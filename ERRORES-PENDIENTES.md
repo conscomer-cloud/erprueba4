@@ -1,4 +1,4 @@
-# Verificación de tipos: 328 errores pendientes
+# Verificación de tipos: 304 errores pendientes
 
 ## Qué cambió
 
@@ -16,7 +16,8 @@ está bloqueado. Lo que falla es la verificación, no la compilación.
 | Momento | Errores |
 |---|---|
 | Al instalar los tipos | 421 |
-| Después de las correcciones | 328 |
+| Primera pasada | 328 |
+| Segunda pasada | 304 |
 
 ## Categorías cerradas
 
@@ -61,23 +62,38 @@ que el vendedor siempre veía "Rechazado sin observaciones".
 - `EmployeeDocuments` mostraba una fecha escrita a mano (`'2026-01-10'`) como
   respaldo de un campo inexistente.
 
+## Segunda pasada: colecciones del contexto mal nombradas
+
+Varios tableros ejecutivos leían colecciones que el contexto no expone:
+`inventoryMovements`, `arInvoices`, `payments`, `payrollRecords`, `deliveries`,
+`apBills`, `campaigns`, `companyBudget` y `operatingExpenses`. Los nombres
+reales son `movements`, `cxcInvoices`, `cxcPayments`, `payrollPeriods`, `pods`,
+`cxpInvoices`, `marketingCampaigns`, `budgets` y `expenses`.
+
+Consecuencia: el reporte de integridad de datos, el tablero de certificación y
+el centro de mando ejecutivo se construían sobre colecciones `undefined`.
+
+El OPEX del centro de mando leía `expensesTotal`, que no existe en el resumen
+ejecutivo; el campo real es `operatingExpensesTotal`, así que esa cifra se
+pintaba siempre en cero.
+
 ## Lo que queda
 
-328 errores repartidos en unos 60 archivos. Es cola larga: ningún archivo
+304 errores repartidos en unos 60 archivos. Es cola larga: ningún archivo
 concentra más de 33, así que no hay una corrección que cierre muchos de golpe.
 
 | Archivo | Errores |
 |---|---|
 | `context/ERPContext.tsx` | 33 |
-| `components/executive/MasterCertificationDashboard.tsx` | 12 |
 | `components/finance/CXCManagement.tsx` | 11 |
 | `components/hr/AttendanceTracker.tsx` | 10 |
-| `components/hr/CommissionsAndPayroll.tsx` | 9 |
-| `components/executive/DataIntegrityReportViewer.tsx` | 9 |
 | `components/automation/WorkflowBpmStudioView.tsx` | 9 |
-| `components/service/CustomerServiceCenter.tsx` | 8 |
-| `components/marketing/SegmentsAndAudience.tsx` | 8 |
+| `components/hr/CommissionsAndPayroll.tsx` | 9 |
+| `components/automation/ChaosTestingSuiteView.tsx` | 8 |
+| `components/executive/MasterE2ETestModal.tsx` | 8 |
+| `components/finance/CustomerStatementModal.tsx` | 8 |
 | `components/finance/TreasuryOverview.tsx` | 8 |
+| `components/marketing/SegmentsAndAudience.tsx` | 8 |
 
 Para ver el listado completo:
 

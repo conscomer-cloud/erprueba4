@@ -84,15 +84,19 @@ export const ExecutiveCommandCenter: React.FC<ExecutiveCommandCenterProps> = ({
     orders,
     products,
     customers,
-    arInvoices,
-    apBills,
+    cxcInvoices,
+    cxpInvoices,
     bankAccounts,
     warehouses,
-    sellerCommissions,
-    payrollRecords,
-    operatingExpenses,
-    companyBudget,
+    commissionRecords,
+    payrollPeriods,
+    expenses,
+    budgets,
   } = useERP();
+
+  // El servicio espera un presupuesto, no la colección. Se usa el del año
+  // en curso; si no hay, el primero disponible.
+  const companyBudget = budgets.find((b) => b.year === new Date().getFullYear()) || budgets[0];
 
   const { currentRole } = useAuth();
 
@@ -108,11 +112,11 @@ export const ExecutiveCommandCenter: React.FC<ExecutiveCommandCenterProps> = ({
       orders,
       products,
       customers,
-      arInvoices,
-      apBills,
+      cxcInvoices,
+      cxpInvoices,
       bankAccounts,
-      operatingExpenses,
-      payrollRecords,
+      expenses,
+      payrollPeriods,
       companyBudget
     );
   }, [
@@ -120,11 +124,11 @@ export const ExecutiveCommandCenter: React.FC<ExecutiveCommandCenterProps> = ({
     orders,
     products,
     customers,
-    arInvoices,
-    apBills,
+    cxcInvoices,
+    cxpInvoices,
     bankAccounts,
-    operatingExpenses,
-    payrollRecords,
+    expenses,
+    payrollPeriods,
     companyBudget,
   ]);
 
@@ -136,10 +140,10 @@ export const ExecutiveCommandCenter: React.FC<ExecutiveCommandCenterProps> = ({
     return ExecutiveIntelligenceService.calculateCustomerProfitability(
       customers,
       orders,
-      arInvoices,
+      cxcInvoices,
       products
     );
-  }, [customers, orders, arInvoices, products]);
+  }, [customers, orders, cxcInvoices, products]);
 
   const productProfitability = useMemo(() => {
     return ExecutiveIntelligenceService.calculateProductProfitability(products, orders);
@@ -147,12 +151,12 @@ export const ExecutiveCommandCenter: React.FC<ExecutiveCommandCenterProps> = ({
 
   const salesPerformance = useMemo(() => {
     return ExecutiveIntelligenceService.calculateSalesPerformance(
-      sellerCommissions,
+      commissionRecords,
       orders,
       quotes,
       products
     );
-  }, [sellerCommissions, orders, quotes, products]);
+  }, [commissionRecords, orders, quotes, products]);
 
   const executiveAlerts = useMemo(() => {
     return ExecutiveIntelligenceService.generateExecutiveAlerts(
@@ -179,13 +183,13 @@ export const ExecutiveCommandCenter: React.FC<ExecutiveCommandCenterProps> = ({
     return ExecutiveIntelligenceService.validateDataIntegrity(
       orders,
       products,
-      arInvoices,
-      apBills,
+      cxcInvoices,
+      cxpInvoices,
       bankAccounts,
-      operatingExpenses,
-      payrollRecords
+      expenses,
+      payrollPeriods
     );
-  }, [orders, products, arInvoices, apBills, bankAccounts, operatingExpenses, payrollRecords]);
+  }, [orders, products, cxcInvoices, cxpInvoices, bankAccounts, expenses, payrollPeriods]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -689,11 +693,11 @@ export const ExecutiveCommandCenter: React.FC<ExecutiveCommandCenterProps> = ({
             erpData={{
               orders,
               products,
-              arInvoices,
-              apBills,
+              arInvoices: cxcInvoices,
+              apBills: cxpInvoices,
               bankAccounts,
-              payrollRecords,
-              operatingExpenses,
+              payrollRecords: payrollPeriods,
+              operatingExpenses: expenses,
               customers,
             }}
             currentUser={currentRole}
@@ -705,7 +709,7 @@ export const ExecutiveCommandCenter: React.FC<ExecutiveCommandCenterProps> = ({
         )}
 
         {activeTab === 'CERTIFICATION' && (
-          <MasterCertificationDashboard onNavigateModule={onNavigate} />
+          <MasterCertificationDashboard onNavigateToModule={onNavigate} />
         )}
 
         {activeTab === 'HEALTH_SCORE' && (

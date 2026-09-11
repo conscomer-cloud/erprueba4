@@ -11,50 +11,68 @@
    nombres aquí repinta los 246 archivos de componentes. Cambiar la identidad
    visual de la app es editar este bloque, no tocar los componentes.
 
-   Paleta aplicada: la de Conscomer — azul #05406a / #065994, dorado #e4a734
-   y rojos #cf2823 / #ae251e. Para ajustarla, se editan los valores de abajo
-   y nada más.
+   Paleta aplicada: la de Bind ERP, extraída de las capturas del alta de
+   producto. Para volver a la de Conscomer (#05406a / #065994 / #e4a734) o
+   cambiar a otra, se editan los valores de abajo y nada más.
    ========================================================================== */
 
 @theme {
-  /* --- Azul institucional -------------------------------------------------
-     Base #05406a (oscuro) y #065994 (medio). La escala se construye alrededor
-     de esos dos: los tonos claros para fondos de insignia, los oscuros para
-     encabezados y barras. blue-600 es el color primario de la app. */
-  --color-blue-50:  #eaf2f8;
-  --color-blue-100: #cfe1ee;
-  --color-blue-200: #a4c6de;
-  --color-blue-500: #0b6fb4;
-  --color-blue-600: #065994;
-  --color-blue-700: #05406a;
-  --color-blue-800: #04324f;
-  --color-blue-900: #03253b;
-  --color-blue-950: #021a2a;
+  /* --- Paleta tomada de Bind ERP ------------------------------------------
+     Los valores se extrajeron de las capturas del alta de producto, no a ojo.
+     Bind está construido sobre Bootstrap 3, así que la escala completa sigue
+     ese sistema: eso mantiene coherentes los estados que no aparecen en las
+     capturas (advertencia, error, información). */
 
-  /* --- Amarillo dorado ----------------------------------------------------
-     #e4a734. Es el color de acción de la app: botones destacados sobre fondo
-     oscuro, insignias de la barra lateral, el logotipo. */
-  --color-yellow-300: #f0c268;
-  --color-yellow-400: #e4a734;
-  --color-yellow-500: #c88f22;
+  /* Azul institucional. #337ab7 es el botón primario de Bind; #286090 es su
+     estado al pasar el cursor. Los tonos oscuros vienen del cromo navy
+     (#193048) que Bind usa en encabezados y barra lateral. */
+  --color-blue-50:  #eaf1f8;
+  --color-blue-100: #e3eaf3;   /* fila resaltada en las tablas de Bind */
+  --color-blue-200: #c3d5e8;
+  --color-blue-500: #448db8;
+  --color-blue-600: #337ab7;
+  --color-blue-700: #286090;
+  --color-blue-800: #1f4d75;
+  --color-blue-900: #193048;
+  --color-blue-950: #0c1824;
 
-  /* --- Rojos --------------------------------------------------------------
-     #cf2823 para alertas y acciones destructivas, #ae251e al pasar el cursor
-     y en los estados oscuros. */
-  --color-red-500: #cf2823;
-  --color-red-600: #be2620;
-  --color-red-700: #ae251e;
-  --color-rose-600: #be2620;
+  /* Bind no tiene ningún amarillo. En la app, yellow-400 es el color de los
+     botones de acción principal (300 usos), y el equivalente funcional en
+     Bind es el verde con el que marca "agregar". Esta es la única
+     equivalencia que tuve que decidir, no medir. */
+  --color-yellow-300: #7ec97e;
+  --color-yellow-400: #5cb85c;
+  --color-yellow-500: #4cae4c;
 
-  /* --- Verde de confirmación ----------------------------------------------
-     No viene del kit. Se conserva un verde sobrio para "correcto" y "surtido"
-     porque son estados operativos que no deben confundirse con la marca. */
-  --color-emerald-600: oklch(59.6% 0.145 163.225);
+  /* Confirmaciones. Se deja un verde más profundo que el de acción para que
+     "listo" y "agregar" no se vean idénticos. */
+  --color-emerald-50:  #eaf5ea;
+  --color-emerald-600: #3d8b3d;
+  --color-emerald-700: #357935;
 
-  /* --- Ámbar de advertencia -----------------------------------------------
-     Se separa deliberadamente del amarillo de marca: si ambos fueran el mismo
-     tono, un botón de acción y una advertencia se verían iguales. */
-  --color-amber-400: oklch(82.8% 0.189 84.429);
+  /* Advertencia y error: Bootstrap 3, el mismo sistema que usa Bind. */
+  --color-amber-400: #f0ad4e;
+  --color-amber-600: #ec971f;
+  --color-red-500:   #d9534f;
+  --color-red-600:   #c9302c;
+  --color-red-700:   #ac2925;
+  --color-rose-600:  #c9302c;
+
+  /* Información */
+  --color-indigo-600: #31b0d5;
+
+  /* Neutros de Bind: texto #636363, fondos #f9f9f9 y #f5f5f5. */
+  --color-slate-50:  #f9f9f9;
+  --color-slate-100: #f5f5f5;
+  --color-slate-200: #e7e7e7;
+  --color-slate-300: #cccccc;
+  --color-slate-400: #999999;
+  --color-slate-500: #7f7f7f;
+  --color-slate-600: #636363;
+  --color-slate-700: #4a4a4a;
+  --color-slate-800: #333333;
+  --color-slate-900: #193048;
+  --color-slate-950: #0c1824;
 }
 
 /* ==========================================================================
@@ -198,15 +216,15 @@ html {
   /* Los acentos de marca se aclaran: el azul #065994 y el rojo #cf2823
      pierden contraste sobre fondo oscuro y se vuelven ilegibles. El dorado
      #e4a734 se deja igual, funciona en ambos fondos. */
-  --color-blue-500: #4fa8dd;
-  --color-blue-600: #3d92c9;
-  --color-blue-700: #2b7bad;
+  --color-blue-500: #6aaed8;
+  --color-blue-600: #5a9ecb;
+  --color-blue-700: #448db8;
   --color-indigo-600: oklch(60% 0.19 277);
   --color-emerald-600: oklch(66% 0.15 163);
-  --color-red-500: #e8564f;
-  --color-red-600: #de4841;
-  --color-red-700: #cf2823;
-  --color-rose-600: #de4841;
+  --color-red-500: #e57373;
+  --color-red-600: #d9534f;
+  --color-red-700: #c9302c;
+  --color-rose-600: #d9534f;
   --color-amber-600: oklch(74% 0.16 70);
 
   /* Los fondos tenues de badge (bg-*-50) quedaban casi blancos al invertir. */
