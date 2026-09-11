@@ -149,7 +149,7 @@ export const SupplierReturnsTab: React.FC<SupplierReturnsTabProps> = ({ onNewRet
                 </div>
                 <p className="text-xs text-slate-500 mt-0.5">
                   Proveedor: <b>{selectedReturn.supplier_name}</b> • Creado por:{' '}
-                  <b>{selectedReturn.created_by_name}</b>
+                  <b>{selectedReturn.requested_by_name}</b>
                 </p>
               </div>
               <button

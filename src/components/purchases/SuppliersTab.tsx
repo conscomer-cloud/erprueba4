@@ -241,12 +241,12 @@ export const SuppliersTab: React.FC<SuppliersTabProps> = ({
             </div>
 
             {/* Bank Info */}
-            {selectedSupplier.bank_name && (
+            {selectedSupplier.bankName && (
               <div className="space-y-1 text-xs">
                 <span className="font-bold text-slate-700 block">Datos Bancarios para Pago:</span>
                 <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200 font-mono text-[11px] text-slate-700">
-                  <div>Banco: <b>{selectedSupplier.bank_name}</b></div>
-                  <div>Cuenta: <b>{selectedSupplier.bank_account || 'N/D'}</b></div>
+                  <div>Banco: <b>{selectedSupplier.bankName}</b></div>
+                  <div>Cuenta: <b>{selectedSupplier.bankAccount || 'N/D'}</b></div>
                   <div>CLABE: <b>{selectedSupplier.clabe || 'N/D'}</b></div>
                 </div>
               </div>
@@ -269,7 +269,7 @@ export const SuppliersTab: React.FC<SuppliersTabProps> = ({
                             [{prod?.code || 'SKU'}] {prod?.name || 'Producto'}
                           </div>
                           <div className="text-[11px] text-slate-400">
-                            Cód. Proveedor: {sp.supplier_product_code || 'N/A'} • Min: {sp.min_order_quantity} {prod?.unit || 'PZA'}
+                            Cód. Proveedor: {sp.supplier_product_code || 'N/A'} • Min: {sp.minimum_order_quantity} {prod?.unit || 'PZA'}
                           </div>
                         </div>
                         <div className="text-right">

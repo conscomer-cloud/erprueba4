@@ -6,7 +6,7 @@
 
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
-import { ChartOfAccount, CostCenter } from '../../types/erp';
+import { ChartAccount, CostCenter } from '../../types/erp';
 import {
   FolderTree,
   Building,
@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 
 export const AccountsAndCostCenters: React.FC = () => {
-  const { chartOfAccounts, costCenters, addAccount, addCostCenter } = useERP();
+  const { chartOfAccounts, costCenters, addChartAccount, addCostCenter } = useERP();
 
   const [activeSubTab, setActiveSubTab] = useState<'ACCOUNTS' | 'COST_CENTERS'>('ACCOUNTS');
   const [accountTypeFilter, setAccountTypeFilter] = useState<string>('ALL');
@@ -30,14 +30,14 @@ export const AccountsAndCostCenters: React.FC = () => {
 
   // New Account Modal State
   const [showNewAccountModal, setShowNewAccountModal] = useState(false);
-  const [newAccData, setNewAccData] = useState<Partial<ChartOfAccount>>({
+  const [newAccData, setNewAccData] = useState<Partial<ChartAccount>>({
     code: '',
     name: '',
-    type: 'GASTOS',
+    category: 'GASTOS',
     nature: 'DEUDORA',
     level: 2,
-    parentCode: '5000',
-    allowsMovement: true,
+    parentId: '5000',
+    isHeader: false,
   });
 
   // New Cost Center Modal State
@@ -46,11 +46,11 @@ export const AccountsAndCostCenters: React.FC = () => {
     code: '',
     name: '',
     managerName: '',
-    monthlyBudget: 0,
+    annualBudget: 0,
   });
 
   const filteredAccounts = chartOfAccounts.filter((acc) => {
-    if (accountTypeFilter !== 'ALL' && acc.type !== accountTypeFilter) return false;
+    if (accountTypeFilter !== 'ALL' && acc.category !== accountTypeFilter) return false;
     if (
       searchQuery &&
       !(acc.code || "").toLowerCase().includes(searchQuery.toLowerCase()) &&
@@ -64,16 +64,21 @@ export const AccountsAndCostCenters: React.FC = () => {
     e.preventDefault();
     if (!newAccData.code || !newAccData.name) return;
 
-    addAccount({
-      code: newAccData.code,
-      name: newAccData.name,
-      type: newAccData.type as any,
+    addChartAccount({
+      code: newAccData.code!,
+      name: newAccData.name!,
+      category: newAccData.category as any,
+      subcategory: (newAccData.subcategory || newAccData.category) as any,
       nature: newAccData.nature as any,
       level: Number(newAccData.level) || 2,
-      parentCode: newAccData.parentCode || undefined,
-      allowsMovement: newAccData.allowsMovement ?? true,
-      currentBalance: 0,
+      parentId: newAccData.parentId || undefined,
+      // Una cuenta de detalle acepta movimientos; una de encabezado agrupa.
+      isHeader: newAccData.isHeader ?? false,
+      balance: 0,
+      currency: 'MXN',
       isActive: true,
+      // Las cuentas creadas por el usuario no son del sistema: se pueden editar.
+      isSystem: false,
     });
 
     setShowNewAccountModal(false);
@@ -87,16 +92,16 @@ export const AccountsAndCostCenters: React.FC = () => {
       code: newCCData.code,
       name: newCCData.name,
       managerName: newCCData.managerName || 'Gerencia Responsable',
-      monthlyBudget: Number(newCCData.monthlyBudget) || 0,
-      currentSpent: 0,
-      isActive: true,
+      annualBudget: Number(newCCData.annualBudget) || 0,
+      spentBudget: 0,
+      status: 'ACTIVO',
     });
 
     setShowNewCCModal(false);
   };
 
-  const totalCCBudget = costCenters.reduce((sum, cc) => sum + cc.monthlyBudget, 0);
-  const totalCCSpent = costCenters.reduce((sum, cc) => sum + cc.currentSpent, 0);
+  const totalCCBudget = costCenters.reduce((sum, cc) => sum + cc.annualBudget, 0);
+  const totalCCSpent = costCenters.reduce((sum, cc) => sum + cc.spentBudget, 0);
   const overallCCConsumedPct = totalCCBudget > 0 ? Math.round((totalCCSpent / totalCCBudget) * 100) : 0;
 
   return (
@@ -199,32 +204,32 @@ export const AccountsAndCostCenters: React.FC = () => {
                       <td className="py-2.5 px-4">
                         <span
                           className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${
-                            acc.type === 'ACTIVO'
+                            acc.category === 'ACTIVO'
                               ? 'bg-blue-100 text-blue-800'
-                              : acc.type === 'PASIVO'
+                              : acc.category === 'PASIVO'
                               ? 'bg-rose-100 text-rose-800'
-                              : acc.type === 'CAPITAL'
+                              : acc.category === 'CAPITAL'
                               ? 'bg-purple-100 text-purple-800'
-                              : acc.type === 'INGRESOS'
+                              : acc.category === 'INGRESOS'
                               ? 'bg-emerald-100 text-emerald-800'
                               : 'bg-amber-100 text-amber-800'
                           }`}
                         >
-                          {acc.type}
+                          {acc.category}
                         </span>
                       </td>
                       <td className="py-2.5 px-4 text-slate-600 font-medium">{acc.nature}</td>
                       <td className="py-2.5 px-4 text-center text-slate-500 font-mono">N{acc.level}</td>
                       <td className="py-2.5 px-4 text-right font-bold text-slate-900 font-mono">
-                        ${(Number(acc.currentBalance) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                        ${(Number(acc.balance) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                       </td>
                       <td className="py-2.5 px-4 text-center">
                         <span
                           className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                            acc.allowsMovement ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                            !acc.isHeader ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
                           }`}
                         >
-                          {acc.allowsMovement ? 'Sí' : 'No (Acum.)'}
+                          {!acc.isHeader ? 'Sí' : 'No (Acum.)'}
                         </span>
                       </td>
                     </tr>
@@ -279,7 +284,7 @@ export const AccountsAndCostCenters: React.FC = () => {
           {/* Cost Centers Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {costCenters.map((cc) => {
-              const consumedPct = cc.monthlyBudget > 0 ? Math.round((cc.currentSpent / cc.monthlyBudget) * 100) : 0;
+              const consumedPct = cc.annualBudget > 0 ? Math.round((cc.spentBudget / cc.annualBudget) * 100) : 0;
               const isOver = consumedPct > 90;
               return (
                 <div
@@ -310,13 +315,13 @@ export const AccountsAndCostCenters: React.FC = () => {
                       <div className="flex justify-between text-xs">
                         <span className="text-slate-500">Presupuesto:</span>
                         <span className="font-semibold text-slate-800">
-                          ${(Number(cc.monthlyBudget) || 0).toLocaleString('es-MX')}
+                          ${(Number(cc.annualBudget) || 0).toLocaleString('es-MX')}
                         </span>
                       </div>
                       <div className="flex justify-between text-xs">
                         <span className="text-slate-500">Ejercido:</span>
                         <span className="font-bold text-slate-900">
-                          ${(Number(cc.currentSpent) || 0).toLocaleString('es-MX')}
+                          ${(Number(cc.spentBudget) || 0).toLocaleString('es-MX')}
                         </span>
                       </div>
 
@@ -339,7 +344,7 @@ export const AccountsAndCostCenters: React.FC = () => {
                   <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-500 flex justify-between items-center">
                     <span>Responsable: {cc.managerName.split(' ')[0]}</span>
                     <span className="font-semibold text-slate-700">
-                      Disp: ${(cc.monthlyBudget - cc.currentSpent).toLocaleString('es-MX')}
+                      Disp: ${(cc.annualBudget - cc.spentBudget).toLocaleString('es-MX')}
                     </span>
                   </div>
                 </div>
@@ -371,8 +376,8 @@ export const AccountsAndCostCenters: React.FC = () => {
                 <div>
                   <label className="block text-slate-600 font-semibold mb-1">Tipo de Cuenta</label>
                   <select
-                    value={newAccData.type}
-                    onChange={(e) => setNewAccData({ ...newAccData, type: e.target.value as any })}
+                    value={newAccData.category}
+                    onChange={(e) => setNewAccData({ ...newAccData, category: e.target.value as any })}
                     className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800"
                   >
                     <option value="ACTIVO">Activo</option>

@@ -68,6 +68,112 @@
    ninguna regla que respondiera a ella y el boton no hacia nada.
    ========================================================================== */
 
+
+/* ==========================================================================
+   DENSIDAD Y TIPOGRAFÍA  (referencia: capturas de Bind ERP)
+
+   Las capturas muestran una interfaz mucho más compacta que la nuestra:
+   tablas densas, texto pequeño, encabezados de columna discretos con
+   ordenamiento, filas de poca altura y separadores tenues. Es el patrón de un
+   ERP que se usa ocho horas al día, donde caber más renglones en pantalla vale
+   más que el aire entre elementos.
+
+   Se ajusta la densidad y el tamaño base, no la paleta: los colores siguen
+   siendo los de Conscomer definidos arriba.
+   ========================================================================== */
+
+:root {
+  /* Bind usa ~13px de base contra los 16px por omisión del navegador. */
+  --erp-font-base: 13px;
+  --erp-font-tabla: 12px;
+  --erp-font-encabezado: 11px;
+  --erp-alto-fila: 34px;
+}
+
+html {
+  font-size: var(--erp-font-base);
+}
+
+/* Las tablas de datos se compactan. Se aplica solo dentro de .tabla-erp para
+   no alterar tablas de contenido ni las de los documentos imprimibles. */
+.tabla-erp {
+  font-size: var(--erp-font-tabla);
+}
+
+.tabla-erp thead th {
+  font-size: var(--erp-font-encabezado);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--color-slate-600);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-slate-200);
+  white-space: nowrap;
+}
+
+.tabla-erp tbody td {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--color-slate-100);
+  vertical-align: middle;
+}
+
+.tabla-erp tbody tr:hover {
+  background-color: var(--color-slate-50);
+}
+
+/* Columnas ordenables, como las de Bind. */
+.tabla-erp th[data-ordenable] {
+  cursor: pointer;
+  user-select: none;
+}
+
+.tabla-erp th[data-ordenable]::after {
+  content: '⇅';
+  margin-left: 0.35em;
+  opacity: 0.35;
+  font-size: 0.9em;
+}
+
+/* Barra de ruta superior: el elemento más reconocible de las capturas. */
+.barra-ruta {
+  background-color: var(--color-blue-600);
+  color: #fff;
+  font-size: var(--erp-font-encabezado);
+  padding: 0.45rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.barra-ruta a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Insignias de estado compactas (Activa, Cancelada, No Pagada). */
+.insignia-estado {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.4;
+  padding: 0.1rem 0.5rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* Los campos de formulario también bajan de altura. */
+.campo-erp {
+  font-size: var(--erp-font-tabla);
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--color-slate-300);
+  border-radius: 4px;
+  background-color: var(--color-white);
+}
+
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 .dark {

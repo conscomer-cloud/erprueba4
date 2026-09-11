@@ -38,20 +38,15 @@ import {
   ComplianceStatus,
 } from '../../types/governanceRiskComplianceTypes';
 import { GovernanceRiskComplianceService } from '../../services/governanceRiskComplianceService';
+import { ErrorBoundaryProps, ErrorBoundaryState } from '../../types/errorBoundary';
 
 // ==========================================
 // ERROR BOUNDARY LOCAL PARA COMPLIANCE
 // ==========================================
-interface ErrorBoundaryProps {
-  children: ReactNode;
-}
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-  errorMessage: string;
-}
 
-export class ComplianceErrorBoundary extends (React.Component as any) {
+export class ComplianceErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+  props!: ErrorBoundaryProps;
   state: ErrorBoundaryState;
 
   constructor(props: ErrorBoundaryProps) {

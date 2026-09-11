@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 import { useERP } from '../../context/ERPContext';
 import { useAuth } from '../../context/AuthContext';
-import { Quote, QuoteItem, Customer, Product, Order } from '../../types/erp';
+import { Quote, QuoteItem, Customer, Product, Order, UserRole } from '../../types/erp';
 import { AIDraftModal } from './AIDraftModal';
 import { CommercialRLSService } from '../../services/commercialRLSService';
 import { exportQuoteToPDF } from '../../services/quotePdfService';
@@ -761,15 +761,11 @@ export const QuotesModule: React.FC<QuotesModuleProps> = ({ onNavigateToOrders }
   );
 
   // Check discount policy against user role (P0-07: 5% max discount for sales executives)
-  const isManagerOrAdmin =
-    currentUser?.role === 'SUPER_ADMIN' ||
-    currentUser?.role === 'DIRECTOR_GENERAL' ||
-    currentUser?.role === 'DIRECTOR' ||
-    currentUser?.role === 'ADMIN' ||
-    currentUser?.role === 'ADMINISTRADOR' ||
-    currentUser?.role === 'GERENTE_SUCURSAL' ||
-    currentUser?.role === 'GERENTE_VENTAS' ||
-    currentUser?.role === 'DIRECTOR_COMERCIAL';
+  // Cinco de los ocho roles que se comparaban aquí no existen en UserRole
+  // (SUPER_ADMIN, DIRECTOR_GENERAL, ADMIN, GERENTE_SUCURSAL, DIRECTOR_COMERCIAL),
+  // así que esas comparaciones eran siempre falsas.
+  const ROLES_DESCUENTO_AMPLIADO: UserRole[] = ['ADMINISTRADOR', 'DIRECTOR', 'GERENTE_VENTAS'];
+  const isManagerOrAdmin = !!currentUser?.role && ROLES_DESCUENTO_AMPLIADO.includes(currentUser.role);
   const maxAllowedDiscount = companyConfig?.sellerMaxDiscountPercent ?? companyConfig?.maxDiscountSalesperson ?? 5;
   const discountExceeded =
     ((liveCalculation?.avgDiscountPct ?? liveCalculation?.discountPct) || 0) > maxAllowedDiscount;
@@ -1145,7 +1141,7 @@ export const QuotesModule: React.FC<QuotesModuleProps> = ({ onNavigateToOrders }
                       <td className="px-4 py-3.5 text-center">
                         <span
                           className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                            quote.status === 'APROBADA'
+                            quote.status === 'ACEPTADA'
                               ? 'bg-emerald-900/60 text-emerald-300 border border-emerald-700'
                               : quote.status === 'PENDIENTE_AUTORIZACION' || (isPendingDiscountApproval && quote.status !== 'APROBADA')
                               ? 'bg-amber-900/60 text-amber-300 border border-amber-700'
@@ -1177,15 +1173,15 @@ export const QuotesModule: React.FC<QuotesModuleProps> = ({ onNavigateToOrders }
                           <div className="flex flex-col items-center">
                             <span
                               className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold bg-rose-950/80 text-rose-400 border border-rose-700/70 shadow-xs cursor-pointer hover:bg-rose-900/60 transition-colors"
-                              title={quote.financialRejectionReason || 'Rechazada por Finanzas (Clic para ver)'}
+                              title={quote.financialApprovalNotes || 'Rechazada por Finanzas (Clic para ver)'}
                               onClick={() => {
-                                showToast(`Dictamen Finanzas (${quote.folio}): ${quote.financialRejectionReason || 'Rechazado sin observaciones adicionales'}`, 'error');
+                                showToast(`Dictamen Finanzas (${quote.folio}): ${quote.financialApprovalNotes || 'Rechazado sin observaciones adicionales'}`, 'error');
                               }}
                             >
                               <XCircle className="h-3 w-3" /> RECHAZADA
                             </span>
-                            <span className="text-[9px] text-rose-300/80 truncate max-w-[115px] mt-0.5" title={quote.financialRejectionReason}>
-                              {quote.financialRejectionReason || 'Dictamen adverso'}
+                            <span className="text-[9px] text-rose-300/80 truncate max-w-[115px] mt-0.5" title={quote.financialApprovalNotes}>
+                              {quote.financialApprovalNotes || 'Dictamen adverso'}
                             </span>
                           </div>
                         ) : (
@@ -2309,7 +2305,7 @@ export const QuotesModule: React.FC<QuotesModuleProps> = ({ onNavigateToOrders }
                           <p>
                             Dictaminado favorablemente por{' '}
                             <strong>{viewingQuote.financialApprovedByName || 'Finanzas'}</strong> (
-                            {viewingQuote.financialApprovedByRole || 'FINANZAS'}) el{' '}
+                            {viewingQuote.financialApprovedRole || 'FINANZAS'}) el{' '}
                             <span className="font-mono">
                               {viewingQuote.financialApprovedAt
                                 ? new Date(viewingQuote.financialApprovedAt).toLocaleString('es-MX')

@@ -57,6 +57,7 @@ interface ErrorBoundaryState {
 }
 
 class AnomalyErrorBoundary extends (Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+  props!: any;
   state: ErrorBoundaryState = { hasError: false, error: null };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {

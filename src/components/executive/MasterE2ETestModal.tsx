@@ -535,7 +535,7 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
           notes: 'Proyecto Torre Titanium: Aislamiento preformado lana mineral y elastómero.',
         });
         setGeneratedEntities((prev) => ({ ...prev, leadId: lead?.id || 'LEAD-9080' }));
-        addLogMessage(`Lead ${lead?.companyName || 'Titanio'} registrado y calificado con éxito.`, 'success');
+        addLogMessage(`Lead ${lead?.company_name || 'Titanio'} registrado y calificado con éxito.`, 'success');
         break;
       }
 

@@ -27,24 +27,15 @@ import {
 import { useERP } from '../../context/ERPContext';
 import { useAuth } from '../../context/AuthContext';
 import { Employee, EmployeeConfidentialData } from '../../types/erp';
+import { ErrorBoundaryProps, ErrorBoundaryState } from '../../types/errorBoundary';
 
 // Safe Error Boundary for Employee Directory
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
-}
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-  errorMsg: string;
-}
 
-export class EmployeeDirectoryErrorBoundary extends (React.Component as any) {
-  state: ErrorBoundaryState;
-  props: any;
-
+export class EmployeeDirectoryErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+  props!: ErrorBoundaryProps;
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.props = props;
     this.state = { hasError: false, errorMsg: '' };
   }
 

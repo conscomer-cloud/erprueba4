@@ -207,7 +207,7 @@ export const EmployeeDocuments: React.FC = () => {
                   </td>
 
                   <td className="px-4 py-3 text-slate-500 font-mono text-[11px]">
-                    {doc.uploadedAt || '2026-01-10'}
+                    {(doc.createdAt || '').substring(0, 10) || '—'}
                   </td>
 
                   <td className="px-4 py-3 font-mono text-[11px]">

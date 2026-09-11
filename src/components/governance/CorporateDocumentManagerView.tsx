@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect, useMemo, Component, ErrorInfo } from 'react';
+import { ErrorBoundaryProps, ErrorBoundaryState } from '../../types/errorBoundary';
 import {
   FileText,
   Search,
@@ -42,17 +43,10 @@ import {
 // ==========================================
 // ERROR BOUNDARY LOCAL PARA BÓVEDA DOCUMENTAL
 // ==========================================
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
-  onReset?: () => void;
-}
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-  errorMessage: string;
-}
 
-export class CorporateDocumentErrorBoundary extends (React.Component as any) {
+export class CorporateDocumentErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+  props!: ErrorBoundaryProps;
   state: ErrorBoundaryState;
 
   constructor(props: ErrorBoundaryProps) {

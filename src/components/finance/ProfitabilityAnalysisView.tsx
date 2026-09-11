@@ -26,6 +26,7 @@ import {
   X,
 } from 'lucide-react';
 import { ProfitabilityAnalysis } from '../../types/erp';
+import { ErrorBoundaryProps, ErrorBoundaryState } from '../../types/errorBoundary';
 
 // Safe numeric formatters
 const safeNumber = (val: any, fallback = 0): number => {
@@ -51,22 +52,12 @@ const formatPercent = (val: any): string => {
   return `${num.toFixed(1)}%`;
 };
 
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
-}
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-  error?: Error;
-}
 
-class ProfitabilityErrorBoundary extends (React.Component as any) {
-  state: ErrorBoundaryState;
-  props: any;
-
+class ProfitabilityErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+  props!: ErrorBoundaryProps;
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.props = props;
     this.state = { hasError: false };
   }
 

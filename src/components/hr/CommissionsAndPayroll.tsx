@@ -89,7 +89,7 @@ export const CommissionsAndPayroll: React.FC = () => {
           </span>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-2xl font-black text-indigo-700">
-              ${(currentPayroll?.totalNetPay || 218540).toLocaleString('es-MX')}
+              ${(currentPayroll?.totalNetToPay || 218540).toLocaleString('es-MX')}
             </span>
             <span className="text-xs text-indigo-600 font-semibold">Neto estimado</span>
           </div>
@@ -221,7 +221,7 @@ export const CommissionsAndPayroll: React.FC = () => {
                     </td>
 
                     <td className="px-4 py-3 text-right font-mono font-bold text-slate-900">
-                      ${(Number(com.saleAmount) || 0).toLocaleString('es-MX')}
+                      ${(Number(com.baseAmount) || 0).toLocaleString('es-MX')}
                     </td>
 
                     <td className="px-4 py-3 text-right font-mono">
@@ -348,7 +348,7 @@ export const CommissionsAndPayroll: React.FC = () => {
               )}
               <span
                 className={`rounded-full px-3 py-1 text-xs font-black uppercase ${
-                  currentPayroll.status === 'APROBADO' || currentPayroll.status === 'PAGADO'
+                  currentPayroll.status === 'APROBADA' || currentPayroll.status === 'PAGADA'
                     ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                     : 'bg-amber-100 text-amber-800 border border-amber-300'
                 }`}

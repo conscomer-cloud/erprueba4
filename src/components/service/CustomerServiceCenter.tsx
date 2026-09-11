@@ -38,6 +38,7 @@ import {
 import { useERP } from '../../context/ERPContext';
 import { useAuth } from '../../context/AuthContext';
 import { CommercialRLSService } from '../../services/commercialRLSService';
+import { ErrorBoundaryProps, ErrorBoundaryState } from '../../types/errorBoundary';
 import {
   TicketPriority,
   TicketStatus,
@@ -68,13 +69,12 @@ interface TicketsErrorBoundaryState {
   errorMsg: string;
 }
 
-export class TicketsErrorBoundary extends (React.Component as any) {
+export class TicketsErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+  props!: ErrorBoundaryProps;
   state: TicketsErrorBoundaryState;
-  props: any;
 
   constructor(props: TicketsErrorBoundaryProps) {
     super(props);
-    this.props = props;
     this.state = { hasError: false, errorMsg: '' };
   }
 
@@ -140,13 +140,12 @@ interface CustomerServiceErrorBoundaryState {
   errorMsg: string;
 }
 
-export class CustomerServiceErrorBoundary extends (React.Component as any) {
+export class CustomerServiceErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+  props!: ErrorBoundaryProps;
   state: CustomerServiceErrorBoundaryState;
-  props: any;
 
   constructor(props: CustomerServiceErrorBoundaryProps) {
     super(props);
-    this.props = props;
     this.state = { hasError: false, errorMsg: '' };
   }
 
@@ -255,8 +254,8 @@ const CustomerServiceCenterInner: React.FC = () => {
     averageFirstResponseMinutes: 14,
     averageResolutionHours: 4.8,
     activeWarrantiesCount: safeWarranties.length,
-    pendingWarrantyClaimsCount: safeClaims.filter((c) => c.status === 'EN_DICTAMEN' || c.status === 'PENDIENTE').length,
-    pendingReturnsCount: safeReturns.filter((r) => r.status === 'PENDIENTE' || r.status === 'EN_INSPECCION').length,
+    pendingWarrantyClaimsCount: safeClaims.filter((c) => c.status === 'EN_REVISION' || c.status === 'RECLAMADA').length,
+    pendingReturnsCount: safeReturns.filter((r) => r.status === 'SOLICITADA' || r.status === 'EN_REVISION' || r.status === 'INSPECCION').length,
     returnsTotalValue: safeReturns.reduce((acc, r) => acc + (r.totalValue || 0), 0),
     activeQualityIncidentsCount: safeQuality.length,
     openCAPAsCount: safeCapa.filter((c) => c.status !== 'CERRADA').length,

@@ -339,7 +339,6 @@ export const CXCManagement: React.FC = () => {
                 {act.type === 'WHATSAPP' && <MessageSquare className="w-4 h-4" />}
                 {act.type === 'CORREO' && <Mail className="w-4 h-4" />}
                 {act.type === 'VISITA' && <FileText className="w-4 h-4" />}
-                {act.type === 'REQUERIMIENTO_FORMAL' && <ShieldAlert className="w-4 h-4 text-rose-600" />}
               </div>
               <div className="flex-1 text-xs">
                 <div className="flex items-center justify-between">

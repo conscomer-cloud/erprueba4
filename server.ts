@@ -24,8 +24,18 @@ import { GovernanceRiskComplianceService } from "./src/services/governanceRiskCo
 import { ComplianceObligation, ComplianceEvidence, CorrectiveActionPlan, CorporateDocument, EnterpriseAlert, AlertSeverity, AlertDomain, AlertStatus, AnomalyDetectionResult, GovernanceExecutiveAction, GovernanceActionStatus, GovernanceActionHorizon } from "./src/types/governanceRiskComplianceTypes";
 import crypto from "crypto";
 import { generateDemandForecast } from "./server/services/demandForecastService";
-import { buildBISeries } from "./server/services/biSeriesService";
+import { buildBISeries, buildCapacityAlerts } from "./server/services/biSeriesService";
 import { buildForecastHistory, saveForecastSnapshot } from "./server/services/forecastHistoryService";
+import {
+  buildStampPreview,
+  stampOrder,
+  cancelCfdi,
+  getCfdiFile,
+  refreshCfdiStatus,
+  listCfdi,
+  isFiscalapiConfigured,
+  getEnvironment,
+} from "./server/services/fiscalapiService";
 import * as XLSX from "xlsx";
 
 dotenv.config();
@@ -8121,6 +8131,91 @@ app.get("/api/predictive/forecast-history", requireAuth, requirePermission("PRED
   } catch (err: any) {
     console.error("[Predictivo] Error construyendo historial:", err);
     res.status(500).json({ error: "No se pudo construir el historial de pronósticos." });
+  }
+});
+
+// ============================================================
+// Facturación electrónica CFDI 4.0 (FiscalAPI)
+// ============================================================
+
+/** Estado de la integración. No expone la clave, solo si está configurada. */
+app.get("/api/invoicing/status", requireAuth, requirePermission("FINANZAS", "VIEW"), (_req, res) => {
+  res.json({ configured: isFiscalapiConfigured(), environment: getEnvironment() });
+});
+
+/** Revisión previa: qué falta para poder timbrar este pedido. */
+app.get("/api/invoicing/preview/:orderId", requireAuth, requirePermission("FINANZAS", "VIEW"), (req, res) => {
+  try {
+    res.json(buildStampPreview(req.params.orderId));
+  } catch (err: any) {
+    console.error("[Facturación] Error en la revisión previa:", err);
+    res.status(500).json({ error: "No se pudo revisar el pedido." });
+  }
+});
+
+/**
+ * Timbrado. Exige permiso de AUTORIZAR en Finanzas, no solo de creación:
+ * emitir un CFDI es un acto fiscal con efectos frente al SAT.
+ */
+app.post("/api/invoicing/stamp/:orderId", requireAuth, requirePermission("FINANZAS", "AUTHORIZE"), async (req, res) => {
+  try {
+    const user = (req as any).user;
+    const result = await stampOrder(req.params.orderId, user);
+    if (!result.ok) {
+      return res.status(422).json({ error: result.error, issues: result.issues });
+    }
+    res.json(result.record);
+  } catch (err: any) {
+    console.error("[Facturación] Error al timbrar:", err);
+    res.status(500).json({ error: "No se pudo timbrar la factura." });
+  }
+});
+
+/** CFDI emitidos. Con ?orderId= se limita a un pedido. */
+app.get("/api/invoicing/cfdi", requireAuth, requirePermission("FINANZAS", "VIEW"), (req, res) => {
+  res.json(listCfdi((req.query.orderId as string) || undefined));
+});
+
+app.post("/api/invoicing/cancel/:cfdiId", requireAuth, requirePermission("FINANZAS", "AUTHORIZE"), async (req, res) => {
+  try {
+    const { motiveCode, replacementUuid } = req.body || {};
+    if (!motiveCode) {
+      return res.status(400).json({ error: "Falta el motivo de cancelación (01 a 04)." });
+    }
+    const result = await cancelCfdi(req.params.cfdiId, String(motiveCode), replacementUuid, (req as any).user);
+    if (!result.ok) return res.status(422).json({ error: result.error });
+    res.json({ ok: true });
+  } catch (err: any) {
+    console.error("[Facturación] Error al cancelar:", err);
+    res.status(500).json({ error: "No se pudo cancelar el CFDI." });
+  }
+});
+
+app.get("/api/invoicing/file/:cfdiId/:kind", requireAuth, requirePermission("FINANZAS", "VIEW"), async (req, res) => {
+  const kind = req.params.kind === "xml" ? "xml" : "pdf";
+  const result = await getCfdiFile(req.params.cfdiId, kind);
+  if (!result.ok) return res.status(422).json({ error: result.error });
+  res.json({ base64: result.base64, fileName: result.fileName });
+});
+
+app.get("/api/invoicing/sat-status/:cfdiId", requireAuth, requirePermission("FINANZAS", "VIEW"), async (req, res) => {
+  const result = await refreshCfdiStatus(req.params.cfdiId);
+  if (!result.ok) return res.status(422).json({ error: result.error });
+  res.json({ status: result.status });
+});
+
+/**
+ * Centro de alerta temprana: materiales cuya demanda proyectada ocupa más de
+ * un porcentaje de la capacidad de almacenamiento. Por defecto 85 por ciento.
+ */
+app.get("/api/predictive/capacity-alerts", requireAuth, requirePermission("PREDICTIVO", "VIEW"), (req, res) => {
+  try {
+    const threshold = Math.min(Math.max(Number(req.query.threshold) || 85, 10), 200);
+    const horizon = Math.min(Math.max(Number(req.query.horizonMonths) || 2, 1), 12);
+    res.json(buildCapacityAlerts(threshold, horizon));
+  } catch (err: any) {
+    console.error("[Predictivo] Error construyendo alertas de capacidad:", err);
+    res.status(500).json({ error: "No se pudieron calcular las alertas de capacidad." });
   }
 });
 

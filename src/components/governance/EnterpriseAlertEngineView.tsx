@@ -61,6 +61,7 @@ export class EnterpriseAlertEngineErrorBoundary extends (Component as any)<
   ErrorBoundaryProps,
   ErrorBoundaryState
 > {
+  props!: any;
   state: ErrorBoundaryState = { hasError: false, errorMessage: '' };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {

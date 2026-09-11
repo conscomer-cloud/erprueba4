@@ -77,7 +77,7 @@ export const ReorderAlertPanel: React.FC<ReorderAlertPanelProps> = ({
         ['BORRADOR', 'PENDIENTE', 'PENDIENTE_AUTORIZACION', 'ENVIADA', 'APROBADA'].includes(pr.status) &&
         (pr.items || []).some((it: any) => it.productId === productId)
     );
-    return abierta ? abierta.folio || abierta.requestNumber || abierta.id : null;
+    return abierta ? abierta.folio || abierta.request_number || abierta.id : null;
   };
 
   const puedeSolicitar = can ? can('COMPRAS', 'CREATE') || can('INVENTARIO', 'CREATE') : true;

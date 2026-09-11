@@ -261,6 +261,18 @@ export interface Customer {
   sales_executive_id?: string;
   sellerId?: string;
   sellerName?: string;
+  // --- Datos fiscales del receptor (CFDI 4.0) ---
+  /** RegimenFiscalReceptor del catálogo c_RegimenFiscal. Ej: 601, 603, 612, 626. */
+  satTaxRegimeCode?: string;
+  /** UsoCFDI del catálogo c_UsoCFDI. Ej: G01 adquisición de mercancías, G03 gastos en general. */
+  satCfdiUseCode?: string;
+  /** Código postal fiscal del receptor. Debe coincidir con su constancia de situación fiscal. */
+  fiscalZipCode?: string;
+  /** Razón social exactamente como aparece en la constancia, sin régimen societario. */
+  fiscalLegalName?: string;
+  /** Correo al que se envía el CFDI timbrado. */
+  billingEmail?: string;
+
   paymentTerms?: string;
   discountRate?: number;
   notes?: string;
@@ -351,6 +363,16 @@ export interface Product {
     nivel: string;
     stock: number;
   }[];
+  // --- Datos fiscales requeridos para timbrar (CFDI 4.0) ---
+  /** ClaveProdServ del catálogo c_ClaveProdServ del SAT. Sin esto no se puede facturar. */
+  satProductCode?: string;
+  /** ClaveUnidad del catálogo c_ClaveUnidad. La unidad interna ("ROLLO") no sirve: el SAT pide su clave ("H87", "MTK"). */
+  satUnitCode?: string;
+  /** ObjetoImp: 01 no objeto de impuesto, 02 sí objeto, 03 sí objeto y no obligado al desglose. */
+  satTaxObjectCode?: string;
+  /** Tasa de IVA aplicable, en decimal. 0.16 es la general; 0 para tasa cero. */
+  vatRate?: number;
+
   thermalConductivity?: string;
   tempRange?: string;
   specifications?: Record<string, string>;

@@ -37,11 +37,16 @@ import {
   Flame,
   BarChart3,
   History,
+  SlidersHorizontal,
+  BellRing,
 } from 'lucide-react';
 
 import { DemandForecastView } from './DemandForecastView';
 import { BusinessIntelligenceView } from './BusinessIntelligenceView';
 import { ForecastHistoryView } from './ForecastHistoryView';
+import { ScenarioSimulatorView } from './ScenarioSimulatorView';
+import { StockCapacityAlertCenter } from './StockCapacityAlertCenter';
+import { ModelAccuracyGauge } from './ModelAccuracyGauge';
 
 export type PredictiveTab =
   | 'OVERVIEW'
@@ -59,7 +64,9 @@ export type PredictiveTab =
   | 'CERTIFICACION'
   | 'PRONOSTICO_DEMANDA'
   | 'BUSINESS_INTELLIGENCE'
-  | 'HISTORIAL_PRONOSTICOS';
+  | 'HISTORIAL_PRONOSTICOS'
+  | 'SIMULADOR_ESCENARIOS'
+  | 'ALERTA_CAPACIDAD';
 
 export const PredictiveDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<PredictiveTab>('OVERVIEW');
@@ -80,6 +87,8 @@ export const PredictiveDashboard: React.FC = () => {
     { id: 'PRONOSTICO_DEMANDA', label: 'Pronóstico de Demanda', icon: Flame },
     { id: 'BUSINESS_INTELLIGENCE', label: 'Business Intelligence', icon: BarChart3 },
     { id: 'HISTORIAL_PRONOSTICOS', label: 'Historial Reciente', icon: History },
+    { id: 'SIMULADOR_ESCENARIOS', label: 'Simulador de Escenarios', icon: SlidersHorizontal },
+    { id: 'ALERTA_CAPACIDAD', label: 'Alerta Temprana de Capacidad', icon: BellRing },
     { id: 'INVENTARIO', label: 'Inventario & WMS', icon: Boxes, badge: criticalInv.length > 0 ? `${criticalInv.length}` : undefined },
     { id: 'COBRANZA', label: 'Cobranza CXC', icon: CreditCard },
     { id: 'FLUJO_CAJA', label: 'Flujo de Caja', icon: Wallet },
@@ -316,9 +325,16 @@ export const PredictiveDashboard: React.FC = () => {
         )}
 
         {activeTab === 'VENTAS' && <SalesForecastView />}
-        {activeTab === 'PRONOSTICO_DEMANDA' && <DemandForecastView />}
+        {activeTab === 'PRONOSTICO_DEMANDA' && (
+          <div className="space-y-5">
+            <DemandForecastView />
+            <ModelAccuracyGauge />
+          </div>
+        )}
         {activeTab === 'BUSINESS_INTELLIGENCE' && <BusinessIntelligenceView />}
         {activeTab === 'HISTORIAL_PRONOSTICOS' && <ForecastHistoryView />}
+        {activeTab === 'SIMULADOR_ESCENARIOS' && <ScenarioSimulatorView />}
+        {activeTab === 'ALERTA_CAPACIDAD' && <StockCapacityAlertCenter />}
         {activeTab === 'INVENTARIO' && <InventoryForecastView />}
         {activeTab === 'COBRANZA' && <CollectionForecastView />}
         {activeTab === 'FLUJO_CAJA' && <CashFlowForecastView />}

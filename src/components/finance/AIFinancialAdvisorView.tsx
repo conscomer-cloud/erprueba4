@@ -217,7 +217,7 @@ export const AIFinancialAdvisorView: React.FC = () => {
               {periodClosings.map((c) => (
                 <tr key={c.id} className="hover:bg-slate-50/70">
                   <td className="py-2.5 px-4 font-bold text-slate-900">{c.period}</td>
-                  <td className="py-2.5 px-4 text-slate-600">{c.closedAt ? c.closedAt.slice(0, 10) : 'Pendiente'}</td>
+                  <td className="py-2.5 px-4 text-slate-600">{c.closedDate ? c.closedDate.slice(0, 10) : 'Pendiente'}</td>
                   <td className="py-2.5 px-4 text-slate-700">{c.closedBy || 'Sin cerrar'}</td>
                   <td className="py-2.5 px-4 text-right font-medium text-emerald-700">
                     ${(Number(c.totalIncome) || 0).toLocaleString('es-MX')}

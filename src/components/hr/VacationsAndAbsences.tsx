@@ -191,9 +191,9 @@ export const VacationsAndAbsences: React.FC = () => {
                     <td className="px-4 py-3 text-center">
                       <span
                         className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase ${
-                          req.status === 'APPROVED' || req.status === 'APROBADA'
+                          req.status === 'APPROVED' || req.status === 'APROBADO'
                             ? 'bg-emerald-100 text-emerald-800'
-                            : req.status === 'REJECTED' || req.status === 'RECHAZADA'
+                            : req.status === 'REJECTED' || req.status === 'RECHAZADO'
                             ? 'bg-red-100 text-red-800'
                             : 'bg-amber-100 text-amber-800'
                         }`}

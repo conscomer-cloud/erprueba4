@@ -236,58 +236,9 @@ export const ModulePlaceholder: React.FC<ModulePlaceholderProps> = ({ module, on
         </div>
       )}
 
-      {module === 'INVENTARIO' && (
-        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Catálogo Técnico de Aislamiento Térmico</h3>
-            <span className="text-xs text-slate-400">Total: {products.length} productos</span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
-                <tr>
-                  <th className="py-2.5 px-3">Código & SKU</th>
-                  <th className="py-2.5 px-3">Descripción del Material</th>
-                  <th className="py-2.5 px-3">Categoría</th>
-                  <th className="py-2.5 px-3">U.M.</th>
-                  <th className="py-2.5 px-3 text-right">Físico</th>
-                  <th className="py-2.5 px-3 text-right">Reservado</th>
-                  <th className="py-2.5 px-3 text-right">Disponible</th>
-                  <th className="py-2.5 px-3 text-right">Precio Lista</th>
-                  <th className="py-2.5 px-3">Ubicación Almacén</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {products.map((p) => {
-                  const isLow = p.availableStock <= p.minStock;
-                  return (
-                    <tr key={p.id} className={`hover:bg-slate-50/80 ${isLow ? 'bg-red-50/40' : ''}`}>
-                      <td className="py-2.5 px-3">
-                        <div className="font-mono font-bold text-blue-900">{p.code}</div>
-                        <div className="text-[10px] text-slate-400 font-mono">{p.sku}</div>
-                      </td>
-                      <td className="py-2.5 px-3 font-semibold text-slate-900 max-w-xs">{p.name}</td>
-                      <td className="py-2.5 px-3">
-                        <span className="rounded bg-blue-50 border border-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
-                          {p.category}
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-slate-600">{p.unit}</td>
-                      <td className="py-2.5 px-3 text-right font-mono font-medium">{p.stock}</td>
-                      <td className="py-2.5 px-3 text-right font-mono text-amber-700 font-bold">{p.reservedStock}</td>
-                      <td className={`py-2.5 px-3 text-right font-mono font-black ${isLow ? 'text-red-600 font-bold' : 'text-emerald-700'}`}>
-                        {p.availableStock} {isLow && '⚠️'}
-                      </td>
-                      <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">${p.price}</td>
-                      <td className="py-2.5 px-3 text-slate-600 font-mono text-[11px]">{p.warehouseLocation}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+      {/* Los bloques de INVENTARIO y ALMACENES se eliminaron: la función
+          retorna antes para esos dos módulos (ver arriba), así que ese JSX
+          nunca llegaba a renderizarse. Eran ~85 líneas de código muerto. */}
 
       {module === 'COTIZACIONES' && (
         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
@@ -392,37 +343,6 @@ export const ModulePlaceholder: React.FC<ModulePlaceholderProps> = ({ module, on
         </div>
       )}
 
-      {module === 'ALMACENES' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {warehouses.map((w) => (
-            <div key={w.id} className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div>
-                  <h4 className="text-sm font-bold text-slate-900">{w.name}</h4>
-                  <p className="text-xs text-slate-500 font-mono">{w.code} · {w.city}, {w.state}</p>
-                </div>
-                <span className="rounded bg-slate-100 border border-slate-200 px-2 py-0.5 text-[10px] font-bold text-slate-700">
-                  {w.isCentral ? 'Centro Principal' : 'Sucursal'}
-                </span>
-              </div>
-              <div className="mt-4 space-y-2 text-xs text-slate-600">
-                <div>Dirección: <b className="text-slate-800">{w.address}</b></div>
-                <div>Responsable: <b className="text-slate-800">{w.managerName}</b></div>
-                <div>Capacidad: <b className="text-slate-800">{w.totalCapacityM3} m³</b> para aislamiento térmico</div>
-                <div className="pt-2">
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-slate-500">Ocupación Actual:</span>
-                    <b className="text-blue-900">{w.currentOccupancyPct}%</b>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                    <div className="h-full bg-blue-600 rounded-full" style={{ width: `${w.currentOccupancyPct}%` }} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
 
       {module === 'COMPRAS' && (
         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-xs">

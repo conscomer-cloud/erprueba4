@@ -117,7 +117,7 @@ export const RpaBotsManagerView: React.FC<RpaBotsManagerViewProps> = ({
                     <div className="mt-3 p-2 bg-slate-50 rounded border border-slate-200 text-[11px] text-slate-500 space-y-1">
                       <div className="flex items-center justify-between">
                         <span>Horario:</span>
-                        <span className="font-mono text-slate-700 font-medium">{bot.scheduleCron}</span>
+                        <span className="font-mono text-slate-700 font-medium">{bot.scheduledCron}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span>Ejecuciones:</span>

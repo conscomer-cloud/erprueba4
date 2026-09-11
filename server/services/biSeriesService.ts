@@ -313,3 +313,127 @@ export function buildBISeries(options: BISeriesOptions = {}): BISeriesResult {
     totalMatching,
   };
 }
+
+
+// ---------------------------------------------------------------------------
+// Alerta temprana por capacidad de almacén
+// ---------------------------------------------------------------------------
+
+export interface CapacityAlert {
+  warehouseId: string;
+  warehouseName: string;
+  productId: string;
+  productCode: string;
+  productName: string;
+  unit: string;
+  /** Existencia disponible hoy en ese almacén. */
+  currentStock: number;
+  /** Capacidad máxima configurada para el material en ese almacén. */
+  capacity: number;
+  /** Demanda proyectada para el horizonte. */
+  projectedDemand: number;
+  /** Proyección como porcentaje de la capacidad. */
+  utilizationPct: number;
+  severity: 'CRITICA' | 'ALTA';
+  message: string;
+}
+
+export interface CapacityAlertResult {
+  generatedAt: string;
+  thresholdPct: number;
+  horizonMonths: number;
+  alerts: CapacityAlert[];
+  /** Materiales revisados que tenían capacidad configurada. */
+  evaluated: number;
+  /** Materiales sin capacidad configurada: no se pueden evaluar. */
+  withoutCapacity: number;
+}
+
+/**
+ * Detecta materiales cuya demanda proyectada supera un porcentaje de la
+ * capacidad de almacenamiento.
+ *
+ * La capacidad sale de `maximum_stock` por producto y almacén. Los materiales
+ * sin ese dato no se evalúan y se reportan aparte: dar por hecha una capacidad
+ * que nadie configuró produciría alertas inventadas.
+ */
+export function buildCapacityAlerts(thresholdPct = 85, horizonMonths = 2): CapacityAlertResult {
+  const series = buildBISeries({ historicalMonths: 6, forecastMonths: horizonMonths, topN: 30 });
+
+  const productos: any[] = db.getProducts() || [];
+  const almacenes: any[] = db.getWarehouses() || [];
+  const inventario: any[] = db.getInventory() || [];
+
+  const nombreAlmacen = new Map<string, string>(
+    almacenes.map((w: any) => [String(w.id), w.name || String(w.id)])
+  );
+  const productoPorCodigo = new Map<string, any>(
+    productos.map((p: any) => [String(p.code || p.sku || p.id), p])
+  );
+
+  const alerts: CapacityAlert[] = [];
+  let evaluated = 0;
+  let withoutCapacity = 0;
+
+  series.products.forEach((s) => {
+    const producto = productoPorCodigo.get(s.productCode);
+    if (!producto) return;
+
+    const filas = inventario.filter((inv: any) => String(inv.product_id ?? inv.productId) === String(producto.id));
+    if (filas.length === 0) return;
+
+    filas.forEach((inv: any) => {
+      const capacity = num(inv.maximum_stock ?? inv.maximumStock ?? producto.maximum_stock ?? producto.maximumStock);
+      if (capacity <= 0) {
+        withoutCapacity++;
+        return;
+      }
+      evaluated++;
+
+      const currentStock = num(inv.available_stock ?? inv.availableStock ?? inv.quantity ?? inv.stock);
+
+      // La demanda del producto se reparte entre los almacenes que lo tienen,
+      // en proporción a su existencia. Cargar la demanda completa a cada
+      // almacén dispararía alertas falsas en todos ellos.
+      const totalEnAlmacenes = filas.reduce(
+        (acc: number, f: any) => acc + num(f.available_stock ?? f.availableStock ?? f.quantity ?? f.stock),
+        0
+      );
+      const proporcion = totalEnAlmacenes > 0 ? currentStock / totalEnAlmacenes : 1 / filas.length;
+      const projectedDemand = Math.round(s.totalForecast * proporcion);
+
+      const utilizationPct = Math.round((projectedDemand / capacity) * 100);
+      if (utilizationPct < thresholdPct) return;
+
+      const warehouseId = String(inv.warehouse_id ?? inv.warehouseId ?? '');
+      alerts.push({
+        warehouseId,
+        warehouseName: nombreAlmacen.get(warehouseId) || warehouseId || 'Sin almacén',
+        productId: String(producto.id),
+        productCode: s.productCode,
+        productName: s.productName,
+        unit: s.unit,
+        currentStock,
+        capacity,
+        projectedDemand,
+        utilizationPct,
+        severity: utilizationPct >= 100 ? 'CRITICA' : 'ALTA',
+        message:
+          utilizationPct >= 100
+            ? `La demanda proyectada (${projectedDemand} ${s.unit}) supera la capacidad de ${capacity} ${s.unit}. No cabe la reposición completa.`
+            : `La demanda proyectada ocupa el ${utilizationPct} por ciento de la capacidad de ${capacity} ${s.unit}.`,
+      });
+    });
+  });
+
+  alerts.sort((a, b) => b.utilizationPct - a.utilizationPct);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    thresholdPct,
+    horizonMonths,
+    alerts,
+    evaluated,
+    withoutCapacity,
+  };
+}

@@ -6,7 +6,8 @@
 
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
-import { DepartmentBudget, OperatingExpense } from '../../types/erp';
+import { useAuth } from '../../context/AuthContext';
+import { Budget, Expense } from '../../types/erp';
 import {
   PieChart,
   DollarSign,
@@ -28,9 +29,10 @@ export const BudgetAndExpenseControl: React.FC = () => {
     costCenters,
     chartOfAccounts,
     bankAccounts,
-    recordOperatingExpense,
-    authorizeOperatingExpense,
+    addExpense,
+    approveExpense,
   } = useERP();
+  const { currentUser } = useAuth();
 
   const [activeTab, setActiveTab] = useState<'BUDGETS' | 'EXPENSES'>('BUDGETS');
   const [expenseSearch, setExpenseSearch] = useState('');
@@ -40,11 +42,13 @@ export const BudgetAndExpenseControl: React.FC = () => {
   const [newExpData, setNewExpData] = useState<{
     costCenterId: string;
     accountId: string;
-    description: string;
-    category: OperatingExpense['category'];
-    vendor: string;
-    taxId: string;
-    invoiceNumber: string;
+    // Nombres alineados con el modelo Expense: title, supplierOrPayee,
+    // payeeRfc y receiptFolio. Los anteriores no existían en el tipo.
+    title: string;
+    category: Expense['category'];
+    supplierOrPayee: string;
+    payeeRfc: string;
+    receiptFolio: string;
     subtotal: number;
     tax: number;
     total: number;
@@ -53,12 +57,12 @@ export const BudgetAndExpenseControl: React.FC = () => {
     notes: string;
   }>({
     costCenterId: costCenters[0]?.id || '',
-    accountId: chartOfAccounts.find((a) => a.type === 'GASTOS')?.id || '',
-    description: '',
-    category: 'LOGISTICA_Y_FLOTA',
-    vendor: '',
-    taxId: '',
-    invoiceNumber: '',
+    accountId: chartOfAccounts.find((a) => a.category === 'GASTOS')?.id || '',
+    title: '',
+    category: 'COMBUSTIBLE_LOGISTICA',
+    supplierOrPayee: '',
+    payeeRfc: '',
+    receiptFolio: '',
     subtotal: 0,
     tax: 0,
     total: 0,
@@ -67,15 +71,15 @@ export const BudgetAndExpenseControl: React.FC = () => {
     notes: '',
   });
 
-  const totalAnnualBudget = budgets.reduce((sum, b) => sum + b.annualAllocated, 0);
-  const totalAnnualSpent = budgets.reduce((sum, b) => sum + b.annualSpent, 0);
-  const totalAnnualCommitted = budgets.reduce((sum, b) => sum + b.annualCommitted, 0);
+  const totalAnnualBudget = budgets.reduce((sum, b) => sum + b.budgetedAmount, 0);
+  const totalAnnualSpent = budgets.reduce((sum, b) => sum + b.actualAmount, 0);
+  const totalAnnualCommitted = budgets.reduce((sum, b) => sum + b.committedAmount, 0);
 
   const filteredExpenses = expenses.filter((e) => {
     return (
-      (e.description || "").toLowerCase().includes(expenseSearch.toLowerCase()) ||
-      (e.vendor || "").toLowerCase().includes(expenseSearch.toLowerCase()) ||
-      e.invoiceNumber?.toLowerCase().includes(expenseSearch.toLowerCase())
+      (e.title || "").toLowerCase().includes(expenseSearch.toLowerCase()) ||
+      (e.supplierOrPayee || "").toLowerCase().includes(expenseSearch.toLowerCase()) ||
+      (e.receiptFolio || "").toLowerCase().includes(expenseSearch.toLowerCase())
     );
   });
 
@@ -92,29 +96,29 @@ export const BudgetAndExpenseControl: React.FC = () => {
 
   const handleCreateExpense = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newExpData.total <= 0 || !newExpData.description || !newExpData.vendor) return;
+    if (newExpData.total <= 0 || !newExpData.title || !newExpData.supplierOrPayee) return;
 
     const cc = costCenters.find((c) => c.id === newExpData.costCenterId);
     const acc = chartOfAccounts.find((a) => a.id === newExpData.accountId);
 
-    recordOperatingExpense({
+    addExpense({
+      title: newExpData.title,
+      supplierOrPayee: newExpData.supplierOrPayee,
+      payeeRfc: newExpData.payeeRfc || undefined,
+      date: new Date().toISOString().slice(0, 10),
+      category: newExpData.category,
       costCenterId: newExpData.costCenterId,
       costCenterName: cc?.name || 'Operaciones',
-      accountId: newExpData.accountId,
-      accountCode: acc?.code || '5101',
-      accountName: acc?.name || 'Gastos Generales',
-      description: newExpData.description,
-      category: newExpData.category,
-      expenseDate: new Date().toISOString().slice(0, 10),
-      vendor: newExpData.vendor,
-      taxId: newExpData.taxId,
-      invoiceNumber: newExpData.invoiceNumber,
       subtotal: newExpData.subtotal,
       tax: newExpData.tax,
       total: newExpData.total,
-      paymentMethod: newExpData.paymentMethod,
       bankAccountId: newExpData.paymentMethod === 'TRANSFERENCIA' ? newExpData.bankAccountId : undefined,
-      notes: newExpData.notes,
+      receiptFolio: newExpData.receiptFolio || undefined,
+      responsibleId: currentUser?.id || '',
+      responsibleName: currentUser?.name || 'Sin responsable',
+      // La cuenta contable elegida se deja en las notas: Expense no tiene
+      // campo propio para ella en el modelo actual.
+      notes: [newExpData.notes, acc ? `Cuenta ${acc.code} ${acc.name}` : ''].filter(Boolean).join(' · '),
     });
 
     setShowNewExpenseModal(false);
@@ -221,8 +225,8 @@ export const BudgetAndExpenseControl: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {budgets.map((b) => {
-                    const pct = b.annualAllocated > 0 ? Math.round((b.annualSpent / b.annualAllocated) * 100) : 0;
-                    const available = b.annualAllocated - b.annualSpent - b.annualCommitted;
+                    const pct = b.budgetedAmount > 0 ? Math.round((b.actualAmount / b.budgetedAmount) * 100) : 0;
+                    const available = b.budgetedAmount - b.actualAmount - b.committedAmount;
                     const isRed = pct >= 100;
                     const isAmber = pct >= 80 && pct < 100;
 
@@ -231,10 +235,10 @@ export const BudgetAndExpenseControl: React.FC = () => {
                         <td className="py-2.5 px-4 font-bold text-slate-900">{b.departmentName}</td>
                         <td className="py-2.5 px-4 font-medium text-slate-700">{b.costCenterName}</td>
                         <td className="py-2.5 px-4 text-right font-medium text-slate-700">
-                          ${(Number(b.annualAllocated) || 0).toLocaleString('es-MX')}
+                          ${(Number(b.budgetedAmount) || 0).toLocaleString('es-MX')}
                         </td>
                         <td className="py-2.5 px-4 text-right font-bold text-slate-900">
-                          ${(Number(b.annualSpent) || 0).toLocaleString('es-MX')}
+                          ${(Number(b.actualAmount) || 0).toLocaleString('es-MX')}
                         </td>
                         <td className="py-2.5 px-4 text-right font-medium text-emerald-700">
                           ${(Number(available) || 0).toLocaleString('es-MX')}
@@ -318,15 +322,15 @@ export const BudgetAndExpenseControl: React.FC = () => {
                   <tr key={exp.id} className="hover:bg-slate-50/70 transition-colors">
                     <td className="py-2.5 px-4 font-bold text-slate-900">
                       {exp.folio}
-                      <span className="block text-[10px] text-slate-400 font-normal">{exp.expenseDate}</span>
+                      <span className="block text-[10px] text-slate-400 font-normal">{exp.date}</span>
                     </td>
                     <td className="py-2.5 px-4">
-                      <span className="font-semibold text-slate-800">{exp.description}</span>
-                      <span className="block text-[10px] text-slate-400 font-medium">Prov: {exp.vendor}</span>
+                      <span className="font-semibold text-slate-800">{exp.title}</span>
+                      <span className="block text-[10px] text-slate-400 font-medium">Prov: {exp.supplierOrPayee}</span>
                     </td>
                     <td className="py-2.5 px-4 text-slate-700">{exp.costCenterName}</td>
                     <td className="py-2.5 px-4 font-mono text-slate-600">
-                      {exp.invoiceNumber || 'Sin comprobante'}
+                      {exp.receiptFolio || 'Sin comprobante'}
                       {exp.isTaxDeductible && (
                         <span className="ml-1.5 inline-block text-[10px] text-emerald-600 font-bold">✓ SAT</span>
                       )}
@@ -338,7 +342,7 @@ export const BudgetAndExpenseControl: React.FC = () => {
                     <td className="py-2.5 px-4 text-center">
                       <span
                         className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                          exp.status === 'AUTORIZADO'
+                          exp.status === 'APROBADO'
                             ? 'bg-emerald-100 text-emerald-800'
                             : exp.status === 'RECHAZADO'
                             ? 'bg-rose-100 text-rose-800'
@@ -349,16 +353,16 @@ export const BudgetAndExpenseControl: React.FC = () => {
                       </span>
                     </td>
                     <td className="py-2.5 px-4 text-center">
-                      {exp.status === 'BORRADOR' ? (
+                      {exp.status === 'CAPTURADO' ? (
                         <div className="flex items-center justify-center gap-1.5">
                           <button
-                            onClick={() => authorizeOperatingExpense(exp.id, true)}
+                            onClick={() => approveExpense(exp.id, true)}
                             className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-semibold"
                           >
                             Aprobar
                           </button>
                           <button
-                            onClick={() => authorizeOperatingExpense(exp.id, false)}
+                            onClick={() => approveExpense(exp.id, false)}
                             className="px-2 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-semibold"
                           >
                             Rechazar
@@ -391,7 +395,7 @@ export const BudgetAndExpenseControl: React.FC = () => {
                   type="text"
                   required
                   placeholder="Ej. Combustible diesel para unidad Ford Transit..."
-                  value={newExpData.description}
+                  value={newExpData.title}
                   onChange={(e) => setNewExpData({ ...newExpData, description: e.target.value })}
                   className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800"
                 />
@@ -438,7 +442,7 @@ export const BudgetAndExpenseControl: React.FC = () => {
                     type="text"
                     required
                     placeholder="Ej. Gasolinera Oxxo Gas"
-                    value={newExpData.vendor}
+                    value={newExpData.supplierOrPayee}
                     onChange={(e) => setNewExpData({ ...newExpData, vendor: e.target.value })}
                     className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800"
                   />
@@ -449,7 +453,7 @@ export const BudgetAndExpenseControl: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Ej. FAC-98231"
-                    value={newExpData.invoiceNumber}
+                    value={newExpData.receiptFolio}
                     onChange={(e) => setNewExpData({ ...newExpData, invoiceNumber: e.target.value })}
                     className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 font-mono"
                   />

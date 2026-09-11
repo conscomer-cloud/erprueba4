@@ -6745,7 +6745,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       // 3. Validate order state (Cannot deliver cancelled or rejected orders)
       const order = orders.find((o) => o.id === stop.orderId || o.folio === stop.orderNumber || o.order_number === stop.orderNumber);
-      if (order && (order.status === 'CANCELADO' || order.status === 'RECHAZADO')) {
+      if (order && order.status === 'CANCELADO') {
         return {
           success: false,
           error: `DENIED: No es posible registrar entrega del pedido ${stop.orderNumber} en estatus ${order.status}.`,
@@ -8817,8 +8817,8 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const totalOpenTickets = serviceTickets.filter((t) => t.status !== 'RESUELTO' && t.status !== 'CERRADO' && t.status !== 'CANCELADO').length;
   const criticalTickets = serviceTickets.filter((t) => (t.status === 'ABIERTO' || t.status === 'EN_PROCESO') && t.priority === 'CRITICA').length;
   const activeWarrantiesCount = warranties.filter((w) => w.status === 'ACTIVA').length;
-  const pendingClaimsCount = warrantyClaims.filter((c) => c.status === 'EN_REVISION' || c.status === 'DICTAMEN_TECNICO').length;
-  const pendingReturnsCount = customerReturns.filter((r) => r.status === 'SOLICITADA' || r.status === 'EN_INSPECCION' || r.status === 'AUTORIZADA').length;
+  const pendingClaimsCount = warrantyClaims.filter((c) => c.status === 'EN_REVISION' || c.status === 'RECLAMADA').length;
+  const pendingReturnsCount = customerReturns.filter((r) => r.status === 'SOLICITADA' || r.status === 'INSPECCION' || r.status === 'AUTORIZADA').length;
   const activeIncidentsQuality = qualityIncidents.filter((i) => i.status !== 'CERRADA').length;
   const activeCAPACount = capaActions.filter((c) => c.status === 'ABIERTA' || c.status === 'EN_PROCESO').length;
 

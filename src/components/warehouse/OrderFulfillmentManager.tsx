@@ -35,7 +35,7 @@ export const OrderFulfillmentManager: React.FC = () => {
   const { currentUser } = useAuth();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDIENTE' | 'CONFIRMADO' | 'RESERVADO' | 'EN SURTIDO' | 'SURTIDO'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDIENTE' | 'CONFIRMADO' | 'RESERVADO' | 'EN_SURTIDO' | 'SURTIDO'>('ALL');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [fulfillmentNotes, setFulfillmentNotes] = useState('');
   const [actionFeedback, setActionFeedback] = useState<{ text: string; ok: boolean } | null>(null);
@@ -48,7 +48,7 @@ export const OrderFulfillmentManager: React.FC = () => {
   const fulfillableOrders = useMemo(() => {
     const q = searchTerm.toLowerCase().trim();
     return orders.filter((o) => {
-      const isFulfillable = ['PENDIENTE', 'CONFIRMADO', 'RESERVADO', 'EN SURTIDO', 'SURTIDO'].includes(o.status);
+      const isFulfillable = ['PENDIENTE', 'CONFIRMADO', 'RESERVADO', 'EN_SURTIDO', 'SURTIDO'].includes(o.status);
       if (!isFulfillable) return false;
 
       if (statusFilter !== 'ALL' && o.status !== statusFilter) return false;
@@ -195,7 +195,7 @@ export const OrderFulfillmentManager: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-            {(['ALL', 'CONFIRMADO', 'RESERVADO', 'EN SURTIDO', 'SURTIDO'] as const).map((st) => (
+            {(['ALL', 'CONFIRMADO', 'RESERVADO', 'EN_SURTIDO', 'SURTIDO'] as const).map((st) => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
@@ -252,7 +252,7 @@ export const OrderFulfillmentManager: React.FC = () => {
                           ? 'bg-emerald-100 text-emerald-800'
                           : ord.status === 'RESERVADO'
                           ? 'bg-amber-100 text-amber-800'
-                          : ord.status === 'EN SURTIDO'
+                          : ord.status === 'EN_SURTIDO'
                           ? 'bg-purple-100 text-purple-800'
                           : 'bg-blue-100 text-blue-800'
                       }`}

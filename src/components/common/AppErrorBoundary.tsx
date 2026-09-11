@@ -23,6 +23,10 @@ interface State {
 // llega sin tipos genericos y el compilador no reconoce props ni setState.
 // Se sigue el mismo patron que EmployeeDirectory hasta que se agreguen los
 // tipos oficiales de React (ver informe de auditoria).
+// El proyecto no tiene @types/react instalado, asi que React.Component llega
+// sin genericos y el compilador no reconoce props ni setState. Se sigue el
+// mismo patron que EmployeeDirectory hasta que se agreguen los tipos
+// oficiales de React (ver apartado 5.1 de AUDITORIA.md).
 export class AppErrorBoundary extends (React.Component as any)<Props, State> {
   props!: Props;
   state: State = { error: null };

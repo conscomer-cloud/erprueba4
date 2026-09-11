@@ -32,21 +32,15 @@ import {
 } from 'lucide-react';
 import { AuditLog } from '../../types/erp';
 import { MasterTransactionAuditTrace, MasterAuditTraceEvent } from '../../types/governanceRiskComplianceTypes';
+import { ErrorBoundaryProps, ErrorBoundaryState } from '../../types/errorBoundary';
 
 // ==========================================
 // ERROR BOUNDARY LOCAL
 // ==========================================
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
-  onRetry?: () => void;
-}
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-  errorMessage: string;
-}
 
-export class ExecutiveAuditCenterErrorBoundary extends (React.Component as any) {
+export class ExecutiveAuditCenterErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+  props!: ErrorBoundaryProps;
   state: ErrorBoundaryState;
 
   constructor(props: ErrorBoundaryProps) {

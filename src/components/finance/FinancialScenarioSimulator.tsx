@@ -28,6 +28,7 @@ import {
   Scale,
 } from 'lucide-react';
 import { FinancialSimulationParams, FinancialSimulationResult } from '../../types/erp';
+import { ErrorBoundaryProps, ErrorBoundaryState } from '../../types/errorBoundary';
 
 // Safe numeric formatters
 const safeNumber = (val: any, fallback = 0): number => {
@@ -64,13 +65,12 @@ interface SimulatorErrorBoundaryState {
   error?: Error;
 }
 
-class SimulatorErrorBoundary extends (React.Component as any) {
+class SimulatorErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+  props!: ErrorBoundaryProps;
   state: SimulatorErrorBoundaryState;
-  props: any;
 
   constructor(props: SimulatorErrorBoundaryProps) {
     super(props);
-    this.props = props;
     this.state = { hasError: false };
   }
 
