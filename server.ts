@@ -26,6 +26,8 @@ import crypto from "crypto";
 import { generateDemandForecast } from "./server/services/demandForecastService";
 import { buildBISeries, buildCapacityAlerts } from "./server/services/biSeriesService";
 import { buildForecastHistory, saveForecastSnapshot } from "./server/services/forecastHistoryService";
+import { buildDepartmentKpis } from "./server/services/departmentKpisService";
+import { lookupZipCode } from "./server/services/zipCodeService";
 import {
   buildStampPreview,
   stampOrder,
@@ -8224,6 +8226,67 @@ app.get("/api/predictive/capacity-alerts", requireAuth, requirePermission("PREDI
     console.error("[Predictivo] Error construyendo alertas de capacidad:", err);
     res.status(500).json({ error: "No se pudieron calcular las alertas de capacidad." });
   }
+});
+
+/**
+ * Dashboard por departamento (Ventas, Compras, Almacén, Logística).
+ *
+ * Control de acceso más estricto que un permiso de módulo: cada jefe solo
+ * recibe su propio departamento; Dirección y Administración reciben los
+ * cuatro. Un GERENTE_VENTAS pidiendo "purchasing" no debe recibir nada, ni
+ * siquiera si conoce la forma del endpoint.
+ */
+const DEPARTMENT_ACCESS: Record<string, string[]> = {
+  GERENTE_VENTAS: ['sales'],
+  VENDEDOR: ['sales'],
+  COMPRAS: ['purchasing'],
+  JEFE_ALMACEN: ['warehouse'],
+  ALMACEN: ['warehouse'],
+  LOGISTICA: ['logistics'],
+  DIRECTOR: ['sales', 'purchasing', 'warehouse', 'logistics'],
+  ADMINISTRADOR: ['sales', 'purchasing', 'warehouse', 'logistics'],
+};
+
+app.get("/api/reports/department-kpis", requireAuth, (req, res) => {
+  const user = (req as any).user;
+  const permitidos = DEPARTMENT_ACCESS[user.role] || [];
+
+  if (permitidos.length === 0) {
+    return res.status(403).json({
+      error: `Tu rol (${user.role}) no tiene un dashboard departamental asignado.`,
+    });
+  }
+
+  try {
+    const full = buildDepartmentKpis();
+    // Se recorta la respuesta a lo que el rol puede ver, en vez de confiar
+    // en que el cliente oculte lo que no debe mostrar.
+    const recortado: Record<string, unknown> = { generatedAt: full.generatedAt };
+    if (permitidos.includes('sales')) recortado.sales = full.sales;
+    if (permitidos.includes('purchasing')) recortado.purchasing = full.purchasing;
+    if (permitidos.includes('warehouse')) recortado.warehouse = full.warehouse;
+    if (permitidos.includes('logistics')) recortado.logistics = full.logistics;
+    recortado.allowedDepartments = permitidos;
+
+    res.json(recortado);
+  } catch (err: any) {
+    console.error("[Reportes] Error construyendo KPIs por departamento:", err);
+    res.status(500).json({ error: "No se pudieron calcular los indicadores del departamento." });
+  }
+});
+
+/**
+ * Autocompletar dirección a partir de un código postal mexicano (SEPOMEX).
+ * Es información pública; solo se exige sesión iniciada, sin permiso de
+ * módulo, porque cualquier persona capturando una dirección en cualquier
+ * parte del sistema puede necesitarlo.
+ */
+app.get("/api/geo/zipcode/:cp", requireAuth, (req, res) => {
+  const result = lookupZipCode(req.params.cp);
+  if (!result) {
+    return res.status(404).json({ error: "Código postal no encontrado en el catálogo de SEPOMEX." });
+  }
+  res.json(result);
 });
 
 // Reset database to initial seed for development testing

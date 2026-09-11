@@ -6,7 +6,7 @@ WORKDIR /app
 # Las dependencias se copian aparte para que Docker reutilice la capa
 # mientras package.json no cambie.
 COPY package*.json ./
-RUN npm ci --include=dev
+RUN npm ci
 
 COPY . .
 RUN npm run build

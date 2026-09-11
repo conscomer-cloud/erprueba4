@@ -239,6 +239,10 @@ export interface Customer {
   address?: string;
   city?: string;
   state?: string;
+  /** Colonia/asentamiento, tomado del catálogo SEPOMEX al capturar el código postal. */
+  colonia?: string;
+  /** Código postal de la dirección de operación. No confundir con fiscalZipCode. */
+  zipCode?: string;
   tax_id?: string;
   taxId?: string;
   rfc?: string;
@@ -1223,6 +1227,8 @@ export interface Lead {
   email: string;
   city: string;
   state?: string;
+  colonia?: string;
+  zipCode?: string;
   source: LeadSource;
   salespersonId: string;
   salespersonName: string;

@@ -1,3 +1,4 @@
+import { DepartmentDashboard } from './DepartmentDashboard';
 import React, { useState, useMemo } from 'react';
 import {
   TrendingUp,
@@ -57,6 +58,7 @@ interface ExecutiveCommandCenterProps {
 
 export type ExecutiveTab =
   | 'OVERVIEW'
+  | 'DEPARTMENTS'
   | 'GOVERNANCE_FASE13'
   | 'APPROVALS'
   | 'HARDENING'
@@ -577,6 +579,7 @@ export const ExecutiveCommandCenter: React.FC<ExecutiveCommandCenterProps> = ({
             { id: 'GOVERNANCE_FASE13', label: '🏛️ Gobierno, Riesgos & Compliance (Fase 13)', badge: 'FASE 13' },
             { id: 'HARDENING', label: '🛡️ Resiliencia & Hardening (Fase 10)', badge: 'SLA OK' },
             { id: 'APPROVALS', label: '🔒 Aprobaciones Ejecutivas', badge: '3 Pendientes' },
+            { id: 'DEPARTMENTS', label: '🏢 Por Departamento', badge: null },
             { id: 'CERTIFICATION', label: '🏆 Certificación Maestra (Fase 9)', badge: 'PASS 100%' },
             { id: 'CEO_ADVISOR', label: '🤖 AI Advisor (11 Puntos)', badge: 'IA' },
             { id: 'HEALTH_SCORE', label: '🚦 Semáforo 360°', badge: `${healthScoreData.overallScore}/100` },
@@ -683,6 +686,8 @@ export const ExecutiveCommandCenter: React.FC<ExecutiveCommandCenterProps> = ({
             />
           </div>
         )}
+
+        {activeTab === 'DEPARTMENTS' && <DepartmentDashboard />}
 
         {activeTab === 'GOVERNANCE_FASE13' && (
           <GovernanceRiskComplianceModule />

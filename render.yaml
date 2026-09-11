@@ -5,7 +5,7 @@ services:
     name: conscore-erp
     runtime: node
     plan: starter          # el plan free no permite disco persistente
-    buildCommand: npm ci --include=dev && npm run build
+    buildCommand: npm ci && npm run build
     startCommand: node dist/server.cjs
     healthCheckPath: /api/health
     envVars:

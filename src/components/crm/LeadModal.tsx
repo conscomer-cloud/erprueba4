@@ -4,6 +4,7 @@ import { useERP } from '../../context/ERPContext';
 import { useAuth } from '../../context/AuthContext';
 import { Lead, LeadSource, LeadStatus } from '../../types/erp';
 import { INITIAL_SALES_REPS } from '../../data/initialCRMData';
+import { MexicanAddressAutofill } from '../common/MexicanAddressAutofill';
 
 interface LeadModalProps {
   isOpen: boolean;
@@ -23,7 +24,9 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, leadToEdi
     phone: leadToEdit?.phone || '',
     email: leadToEdit?.email || '',
     city: leadToEdit?.city || '',
-    state: leadToEdit?.state || 'México',
+    state: leadToEdit?.state || '',
+    colonia: leadToEdit?.colonia || '',
+    zipCode: leadToEdit?.zipCode || '',
     source: (leadToEdit?.source || 'WHATSAPP') as LeadSource,
     productInterest: leadToEdit?.productInterest || 'Lana Mineral & Fibra de Vidrio',
     estimatedValue: leadToEdit?.estimatedValue || 150000,
@@ -205,19 +208,29 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, leadToEdi
               </div>
             </div>
 
-            {/* City & State */}
-            <div>
-              <label className="mb-1 block text-xs font-semibold text-slate-300">Ciudad</label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
-                <input
-                  type="text"
-                  placeholder="Ej. Querétaro, Monterrey, CDMX"
-                  value={formData.city}
-                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:border-yellow-400 focus:outline-none"
-                />
-              </div>
+            {/* Dirección: código postal, colonia, municipio y estado, con
+                autocompletado desde el catálogo de SEPOMEX. Antes esto era un
+                único campo de texto libre para "Ciudad" y el estado nunca se
+                llegaba a capturar, aunque el tipo Lead ya lo contemplaba. */}
+            <div className="md:col-span-2">
+              <MexicanAddressAutofill
+                variant="dark"
+                value={{
+                  zipCode: formData.zipCode,
+                  colonia: formData.colonia,
+                  municipality: formData.city,
+                  state: formData.state,
+                }}
+                onChange={(addr) =>
+                  setFormData({
+                    ...formData,
+                    zipCode: addr.zipCode ?? formData.zipCode,
+                    colonia: addr.colonia ?? formData.colonia,
+                    city: addr.municipality ?? formData.city,
+                    state: addr.state ?? formData.state,
+                  })
+                }
+              />
             </div>
 
             {/* Source */}

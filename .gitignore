@@ -7,5 +7,7 @@ coverage/
 .env*
 !.env.example
 
-# Base de datos local: se genera en el primer arranque
-data/*.json
+# Base de datos local: se genera en el primer arranque.
+# La barra inicial ancla la regla a la raíz: sin ella, Git también excluiría
+# server/data/zipcodes-mx.json (el catálogo SEPOMEX), que sí debe versionarse.
+/data/*.json
