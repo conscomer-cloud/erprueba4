@@ -2352,7 +2352,7 @@ export const QuotesModule: React.FC<QuotesModuleProps> = ({ onNavigateToOrders }
                               Motivo del Dictamen de Rechazo:
                             </span>
                             <p className="mt-0.5 font-medium">
-                              {viewingQuote.financialRejectionReason || 'No se especificó motivo detallado.'}
+                              {viewingQuote.financialApprovalNotes || 'No se especificó motivo detallado.'}
                             </p>
                           </div>
                           <p className="text-[11px] text-slate-600">
@@ -2595,7 +2595,6 @@ export const QuotesModule: React.FC<QuotesModuleProps> = ({ onNavigateToOrders }
         onClose={() => setIsProductSelectorOpen(false)}
         onSelectProduct={handleSelectProductFromModal}
         products={products}
-        isManagerOrAdmin={isManagerOrAdmin}
       />
 
       {/* AI Draft modal */}

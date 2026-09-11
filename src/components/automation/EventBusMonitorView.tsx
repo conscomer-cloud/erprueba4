@@ -18,7 +18,7 @@ import {
   AlertTriangle,
   Lock,
 } from 'lucide-react';
-import { EnterpriseEvent, EnterpriseEventType } from '../../types/automationBpmTypes';
+import { EnterpriseEvent, EnterpriseEventType, EnterpriseModule } from '../../types/automationBpmTypes';
 import { AutomationBpmEngine } from '../../services/automationBpmEngine';
 
 interface EventBusMonitorViewProps {
@@ -36,7 +36,7 @@ export const EventBusMonitorView: React.FC<EventBusMonitorViewProps> = ({
 
   // Manual event dispatcher state
   const [newEventType, setNewEventType] = useState<EnterpriseEventType>('QUOTE_CREATED');
-  const [newModule, setNewModule] = useState<string>('VENTAS');
+  const [newModule, setNewModule] = useState<EnterpriseModule>('VENTAS');
   const [newEntityId, setNewEntityId] = useState<string>('COT-2026-999');
   const [newPayload, setNewPayload] = useState<string>(
     JSON.stringify({ total: 180000, marginPct: 21.0, customerId: 'CUST-089' }, null, 2)

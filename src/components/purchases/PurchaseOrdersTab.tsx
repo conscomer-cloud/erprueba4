@@ -126,9 +126,9 @@ export const PurchaseOrdersTab: React.FC<PurchaseOrdersTabProps> = ({
     ) || 'EMAIL';
 
     await sendPurchaseOrderToSupplier(po.id, {
-      method: (method.toUpperCase() === 'WHATSAPP' ? 'WHATSAPP' : 'EMAIL') as any,
-      contact: po.supplier_email || 'ventas@proveedor.com',
-      reference: `PO-${po.purchase_order_number}-ENVIO`,
+      sendMethod: method.toUpperCase() === 'WHATSAPP' ? 'WHATSAPP' : 'EMAIL',
+      contactEmail: po.supplier_email,
+      notes: `PO-${po.purchase_order_number}-ENVIO`,
     });
   };
 

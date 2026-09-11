@@ -32,6 +32,7 @@ export const ActivityModal: React.FC<ActivityModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentUser) return;
     if (!result) {
       alert('Por favor describa el resultado o minuta de la actividad.');
       return;
@@ -42,6 +43,9 @@ export const ActivityModal: React.FC<ActivityModalProps> = ({
     const rep = INITIAL_SALES_REPS.find((r) => r.id === salespersonId);
 
     addActivity({
+      userId: currentUser.id,
+      userName: currentUser.name,
+      time: new Date().toTimeString().slice(0, 8),
       customerId: customerId || undefined,
       customerName: customer?.businessName,
       opportunityId: opportunityId || undefined,

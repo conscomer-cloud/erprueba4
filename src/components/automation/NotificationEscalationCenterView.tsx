@@ -213,20 +213,20 @@ export const NotificationEscalationCenterView: React.FC<NotificationEscalationCe
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-bold text-amber-900">{esc.incidentId}</span>
                     <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900">
-                      Nivel {esc.currentLevel}: {esc.escalatedToRole}
+                      Nivel {esc.currentLevel}: {esc.history.at(-1)?.notifiedRole || '—'}
                     </span>
                   </div>
                   <span className="font-mono text-slate-500">
-                    SLA Excedido: +{esc.elapsedHours} horas
+                    SLA Excedido: +{Math.max(0, (esc.elapsedMinutes - esc.slaMinutes) / 60).toFixed(1)} horas
                   </span>
                 </div>
 
-                <p className="text-slate-800 font-semibold">{esc.reason}</p>
+                <p className="text-slate-800 font-semibold">{esc.title}</p>
 
                 <div className="flex items-center gap-2 text-slate-500 text-[11px]">
                   <span>Roles notificados en cadena:</span>
                   <div className="flex items-center gap-1 font-semibold text-slate-700">
-                    {esc.chainOfNotifiedRoles.map((r, i) => (
+                    {esc.history.map(entry => entry.notifiedRole).map((r, i) => (
                       <span key={i} className="flex items-center gap-1">
                         {i > 0 && <ArrowUpRight className="w-3 h-3 text-amber-600" />}
                         {r}

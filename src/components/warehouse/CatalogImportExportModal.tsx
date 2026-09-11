@@ -81,7 +81,7 @@ export const CatalogImportExportModal: React.FC<CatalogImportExportModalProps> =
       const res = importCatalogFromExcelRows(foundRows);
       if (res.success) {
         setImportStatus({
-          text: `✅ ${res.importedCount} materiales y ubicaciones importados exitosamente desde ${file.name}.`,
+          text: `✅ ${res.count} materiales y ubicaciones importados exitosamente desde ${file.name}.`,
           ok: true,
         });
       } else {

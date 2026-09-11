@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { api } from '../../services/apiClient';
 import {
   Sparkles,
   Bot,
@@ -24,7 +25,6 @@ export const AIMarketingAdvisor: React.FC = () => {
     aiMarketingProposals,
     authorizeAIMarketingProposal,
     rejectAIMarketingProposal,
-    askMarketingAI,
     marketingCampaigns,
     marketingKPIs,
   } = useERP();
@@ -44,7 +44,7 @@ export const AIMarketingAdvisor: React.FC = () => {
 
   const fmtCurrency = (val: number) => `$${(val || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN`;
 
-  const handleAskAI = (promptText?: string) => {
+  const handleAskAI = async (promptText?: string) => {
     const query = promptText || aiQuestion;
     if (!query.trim() || isAsking) return;
 
@@ -53,12 +53,13 @@ export const AIMarketingAdvisor: React.FC = () => {
     setAiQuestion('');
     setIsAsking(true);
 
-    setTimeout(() => {
-      const aiResponseText = askMarketingAI(query);
+    try {
+      const { reply: aiResponseText } = await api.askAI('Consulta de marketing, solo análisis: ' + query);
       const aiMsgTime = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
       setAiChatHistory(prev => [...prev, { sender: 'AI', text: aiResponseText, time: aiMsgTime }]);
-      setIsAsking(false);
-    }, 450);
+    } catch (error) {
+      setAiChatHistory(prev => [...prev, { sender: 'AI', text: error instanceof Error ? error.message : 'No fue posible consultar a la IA', time: new Date().toLocaleTimeString('es-MX') }]);
+    } finally { setIsAsking(false); }
   };
 
   const handleAuthorize = (proposal: AIMarketingProposal) => {

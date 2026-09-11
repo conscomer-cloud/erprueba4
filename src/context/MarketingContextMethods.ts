@@ -552,7 +552,7 @@ export function createMarketingHandlers(params: MarketingHandlersParams) {
     broadcastDataUpdate('AI_PROPOSAL_AUTHORIZED', { proposalId });
   };
 
-  const rejectAIMarketingProposal = (proposalId: string) => {
+  const rejectAIMarketingProposal = (proposalId: string, reason?: string) => {
     setAiMarketingProposals(prev =>
       prev.map(p => (p.id === proposalId ? { ...p, status: 'RECHAZADA' } : p))
     );
@@ -561,7 +561,7 @@ export function createMarketingHandlers(params: MarketingHandlersParams) {
       action: 'RECHAZAR_PROPUESTA_IA_MARKETING',
       module: 'MARKETING',
       recordId: proposalId,
-      details: `Propuesta de IA ${proposalId} descartada por el usuario.`,
+      details: `Propuesta de IA ${proposalId} descartada por el usuario. Motivo: ${reason || 'Sin motivo registrado'}`,
     });
 
     broadcastDataUpdate('AI_PROPOSAL_REJECTED', { proposalId });

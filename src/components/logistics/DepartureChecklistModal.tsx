@@ -19,7 +19,7 @@ export const DepartureChecklistModal: React.FC<DepartureChecklistModalProps> = (
   const [vehicleInspectionOk, setVehicleInspectionOk] = useState(true);
   const [driverEquipped, setDriverEquipped] = useState(true);
   const [odometerKm, setOdometerKm] = useState<number>(142500);
-  const [fuelLevel, setFuelLevel] = useState<DepartureChecklist['fuelLevel']>('FULL');
+  const [fuelLevel, setFuelLevel] = useState<DepartureChecklist['fuelLevel']>(100);
   const [notes, setNotes] = useState('');
 
   const allChecksPassed =
@@ -176,13 +176,13 @@ export const DepartureChecklistModal: React.FC<DepartureChecklistModalProps> = (
               </label>
               <select
                 value={fuelLevel}
-                onChange={(e) => setFuelLevel(e.target.value as DepartureChecklist['fuelLevel'])}
+                onChange={(e) => setFuelLevel(Number(e.target.value))}
                 className="w-full p-2 rounded-lg border border-slate-300 font-semibold text-slate-900 bg-white"
               >
-                <option value="FULL">100% (Lleno)</option>
-                <option value="3/4">75% (3/4 Tanque)</option>
-                <option value="1/2">50% (1/2 Tanque)</option>
-                <option value="1/4">25% (1/4 Tanque)</option>
+                <option value="100">100% (Lleno)</option>
+                <option value="75">75% (3/4 Tanque)</option>
+                <option value="50">50% (1/2 Tanque)</option>
+                <option value="25">25% (1/4 Tanque)</option>
               </select>
             </div>
           </div>

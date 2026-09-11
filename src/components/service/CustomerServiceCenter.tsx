@@ -66,22 +66,22 @@ interface TicketsErrorBoundaryProps {
 
 interface TicketsErrorBoundaryState {
   hasError: boolean;
-  errorMsg: string;
+  errorMessage: string;
 }
 
-export class TicketsErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+export class TicketsErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   props!: ErrorBoundaryProps;
   state: TicketsErrorBoundaryState;
 
   constructor(props: TicketsErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false, errorMsg: '' };
+    this.state = { hasError: false, errorMessage: '' };
   }
 
   static getDerivedStateFromError(error: any) {
     return {
       hasError: true,
-      errorMsg: error?.message || 'Error inesperado al cargar o procesar los tickets de servicio.',
+      errorMessage: error?.message || 'Error inesperado al cargar o procesar los tickets de servicio.',
     };
   }
 
@@ -90,7 +90,7 @@ export class TicketsErrorBoundary extends (React.Component as any)<ErrorBoundary
   }
 
   handleRetry = () => {
-    this.setState({ hasError: false, errorMsg: '' });
+    this.setState({ hasError: false, errorMessage: '' });
     if (this.props.onRetry) {
       this.props.onRetry();
     }
@@ -109,9 +109,9 @@ export class TicketsErrorBoundary extends (React.Component as any)<ErrorBoundary
           <p className="text-xs text-slate-600 mt-1.5 max-w-md mx-auto">
             Ocurrió un fallo aislado al cargar o procesar la lista de tickets. El resto del centro de atención a clientes continúa disponible.
           </p>
-          {this.state.errorMsg && (
+          {this.state.errorMessage && (
             <p className="text-[11px] font-mono text-amber-900 bg-amber-100/70 rounded p-2 mt-2.5 max-w-lg mx-auto overflow-x-auto text-left">
-              {this.state.errorMsg}
+              {this.state.errorMessage}
             </p>
           )}
           <div className="mt-4 flex items-center justify-center gap-2">
@@ -137,22 +137,22 @@ interface CustomerServiceErrorBoundaryProps {
 
 interface CustomerServiceErrorBoundaryState {
   hasError: boolean;
-  errorMsg: string;
+  errorMessage: string;
 }
 
-export class CustomerServiceErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+export class CustomerServiceErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   props!: ErrorBoundaryProps;
   state: CustomerServiceErrorBoundaryState;
 
   constructor(props: CustomerServiceErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false, errorMsg: '' };
+    this.state = { hasError: false, errorMessage: '' };
   }
 
   static getDerivedStateFromError(error: any) {
     return {
       hasError: true,
-      errorMsg: error?.message || 'Error inesperado en el Centro de Atención a Clientes.',
+      errorMessage: error?.message || 'Error inesperado en el Centro de Atención a Clientes.',
     };
   }
 
@@ -161,7 +161,7 @@ export class CustomerServiceErrorBoundary extends (React.Component as any)<Error
   }
 
   handleReload = () => {
-    this.setState({ hasError: false, errorMsg: '' });
+    this.setState({ hasError: false, errorMessage: '' });
   };
 
   render() {
@@ -173,9 +173,9 @@ export class CustomerServiceErrorBoundary extends (React.Component as any)<Error
           <p className="text-xs text-red-700 mt-1 max-w-md mx-auto">
             Ocurrió un error inesperado al renderizar el módulo. Por favor reintente o contacte a soporte.
           </p>
-          {this.state.errorMsg && (
+          {this.state.errorMessage && (
             <p className="text-[11px] font-mono text-red-800 bg-red-100/60 rounded p-2 mt-3 max-w-lg mx-auto">
-              {this.state.errorMsg}
+              {this.state.errorMessage}
             </p>
           )}
           <button
@@ -587,7 +587,7 @@ const CustomerServiceCenterInner: React.FC = () => {
                 {safeAlerts.length} Alerta(s) de SLA en Tiempo Real
               </div>
               <p className="text-xs text-amber-700 mt-0.5">
-                {safeAlerts[0]?.message} (Responsable: {safeAlerts[0]?.assignedToName})
+                {safeAlerts[0]?.message} (Responsable: {safeTickets.find(ticket => ticket.id === safeAlerts[0]?.ticketId)?.assignedUserName || 'Sin asignar'})
               </p>
             </div>
           </div>
@@ -895,7 +895,7 @@ const CustomerServiceCenterInner: React.FC = () => {
                       {selectedTicket.priority}
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900 mt-1">{selectedTicket.subject}</h3>
+                  <h3 className="text-lg font-bold text-slate-900 mt-1">{selectedTicket.title}</h3>
                   <p className="text-xs text-slate-500 mt-0.5">Cliente: {selectedTicket.customerName}</p>
                 </div>
                 <button
@@ -974,7 +974,7 @@ const CustomerServiceCenterInner: React.FC = () => {
                         }`}
                       >
                         <div className="flex items-center justify-between font-semibold">
-                          <span>{c.authorName}</span>
+                          <span>{c.userName}</span>
                           <span className="text-[10px] text-slate-400">{displayTime}</span>
                         </div>
                         <p className="mt-1 leading-normal">{c.content}</p>
@@ -1314,10 +1314,10 @@ const CustomerServiceCenterInner: React.FC = () => {
                           {capa.status}
                         </span>
                       </div>
-                      <div className="text-xs font-semibold text-slate-800">{capa.actionPlan}</div>
+                      <div className="text-xs font-semibold text-slate-800">{[capa.correctiveAction, capa.preventiveAction].filter(Boolean).join(' · ')}</div>
                       <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
-                        <span>Resp: {capa.responsibleUserName}</span>
-                        <span>Vence: {capa.targetCompletionDate}</span>
+                        <span>Resp: {capa.ownerName}</span>
+                        <span>Vence: {capa.targetDate}</span>
                       </div>
                     </div>
                   ))

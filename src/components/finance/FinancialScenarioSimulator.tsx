@@ -65,7 +65,7 @@ interface SimulatorErrorBoundaryState {
   error?: Error;
 }
 
-class SimulatorErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+class SimulatorErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   props!: ErrorBoundaryProps;
   state: SimulatorErrorBoundaryState;
 

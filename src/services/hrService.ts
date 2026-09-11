@@ -47,17 +47,17 @@ export function calculateHRKPIs(
   const probationEmployees = employees.filter((e) => e.employmentStatus === 'PROBATION' || e.status === 'PRUEBA').length;
 
   // Asistencia del día
-  const todayAttendance = attendance.filter((a) => a.date === todayStr || a.date.startsWith(todayStr.slice(0, 7)));
-  const todayPresent = todayAttendance.filter((a) => a.status === 'PRESENT' || a.status === 'REMOTE').length || 18;
-  const todayLate = todayAttendance.filter((a) => a.status === 'LATE').length || 1;
-  const todayAbsent = todayAttendance.filter((a) => a.status === 'ABSENT' || a.status === 'JUSTIFIED').length || 1;
+  const todayAttendance = attendance.filter((a) => a.date === todayStr);
+  const todayPresent = todayAttendance.filter((a) => a.status === 'PRESENT' || a.status === 'REMOTE').length;
+  const todayLate = todayAttendance.filter((a) => a.status === 'LATE').length;
+  const todayAbsent = todayAttendance.filter((a) => a.status === 'ABSENT' || a.status === 'JUSTIFIED').length;
   const todayVacations = vacationRequests.filter(
     (r) => r.status === 'APPROVED' && r.type === 'VACACIONES' && r.startDate <= todayStr && r.endDate >= todayStr
   ).length;
 
   // Solicitudes pendientes
   const pendingVacationRequests = vacationRequests.filter((r) => r.status === 'PENDING').length;
-  const pendingReviewsCount = performanceReviews.filter((p) => p.status === 'IN_REVIEW' || p.status === 'EN_REVISION' || p.status === 'DRAFT' || p.status === 'BORRADOR').length || 1;
+  const pendingReviewsCount = performanceReviews.filter((p) => p.status === 'IN_REVIEW' || p.status === 'EN_REVISION' || p.status === 'DRAFT' || p.status === 'BORRADOR').length;
   const pendingTrainingsCount = trainings.filter((t) => t.status === 'ASSIGNED' || t.status === 'IN_PROGRESS').length;
 
   // Documentos por vencer o vencidos (en menos de 30 días)
@@ -78,9 +78,6 @@ export function calculateHRKPIs(
     const monthly = c.paymentFrequency === 'QUINCENAL' ? c.baseSalary * 2 : c.baseSalary;
     totalMonthlyLaborCost += monthly;
   });
-  if (totalMonthlyLaborCost === 0) {
-    totalMonthlyLaborCost = 464775; // Demo fallback
-  }
 
   // Comisiones devengadas
   const totalCommissionsAccrued = commissions.reduce((acc, c) => acc + (c.commissionAmount || 0), 0);
@@ -94,13 +91,7 @@ export function calculateHRKPIs(
     topSkillsGapArea = {
       skillName: topGap.skillName,
       gapScore: topGap.gap,
-      department: emp?.departmentName || 'Comercial & Ventas Industriales',
-    };
-  } else {
-    topSkillsGapArea = {
-      skillName: 'Venta Consultiva B2B & Negociación',
-      gapScore: 1.0,
-      department: 'Comercial & Ventas Industriales',
+      department: emp?.departmentName || 'Sin departamento registrado',
     };
   }
 
@@ -121,11 +112,7 @@ export function calculateHRKPIs(
         totalCommission: topLeaderEntry.total,
         salesAmount: topLeaderEntry.sales,
       }
-    : {
-        name: 'Ing. Sofía Villalobos Cruz',
-        totalCommission: 22050,
-        salesAmount: 490000,
-      };
+    : undefined;
 
   return {
     totalEmployees,
@@ -141,8 +128,9 @@ export function calculateHRKPIs(
     expiringDocumentsCount,
     totalMonthlyLaborCost,
     totalCommissionsAccrued,
-    avgTurnoverRatePct: 2.1,
-    avgAttendanceRatePct: 97.4,
+    // No histórico de bajas ni población programada: no inventar porcentajes.
+    avgTurnoverRatePct: undefined,
+    avgAttendanceRatePct: undefined,
     topSkillsGapArea,
     topSalesCommissionLeader,
   };

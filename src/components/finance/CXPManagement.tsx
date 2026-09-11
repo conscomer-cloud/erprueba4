@@ -278,10 +278,10 @@ export const CXPManagement: React.FC = () => {
                   <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
                     <td className="py-2.5 px-4 font-semibold text-slate-900">
                       {item.scheduledDate}
-                      <span className="block text-[10px] text-slate-400 font-normal">Sem {item.weekNumber}</span>
+                      <span className="block text-[10px] text-slate-400 font-normal">Vence: {item.dueDate}</span>
                     </td>
-                    <td className="py-2.5 px-4 font-medium text-slate-800">{item.payeeName}</td>
-                    <td className="py-2.5 px-4 text-slate-600">{item.concept}</td>
+                    <td className="py-2.5 px-4 font-medium text-slate-800">{item.supplierName}</td>
+                    <td className="py-2.5 px-4 text-slate-600">{item.supplierInvoiceNumber}</td>
                     <td className="py-2.5 px-4">
                       <span
                         className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${

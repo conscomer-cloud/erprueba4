@@ -1,7 +1,7 @@
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
-import dotenv from "dotenv";
+import "dotenv/config";
 import { db, generateSalt, hashPassword, verifyPassword } from "./server/db/database";
 import { AuthService, requireAuth, requirePermission } from "./server/services/authService";
 import { InventoryService } from "./server/services/inventoryService";
@@ -38,7 +38,7 @@ import {
 } from "./server/services/fiscalapiService";
 import * as XLSX from "xlsx";
 
-dotenv.config();
+
 
 const app = express();
 
@@ -82,25 +82,32 @@ app.get("/api/health", (_req, res) => {
 
 // Server-Sent Events (SSE) Live Stream
 app.get("/api/events", (req, res) => {
+  const token = typeof req.query.token === 'string' ? req.query.token : '';
+  const session = AuthService.getSession(token);
+  if (!session) return res.status(401).json({ error: 'Sesión requerida.' });
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders?.();
 
   const clientId = `client_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
-  const token = req.query.token as string;
-  const session = token ? AuthService.getSession(token) : null;
 
   const sseClient = {
     id: clientId,
     res,
-    userId: session?.user.id,
-    role: session?.user.role,
+    userId: session.user.id,
+    role: session.user.role,
+    isAuthorized: () => {
+      const active = AuthService.getSession(token);
+      return !!active && active.user.id === session.user.id && active.user.role === sseClient.role;
+    },
   };
 
   eventBus.addClient(sseClient);
 
+  const heartbeat = setInterval(() => eventBus.sendToClient(sseClient, 'heartbeat', {}), 30000);
   req.on("close", () => {
+    clearInterval(heartbeat);
     eventBus.removeClient(clientId);
   });
 });
@@ -8712,3 +8719,4 @@ start().catch((err) => {
   console.error("[CONSCORE ERP IA] Error fatal al iniciar:", err);
   process.exit(1);
 });
+

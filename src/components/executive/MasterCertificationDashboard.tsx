@@ -89,7 +89,7 @@ export const MasterCertificationDashboard: React.FC<MasterCertificationDashboard
         deliveries: erpData.pods,
         supplierInvoices: erpData.cxpInvoices,
         campaigns: erpData.marketingCampaigns,
-        companyBudget: erpData.budgets,
+        budgets: erpData.budgets,
         operatingExpenses: erpData.expenses,
       },
       currentUser?.name ? `${currentUser.name} (${currentRole})` : 'Auditoría Interna / Ing. Alejandro Ruiz'

@@ -85,7 +85,7 @@ export const NewPurchaseOrderModal: React.FC<NewPurchaseOrderModalProps> = ({
         const suppProd = supplierProducts.find(
           (sp) => sp.supplier_id === supplierId && sp.product_id === it.product_id
         );
-        const cost = suppProd?.cost || it.estimated_unit_cost || prod?.cost_price || 100;
+        const cost = suppProd?.purchase_price || it.estimated_unit_cost || prod?.cost_price || 100;
         const qty = it.quantity || (selectedRequest as any).requestedQty || 1;
         const sub = qty * cost;
         const tax = sub * 0.16;
@@ -110,7 +110,7 @@ export const NewPurchaseOrderModal: React.FC<NewPurchaseOrderModalProps> = ({
     const defaultSuppProd = supplierProducts.find(
       (sp) => sp.supplier_id === supplierId && sp.product_id === defaultProd?.id
     );
-    const cost = defaultSuppProd?.cost || defaultProd?.cost_price || 100;
+    const cost = defaultSuppProd?.purchase_price || defaultProd?.cost_price || 100;
     const sub = 10 * cost;
     const tax = sub * 0.16;
     return [
@@ -198,7 +198,7 @@ export const NewPurchaseOrderModal: React.FC<NewPurchaseOrderModalProps> = ({
       const sp = supplierProducts.find(
         (p) => p.supplier_id === newSuppId && p.product_id === it.product_id
       );
-      const cost = sp?.cost ?? it.unit_cost;
+      const cost = sp?.purchase_price ?? it.unit_cost;
       const sub = it.quantity_ordered * cost * (1 - it.discount_percentage / 100);
       const tax = sub * (it.tax_percentage / 100);
       return {
@@ -218,7 +218,7 @@ export const NewPurchaseOrderModal: React.FC<NewPurchaseOrderModalProps> = ({
     const sp = supplierProducts.find(
       (p) => p.supplier_id === supplierId && p.product_id === prodId
     );
-    const cost = sp?.cost || prod.cost_price || 0;
+    const cost = sp?.purchase_price || prod.cost_price || 0;
     const newItems = [...items];
     const qty = newItems[index].quantity_ordered;
     const disc = newItems[index].discount_percentage;
@@ -261,7 +261,7 @@ export const NewPurchaseOrderModal: React.FC<NewPurchaseOrderModalProps> = ({
     const sp = supplierProducts.find(
       (p) => p.supplier_id === supplierId && p.product_id === defaultProd?.id
     );
-    const cost = sp?.cost || defaultProd?.cost_price || 0;
+    const cost = sp?.purchase_price || defaultProd?.cost_price || 0;
     const sub = cost;
     const tax = sub * 0.16;
     setItems([
@@ -409,7 +409,7 @@ export const NewPurchaseOrderModal: React.FC<NewPurchaseOrderModalProps> = ({
               >
                 {suppliers.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.name} ({s.code}) - RFC: {s.rfc || 'N/D'}
+                    {s.name} ({s.supplier_number}) - RFC: {s.rfc || 'N/D'}
                   </option>
                 ))}
               </select>

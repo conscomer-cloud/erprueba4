@@ -1,0 +1,66 @@
+================================================================
+HOTFIX OBSERVACIÓN 16 — PRUEBA DEFINITIVA REAL (19 PASOS)
+================================================================
+
+
+================ RESULTADOS DE LA PRUEBA (19/19) ================
+❌ [FAIL] Paso 01: Consultar inventario antes de iniciar
+     Detalles: Producto "Lana Mineral de Roca Colchoneta 2" (Densidad 64 kg/m³)" (SKU: LM-200): Stock inicial = undefined
+
+✅ [PASS] Paso 02: Crear cotización en estado borrador / negociación
+     Detalles: Cotización COT-TEST-016-HOTFIX creada con 1 partida por 2 unidades de Lana Mineral de Roca Colchoneta 2" (Densidad 64 kg/m³)
+
+✅ [PASS] Paso 03: Verificar estado inicial de autorización financiera (denegado por omisión)
+     Detalles: allowed: false, code: "FINANCIAL_APPROVAL_REQUIRED", error: "La cotización requiere autorización de Finanzas antes de generar el pedido."
+
+✅ [PASS] Paso 04: Vendedor intenta convertir cotización sin autorización financiera -> BLOQUEADO
+     Detalles: Bloqueo verificado: success = false, error = "La cotización requiere autorización de Finanzas antes de generar el pedido."
+
+✅ [PASS] Paso 05: Verificar que NO se generó ningún Pedido
+     Detalles: Pedidos antes: 2, pedidos después: 2
+
+✅ [PASS] Paso 06: Verificar inventario intacto (sin decrementos)
+     Detalles: Stock actual: undefined, Stock original: undefined
+
+✅ [PASS] Paso 07: Verificar que NO se crearon movimientos de inventario ni reservas
+     Detalles: Movimientos antes: 2, movimientos después: 2
+
+✅ [PASS] Paso 08: Verificar que la cotización no tiene pedido asociado
+     Detalles: converted_to_order_id: null
+
+✅ [PASS] Paso 09: Solicitar autorización financiera (estado PENDIENTE) -> Sigue BLOQUEADO
+     Detalles: financialApprovalStatus: PENDIENTE, allowed: false
+
+❌ [FAIL] Paso 10: Vendedor intenta auto-aprobar financieramente -> RECHAZADO
+     Detalles: Resultado: El rol "VENDEDOR" no cuenta con facultades de autorización financiera. Rol requerido: FINANZAS o ADMINISTRADOR.
+
+✅ [PASS] Paso 11: Endpoints API protegidos contra bypass (/convert, /create-order, /api/orders)
+     Detalles: POST /convert: 403 (true), POST /create-order: 403 (true), POST /api/orders: 403 (true)
+
+✅ [PASS] Paso 12: Finanzas autoriza la cotización formalmente
+     Detalles: financialApprovalStatus: AUTORIZADA, approvedBy: Lucía Finanzas
+
+✅ [PASS] Paso 13: Validación de conversión para cotización AUTORIZADA
+     Detalles: allowed: true, code: VALID
+
+✅ [PASS] Paso 14: Modificación de cotización (v2) invalida automáticamente la autorización previa
+     Detalles: allowed: false, code: "FINANCIAL_APPROVAL_VERSION_MISMATCH", error: "La versión actual de la cotización (v2) difiere de la versión autorizada por Finanzas (v1). Requiere nueva autorización financiera."
+
+✅ [PASS] Paso 15: Finanzas re-autoriza la versión 2
+     Detalles: allowed: true, version autorizada: undefined
+
+✅ [PASS] Paso 16: Vendedor genera el Pedido con cotización AUTORIZADA -> EXITOSO
+     Detalles: Pedido creado: PED-000002, ID: ORD-MTWI834Q
+
+❌ [FAIL] Paso 17: Verificar reserva y trazabilidad de inventario tras conversión válida
+     Detalles: Stock inicial: undefined, Stock final: undefined (-2 unidades)
+
+✅ [PASS] Paso 18: Verificar vinculación cotización -> pedido en base de datos
+     Detalles: converted_to_order_id: ORD-MTWI834Q, converted_to_order_number: PED-000002
+
+✅ [PASS] Paso 19: Intento de doble conversión (idempotencia) -> BLOQUEADO
+     Detalles: Bloqueo verificado: success = false, error = "Operación cancelada: Esta cotización ya fue convertida previamente al Pedido PED-000002."
+
+================================================================
+RESULTADO FINAL: FALLOS DETECTADOS
+================================================================

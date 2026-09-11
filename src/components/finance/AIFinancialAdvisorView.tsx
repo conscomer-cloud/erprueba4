@@ -5,6 +5,7 @@
  */
 
 import React, { useState } from 'react';
+import { api } from '../../services/apiClient';
 import { useERP } from '../../context/ERPContext';
 import { AIFinancialInsight, PeriodClosing } from '../../types/erp';
 import {
@@ -29,7 +30,6 @@ export const AIFinancialAdvisorView: React.FC = () => {
     aiFinancialInsights,
     periodClosings,
     financialKPIs,
-    askFinancialAI,
     closeAccountingPeriod,
     reopenAccountingPeriod,
   } = useERP();
@@ -50,8 +50,10 @@ export const AIFinancialAdvisorView: React.FC = () => {
 
     setIsAsking(true);
     try {
-      const resp = await askFinancialAI(promptQuery);
-      setCustomAnswer(resp);
+      const resp = await api.askAI('Consulta financiera, solo análisis: ' + promptQuery);
+      setCustomAnswer(resp.reply);
+    } catch (error) {
+      setCustomAnswer(error instanceof Error ? error.message : 'No fue posible consultar a la IA');
     } finally {
       setIsAsking(false);
     }
@@ -59,13 +61,14 @@ export const AIFinancialAdvisorView: React.FC = () => {
 
   const handleExecuteClose = (e: React.FormEvent) => {
     e.preventDefault();
-    closeAccountingPeriod({
+    try { closeAccountingPeriod({
       year: closePeriodYear,
       month: closePeriodMonth,
       notes: closeNotes || 'Cierre mensual contable regular',
     });
     setShowCloseModal(false);
     setCloseNotes('');
+    } catch (error) { alert(error instanceof Error ? error.message : 'No fue posible cerrar el periodo'); }
   };
 
   return (
@@ -220,13 +223,13 @@ export const AIFinancialAdvisorView: React.FC = () => {
                   <td className="py-2.5 px-4 text-slate-600">{c.closedDate ? c.closedDate.slice(0, 10) : 'Pendiente'}</td>
                   <td className="py-2.5 px-4 text-slate-700">{c.closedBy || 'Sin cerrar'}</td>
                   <td className="py-2.5 px-4 text-right font-medium text-emerald-700">
-                    ${(Number(c.totalIncome) || 0).toLocaleString('es-MX')}
+                    ${(Number(c.financialSummary.totalRevenue) || 0).toLocaleString('es-MX')}
                   </td>
                   <td className="py-2.5 px-4 text-right font-medium text-rose-700">
-                    ${(Number(c.totalExpense) || 0).toLocaleString('es-MX')}
+                    ${(Number((c.financialSummary.totalCostOfGoodsSold + c.financialSummary.totalOperatingExpenses)) || 0).toLocaleString('es-MX')}
                   </td>
                   <td className="py-2.5 px-4 text-right font-bold text-slate-900">
-                    ${(Number(c.netResult) || 0).toLocaleString('es-MX')}
+                    ${(Number(c.financialSummary.operatingProfit) || 0).toLocaleString('es-MX')}
                   </td>
                   <td className="py-2.5 px-4 text-center">
                     <span
@@ -238,11 +241,11 @@ export const AIFinancialAdvisorView: React.FC = () => {
                     </span>
                   </td>
                   <td className="py-2.5 px-4 text-center">
-                    {c.isLocked ? (
+                    {c.status === 'CERRADO' ? (
                       <button
                         onClick={() => {
                           const reason = prompt('Motivo de reapertura justificada (requiere auditoría):');
-                          if (reason) reopenAccountingPeriod(c.id, reason);
+                          if (reason) { try { reopenAccountingPeriod(c.id, reason); } catch (error) { alert(error instanceof Error ? error.message : 'No fue posible reabrir el periodo'); } }
                         }}
                         className="px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded text-[10px] font-semibold flex items-center gap-1 mx-auto"
                         title="Reabrir con justificación"

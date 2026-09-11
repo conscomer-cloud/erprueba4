@@ -43,7 +43,7 @@ export const SalesGoalsAndCommissions: React.FC = () => {
 
   const handleSaveGoal = () => {
     if (editingGoal) {
-      updateSalesGoal(editingGoal.id, editTargetValue);
+      updateSalesGoal(editingGoal.id, { goalAmount: editTargetValue, targetAmount: editTargetValue });
       setEditingGoal(null);
     }
   };
@@ -275,17 +275,16 @@ export const SalesGoalsAndCommissions: React.FC = () => {
               <div className="flex items-center justify-between">
                 <span className="font-bold text-white text-xs">{rule.name}</span>
                 <span className="rounded-full bg-yellow-400/20 px-2 py-0.5 text-xs font-black text-yellow-300 border border-yellow-400/30">
-                  {rule.commissionPct}%
+                  {rule.basePercentage}%
                 </span>
               </div>
               <p className="text-[11px] text-slate-400">
-                Rango de Venta: ${(Number(rule.minSales) || 0).toLocaleString('es-MX')} —{' '}
-                {rule.maxSales ? `$${(Number(rule.maxSales) || 0).toLocaleString('es-MX')}` : 'En adelante'} MXN
+                {rule.condition || rule.description || 'Sin condición registrada'}
               </p>
-              {rule.bonusPct && (
+              {rule.bonusPercentage && (
                 <div className="flex items-center gap-1 text-[11px] text-emerald-400 font-semibold pt-1">
                   <Sparkles className="h-3.5 w-3.5" />
-                  + {rule.bonusPct}% Bono extra por cumplimiento de margen &gt; 30%
+                  + {rule.bonusPercentage}% Bono extra · {rule.condition}
                 </div>
               )}
             </div>

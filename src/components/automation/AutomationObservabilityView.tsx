@@ -54,7 +54,7 @@ export const AutomationObservabilityView: React.FC<AutomationObservabilityViewPr
               Observabilidad & Telemetría
             </span>
             <span className="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800">
-              Uptime Motor: {metrics.engineUptimePct}%
+              Servicios saludables: {metrics.healthyServicesPct}%
             </span>
           </div>
           <h2 className="text-xl font-bold text-slate-900 mt-1">
@@ -108,7 +108,7 @@ export const AutomationObservabilityView: React.FC<AutomationObservabilityViewPr
         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
           <span className="text-xs font-semibold text-slate-500 uppercase">Throughput Eventos</span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-slate-900">{metrics.eventsPerSecond} / seg</span>
+            <span className="text-2xl font-bold text-slate-900">{metrics.throughputEventsPerMin} / min</span>
             <span className="text-xs text-emerald-600 font-bold">Capacidad 1000/s</span>
           </div>
           <p className="text-[11px] text-slate-400 mt-1">Total procesados: {(Number(metrics.totalEventsProcessed) || 0).toLocaleString()}</p>
@@ -161,12 +161,12 @@ export const AutomationObservabilityView: React.FC<AutomationObservabilityViewPr
                     {item.workflowId}
                   </p>
                   <p className="text-[11px] text-rose-600 mt-0.5 truncate">
-                    {item.errorMessage}
+                    {item.errorReason}
                   </p>
 
                   <div className="flex items-center justify-between mt-2 pt-1 border-t border-slate-200/80 text-[10px] text-slate-400">
                     <span>Reintentos: {item.retryCount}</span>
-                    <span>{new Date(item.failedAt).toLocaleTimeString()}</span>
+                    <span>{new Date(item.failureTimestamp).toLocaleTimeString()}</span>
                   </div>
                 </div>
               );
@@ -180,7 +180,7 @@ export const AutomationObservabilityView: React.FC<AutomationObservabilityViewPr
                 <div className="flex items-start justify-between">
                   <div>
                     <span className="text-[10px] font-semibold text-slate-400 uppercase">Item ID & Master Trx</span>
-                    <p className="font-mono font-bold text-slate-900">{selectedDlq.id} · {selectedDlq.masterTransactionId}</p>
+                    <p className="font-mono font-bold text-slate-900">{selectedDlq.id} · {selectedDlq.correlationId}</p>
                   </div>
 
                   {selectedDlq.resolutionStatus === 'UNRESOLVED' ? (
@@ -200,13 +200,13 @@ export const AutomationObservabilityView: React.FC<AutomationObservabilityViewPr
 
                 <div className="p-3 bg-rose-50 rounded-lg border border-rose-200 text-rose-900 text-xs">
                   <p className="font-bold">Mensaje de Error:</p>
-                  <p className="font-mono text-[11px] mt-0.5">{selectedDlq.errorMessage}</p>
+                  <p className="font-mono text-[11px] mt-0.5">{selectedDlq.errorReason}</p>
                 </div>
 
                 <div>
                   <span className="text-[10px] font-semibold text-slate-400 uppercase">Payload Aislado</span>
                   <pre className="p-2.5 bg-slate-900 text-indigo-200 rounded text-[11px] font-mono overflow-x-auto max-h-[140px]">
-                    {JSON.stringify(selectedDlq.payloadSnapshot, null, 2)}
+                    {JSON.stringify(selectedDlq.payload, null, 2)}
                   </pre>
                 </div>
 

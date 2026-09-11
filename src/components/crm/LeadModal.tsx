@@ -84,7 +84,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, leadToEdi
       if (leadToEdit) {
         updateLead(leadToEdit.id, payload);
       } else {
-        addLead(payload);
+        addLead({ ...payload, creationDate: new Date().toISOString() });
       }
       onClose();
     } catch (err: any) {

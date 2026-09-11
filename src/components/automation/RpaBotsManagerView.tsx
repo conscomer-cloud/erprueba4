@@ -92,7 +92,7 @@ export const RpaBotsManagerView: React.FC<RpaBotsManagerViewProps> = ({
                             {bot.robotName}
                           </span>
                           <span className="text-[10px] text-slate-400 font-mono">
-                            {bot.taskId} · {bot.targetModule}
+                            {bot.taskId} · {bot.category}
                           </span>
                         </div>
                       </div>
@@ -128,7 +128,7 @@ export const RpaBotsManagerView: React.FC<RpaBotsManagerViewProps> = ({
                     {/* Guardrail compliance badge */}
                     <div className="mt-2.5 p-2 bg-emerald-50 rounded border border-emerald-200 text-[10px] text-emerald-900 flex items-center gap-1.5">
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                      <span>{bot.guardrailPolicy}</span>
+                      <span>{bot.sensitiveGuardrailsVerified ? 'Controles verificados' : 'Controles pendientes' }</span>
                     </div>
                   </div>
 

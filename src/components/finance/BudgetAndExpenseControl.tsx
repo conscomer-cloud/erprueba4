@@ -232,8 +232,8 @@ export const BudgetAndExpenseControl: React.FC = () => {
 
                     return (
                       <tr key={b.id} className="hover:bg-slate-50/70 transition-colors">
-                        <td className="py-2.5 px-4 font-bold text-slate-900">{b.departmentName}</td>
-                        <td className="py-2.5 px-4 font-medium text-slate-700">{b.costCenterName}</td>
+                        <td className="py-2.5 px-4 font-bold text-slate-900">{b.entityType === 'DEPARTAMENTO' ? b.entityName : '—'}</td>
+                        <td className="py-2.5 px-4 font-medium text-slate-700">{b.entityType === 'CENTRO_COSTO' ? b.entityName : '—'}</td>
                         <td className="py-2.5 px-4 text-right font-medium text-slate-700">
                           ${(Number(b.budgetedAmount) || 0).toLocaleString('es-MX')}
                         </td>
@@ -331,11 +331,9 @@ export const BudgetAndExpenseControl: React.FC = () => {
                     <td className="py-2.5 px-4 text-slate-700">{exp.costCenterName}</td>
                     <td className="py-2.5 px-4 font-mono text-slate-600">
                       {exp.receiptFolio || 'Sin comprobante'}
-                      {exp.isTaxDeductible && (
-                        <span className="ml-1.5 inline-block text-[10px] text-emerald-600 font-bold">✓ SAT</span>
-                      )}
+                      
                     </td>
-                    <td className="py-2.5 px-4 text-slate-600">{exp.paymentMethod.replace('_', ' ')}</td>
+                    <td className="py-2.5 px-4 text-slate-600">{bankAccounts.find(account => account.id === exp.bankAccountId)?.bankName || '—'}</td>
                     <td className="py-2.5 px-4 text-right font-bold text-slate-900 text-sm">
                       ${(Number(exp.total) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                     </td>
@@ -396,7 +394,7 @@ export const BudgetAndExpenseControl: React.FC = () => {
                   required
                   placeholder="Ej. Combustible diesel para unidad Ford Transit..."
                   value={newExpData.title}
-                  onChange={(e) => setNewExpData({ ...newExpData, description: e.target.value })}
+                  onChange={(e) => setNewExpData({ ...newExpData, title: e.target.value })}
                   className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800"
                 />
               </div>
@@ -443,7 +441,7 @@ export const BudgetAndExpenseControl: React.FC = () => {
                     required
                     placeholder="Ej. Gasolinera Oxxo Gas"
                     value={newExpData.supplierOrPayee}
-                    onChange={(e) => setNewExpData({ ...newExpData, vendor: e.target.value })}
+                    onChange={(e) => setNewExpData({ ...newExpData, supplierOrPayee: e.target.value })}
                     className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800"
                   />
                 </div>
@@ -454,7 +452,7 @@ export const BudgetAndExpenseControl: React.FC = () => {
                     type="text"
                     placeholder="Ej. FAC-98231"
                     value={newExpData.receiptFolio}
-                    onChange={(e) => setNewExpData({ ...newExpData, invoiceNumber: e.target.value })}
+                    onChange={(e) => setNewExpData({ ...newExpData, receiptFolio: e.target.value })}
                     className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-slate-800 font-mono"
                   />
                 </div>

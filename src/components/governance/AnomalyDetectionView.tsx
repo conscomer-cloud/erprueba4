@@ -56,7 +56,7 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-class AnomalyErrorBoundary extends (Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+class AnomalyErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   props!: any;
   state: ErrorBoundaryState = { hasError: false, error: null };
 

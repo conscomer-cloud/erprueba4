@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, AlertCircle, ShieldCheck, Play, ArrowLeft } from 'lucide-react';
 import { useERP } from '../../context/ERPContext';
+import { useAuth } from '../../context/AuthContext';
 import {
   ShippingSheetCertificationService,
   ShippingSheetCertificationResult
@@ -11,7 +12,8 @@ interface Observation14ModalProps {
 }
 
 export const Observation14Modal: React.FC<Observation14ModalProps> = ({ onClose }) => {
-  const { routes, orders, currentUser } = useERP();
+  const { routes, orders } = useERP();
+  const { currentUser } = useAuth();
   const [certResult, setCertResult] = useState<ShippingSheetCertificationResult | null>(null);
 
   useEffect(() => {

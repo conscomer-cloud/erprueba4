@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { Order, Picking, PickingItem } from '../../types/erp';
 import { useERP } from '../../context/ERPContext';
+import { useAuth } from '../../context/AuthContext';
 import { generatePickingSheetPDF, sanitizePickingFileName, buildOperationalRows } from '../../utils/pickingPDFGenerator';
 import { PickingSheetService } from '../../services/pickingSheetService';
 
@@ -38,10 +39,11 @@ export const PickingSheetModal: React.FC<PickingSheetModalProps> = ({
   onClose,
   onFulfillSuccess,
 }) => {
+  const { currentUser } = useAuth();
   const {
     products,
     warehouses,
-    currentUser,
+
     getOrCreatePicking,
     savePickingDraft,
     completePicking,

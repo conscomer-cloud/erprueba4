@@ -151,27 +151,21 @@ export const NewSupplierReturnModal: React.FC<NewSupplierReturnModalProps> = ({
     try {
       setIsSubmitting(true);
       const res = await createSupplierReturn({
-        supplier_id: supplierId,
-        warehouse_id: warehouseId,
-        purchase_order_id: purchaseOrderId || undefined,
-        reason: reason.trim(),
-        reason_summary: reason.trim(),
-        carrier: carrier.trim(),
-        tracking_number: trackingNumber.trim(),
+        supplierId,
+        warehouseId,
+        purchaseOrderId: purchaseOrderId || undefined,
+        reasonSummary: reason.trim(),
+        carrier: carrier.trim() || undefined,
+        trackingNumber: trackingNumber.trim() || undefined,
         notes: notes.trim(),
         items: items.map((it) => ({
-          product_id: it.product_id,
-          product_code: it.product_code,
-          product_name: it.product_name,
-          unit: it.unit,
+          productId: it.product_id,
           quantity: it.quantity,
-          unit_cost: it.unit_cost,
-          unit_price: it.unit_cost,
-          total_amount: it.total_amount,
-          reason: it.reason,
+          unitPrice: it.unit_cost,
+          reason: it.reason || reason.trim(),
+          lotNumber: it.lot_number,
           condition: it.condition,
-          lot_number: it.lot_number,
-        })) as SupplierReturnItem[],
+        })),
       });
 
       if (res.success) {
@@ -230,7 +224,7 @@ export const NewSupplierReturnModal: React.FC<NewSupplierReturnModalProps> = ({
               >
                 {suppliers.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.name} ({s.code})
+                    {s.name} ({s.supplier_number})
                   </option>
                 ))}
               </select>

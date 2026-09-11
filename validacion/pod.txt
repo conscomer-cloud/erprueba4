@@ -1,0 +1,20 @@
+================================================================
+HOTFIX INTEGRAL OBSERVACIÓN 01 — PRUEBAS DE VERIFICACIÓN POD
+================================================================
+
+----------------------------------------------------------------
+RESULTADOS DE EJECUCIÓN:
+----------------------------------------------------------------
+✅ [PASS] 1. Precarga automática desde cantidad embarcada/surtida (no lo pedido, no en cero)
+   Detalles: Partida 1: Shipped=450, Delivered=450 (Fuente: Embarque físico)
+✅ [PASS] 2. Persistencia real y canónica de evidencia (Receptor, Firma, Foto, Notas, Partidas)
+   Detalles: POD Folio: POD-PED-2026-0001-01, Receptor: Arq. Mariana Salgado, Items: 2
+✅ [PASS] 3. Idempotencia y atomicidad (actualización in-place sin duplicar registros)
+   Detalles: Registros antes: 1, Registros después: 1 (Sin duplicados)
+✅ [PASS] 4. Segregación de funciones RBAC (VENDEDOR bloqueado, CHOFER/LOGISTICA autorizado)
+   Detalles: Vendedor bloqueado: true, Chofer autorizado: true
+✅ [PASS] 5. Sincronización de estado de Pedido y trazabilidad de Folio POD
+   Detalles: Pedido: PED-2026-0001, Estatus: Mapeado en Context, POD Folio: POD-PED-2026-0001-01
+----------------------------------------------------------------
+ESTADO TÉCNICO FINAL: COMPLETADO A ESPERA DE REVISIÓN
+================================================================

@@ -26,7 +26,7 @@ import {
 import { useERP } from '../../context/ERPContext';
 import { useAuth } from '../../context/AuthContext';
 import { CommercialRLSService } from '../../services/commercialRLSService';
-import { Customer, Opportunity, Quote, Order } from '../../types/erp';
+import { Customer, Opportunity, Quote, Order, ERPModule } from '../../types/erp';
 import { OpportunityModal } from './OpportunityModal';
 import { FollowUpModal } from './FollowUpModal';
 import { ActivityModal } from './ActivityModal';
@@ -34,7 +34,7 @@ import { AIDraftModal } from './AIDraftModal';
 
 interface Client360ViewProps {
   initialCustomerId?: string | null;
-  onNavigate?: (module: string) => void;
+  onNavigate?: (module: ERPModule) => void;
 }
 
 export const Client360View: React.FC<Client360ViewProps> = ({ initialCustomerId, onNavigate }) => {

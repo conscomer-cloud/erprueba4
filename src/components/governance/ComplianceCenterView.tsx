@@ -45,7 +45,7 @@ import { ErrorBoundaryProps, ErrorBoundaryState } from '../../types/errorBoundar
 // ==========================================
 
 
-export class ComplianceErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ComplianceErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   props!: ErrorBoundaryProps;
   state: ErrorBoundaryState;
 

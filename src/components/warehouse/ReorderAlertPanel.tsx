@@ -77,7 +77,7 @@ export const ReorderAlertPanel: React.FC<ReorderAlertPanelProps> = ({
         ['BORRADOR', 'PENDIENTE', 'PENDIENTE_AUTORIZACION', 'ENVIADA', 'APROBADA'].includes(pr.status) &&
         (pr.items || []).some((it: any) => it.productId === productId)
     );
-    return abierta ? abierta.folio || abierta.request_number || abierta.id : null;
+    return abierta ? abierta.request_number || abierta.id : null;
   };
 
   const puedeSolicitar = can ? can('COMPRAS', 'CREATE') || can('INVENTARIO', 'CREATE') : true;
@@ -121,7 +121,7 @@ export const ReorderAlertPanel: React.FC<ReorderAlertPanelProps> = ({
       addNotification?.({
         title: 'No se pudo generar la solicitud',
         message: err?.message || 'Revisa los permisos del módulo de Compras.',
-        type: 'ERROR',
+        type: 'CRITICA',
         module: 'COMPRAS',
       });
     } finally {

@@ -1,3 +1,4 @@
+import { QuoteAvailabilityService } from '../../services/quoteAvailabilityService';
 import React, { useState } from 'react';
 import {
   ShoppingBag,
@@ -43,6 +44,7 @@ export const OrdersModule: React.FC = () => {
     updateOrderStatus,
     deliverOrder,
     companyConfig,
+    warehouses,
   } = useERP();
 
   const { can, currentUser, currentRole } = useAuth();
@@ -79,7 +81,7 @@ export const OrdersModule: React.FC = () => {
 
   // New Order Form State
   const [selectedCustomerId, setSelectedCustomerId] = useState(scopedCustomers[0]?.id || '');
-  const [selectedWarehouseId, setSelectedWarehouseId] = useState(companyConfig?.warehouses?.[0]?.id || 'ALM-01');
+  const [selectedWarehouseId, setSelectedWarehouseId] = useState(warehouses[0]?.id || '');
   const [shippingAddress, setShippingAddress] = useState('');
   const [deliveryDate, setDeliveryDate] = useState(() => {
     const d = new Date();
@@ -1006,9 +1008,9 @@ export const OrdersModule: React.FC = () => {
                     onChange={(e) => setSelectedWarehouseId(e.target.value)}
                     className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-semibold text-white focus:border-yellow-400 focus:outline-none"
                   >
-                    {companyConfig?.warehouses?.map((wh) => (
+                    {warehouses.map((wh) => (
                       <option key={wh.id} value={wh.id}>
-                        {wh.name} ({wh.location || 'Querétaro'})
+                        {wh.name} ({wh.address || '—'})
                       </option>
                     )) || (
                       <>
@@ -1088,7 +1090,7 @@ export const OrdersModule: React.FC = () => {
                     <tbody className="divide-y divide-slate-800/60">
                       {items.map((it, idx) => {
                         const prod = products.find((p) => p.id === it.productId);
-                        const availableStock = prod ? (prod.stock || 0) - (prod.reserved || 0) : 0;
+                        const availableStock = QuoteAvailabilityService.getAvailableStock(prod);
                         return (
                           <tr key={idx}>
                             <td className="p-3">
@@ -1099,7 +1101,7 @@ export const OrdersModule: React.FC = () => {
                               >
                                 {products.map((p) => (
                                   <option key={p.id} value={p.id}>
-                                    {p.code} - {p.name} (Disp: {Math.max(0, (p.stock || 0) - (p.reserved || 0))})
+                                    {p.code} - {p.name} (Disp: {QuoteAvailabilityService.getAvailableStock(p)})
                                   </option>
                                 ))}
                               </select>

@@ -1,0 +1,70 @@
+====================================================
+EJECUTANDO CERTIFICACIÓN OBSERVACIÓN 09: STOCK EN COTIZACIONES
+====================================================
+
+Estado Suite Canónica: APROBADO (8/8 pasadas)
+
+✅ [PASS] TEST_01_CASE_A: Caso A: Stock suficiente (50 disp, 10 solicitados)
+   Esperado: ENTREGA INMEDIATA, Inmediato: 10, Pendiente: 0
+   Obtenido: ENTREGA INMEDIATA, Inmediato: 10, Pendiente: 0
+   Detalles: Verificado conforme a regla técnica.
+
+✅ [PASS] TEST_02_CASE_B: Caso B: Stock parcial simple (10 disp, 15 solicitados)
+   Esperado: DISPONIBILIDAD PARCIAL, Inmediato: 10, Pendiente: 5
+   Obtenido: DISPONIBILIDAD PARCIAL, Inmediato: 10, Pendiente: 5
+   Detalles: Verificado conforme a regla técnica.
+
+✅ [PASS] TEST_03_CASE_C: Caso C: Sin stock (0 disp, 5 solicitados)
+   Esperado: SIN STOCK DISPONIBLE, Inmediato: 0, Pendiente: 5
+   Obtenido: SIN STOCK DISPONIBLE, Inmediato: 0, Pendiente: 5
+   Detalles: Verificado conforme a regla técnica.
+
+✅ [PASS] TEST_04_CASE_D_DEFINITIVE: Caso D (Prueba Definitiva): Físico 20, Reservado 18, Solicitado 5
+   Esperado: Disponible: 2, DISPONIBILIDAD PARCIAL, Inmediato: 2, Pendiente: 3 (NUNCA ENTREGA INMEDIATA)
+   Obtenido: Disponible: 2, DISPONIBILIDAD PARCIAL, Inmediato: 2, Pendiente: 3
+   Detalles: Aprobado: El sistema restó estrictamente las reservas y no se confundió con el stock físico.
+
+✅ [PASS] TEST_05_SEARCH_IN_STOCK: Selector de Catálogo: Producto con existencia (sin cantidad especificada)
+   Esperado: EN EXISTENCIA, Disponible: 50
+   Obtenido: EN EXISTENCIA, Disponible: 50
+   Detalles: Verificado conforme a regla técnica.
+
+✅ [PASS] TEST_06_SEARCH_OUT_OF_STOCK: Selector de Catálogo: Producto sin existencia (sin cantidad especificada)
+   Esperado: SIN EXISTENCIA, Disponible: 0
+   Obtenido: SIN EXISTENCIA, Disponible: 0
+   Detalles: Verificado conforme a regla técnica.
+
+✅ [PASS] TEST_07_RLS_VENDOR_MASKING: RLS Comercial: Mascaramiento estricto de costos de compra para rol VENDEDOR
+   Esperado: Costo de compra y proveedor suprimidos, stock comercial visible
+   Obtenido: Costos sanitizados al 100% y stock preservado
+   Detalles: Verificado conforme a regla técnica.
+
+✅ [PASS] TEST_08_NO_STOCK_MUTATION: Integridad Operativa: Cotización no reserva ni decrementa inventario
+   Esperado: Stock físico y reservado permanecen inmutables al cotizar
+   Obtenido: Inmutabilidad confirmada
+   Detalles: Verificado conforme a regla técnica.
+
+----------------------------------------------------
+VERIFICACIÓN DE SEGURIDAD RLS PARA ROL VENDEDOR
+----------------------------------------------------
+✅ RLS VERIFICADO: Cero fugas de costos/márgenes/proveedores en los 6 productos analizados para rol VENDEDOR.
+
+----------------------------------------------------
+VERIFICACIÓN DE NO BLOQUEO (SE PUEDE COTIZAR CON STOCK 0)
+----------------------------------------------------
+Cálculo con Stock 0: {
+  disponible: 0,
+  solicitado: 10,
+  estado: 'SIN STOCK DISPONIBLE',
+  recomendacion: 'Sin stock disponible. Validar tiempo de entrega / reabastecimiento con compras.'
+}
+✅ NO BLOQUEO VERIFICADO: El sistema clasifica correctamente como "SIN STOCK DISPONIBLE" y recomienda validar tiempo de entrega sin bloquear la partida.
+
+----------------------------------------------------
+VERIFICACIÓN DE INMUTABILIDAD DE INVENTARIO / KARDEX
+----------------------------------------------------
+✅ INMUTABILIDAD VERIFICADA: El cálculo de stock disponible es puramente referencial en lectura y no alteró el stock físico ni generó movimientos de Kardex.
+
+====================================================
+RESUMEN FINAL DE CERTIFICACIÓN: TODO APROBADO
+====================================================

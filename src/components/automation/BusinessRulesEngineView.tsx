@@ -211,7 +211,7 @@ export const BusinessRulesEngineView: React.FC<BusinessRulesEngineViewProps> = (
 
               {selectedRule.conditionGroups.map((group, gIdx) => (
                 <div
-                  key={group.groupId}
+                  key={gIdx}
                   className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2"
                 >
                   <div className="flex items-center justify-between text-xs">

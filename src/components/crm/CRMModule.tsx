@@ -31,7 +31,7 @@ import { ERPModule } from '../../types/erp';
 import { ShieldCheck } from 'lucide-react';
 
 interface CRMModuleProps {
-  onNavigate?: (module: string) => void;
+  onNavigate?: (module: ERPModule) => void;
   onSelectCustomer?: (customerId: string) => void;
 }
 

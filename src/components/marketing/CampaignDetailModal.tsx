@@ -24,7 +24,7 @@ interface CampaignDetailModalProps {
 }
 
 export const CampaignDetailModal: React.FC<CampaignDetailModalProps> = ({ campaign, onClose }) => {
-  const { leads, opportunities, orders, campaignExpenses } = useERP();
+  const { leads, opportunities, orders, quotes, campaignExpenses } = useERP();
 
   const fmtCurrency = (val: number) => `$${(val || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN`;
 
@@ -35,12 +35,12 @@ export const CampaignDetailModal: React.FC<CampaignDetailModalProps> = ({ campai
 
   // Linked Opportunities from CRM
   const linkedOpportunities = opportunities.filter(
-    o => o.campaignId === campaign.id || linkedLeads.some(l => l.id === o.originLeadId)
+    o => o.campaignId === campaign.id || linkedLeads.some(l => l.id === o.leadId)
   );
 
   // Linked Orders from CRM
   const linkedOrders = orders.filter(
-    o => o.campaignId === campaign.id || linkedLeads.some(l => l.id === o.originLeadId)
+    o => o.campaignId === campaign.id || quotes.some(q => q.id === (o.quoteId || o.quote_id) && linkedOpportunities.some(opp => opp.quoteId === q.id))
   );
 
   // Linked Expenses
@@ -184,11 +184,11 @@ export const CampaignDetailModal: React.FC<CampaignDetailModalProps> = ({ campai
                     {linkedLeads.map(l => (
                       <tr key={l.id} className="hover:bg-slate-50">
                         <td className="py-2.5 px-2.5">
-                          <div className="font-mono text-[11px] font-bold text-blue-700">{l.code}</div>
+                          <div className="font-mono text-[11px] font-bold text-blue-700">{l.id}</div>
                           <div className="font-bold text-slate-900">{l.company}</div>
                         </td>
                         <td className="py-2.5 px-2.5">
-                          <div>{l.contactName}</div>
+                          <div>{l.name}</div>
                           <div className="text-[10px] text-slate-400">{l.email}</div>
                         </td>
                         <td className="py-2.5 px-2.5 text-center">
@@ -212,7 +212,7 @@ export const CampaignDetailModal: React.FC<CampaignDetailModalProps> = ({ campai
                         <td className="py-2.5 px-2.5 text-right font-bold text-slate-900">
                           {fmtCurrency(l.estimatedValue)}
                         </td>
-                        <td className="py-2.5 px-2.5 text-slate-600">{l.assignedToName || 'Sin asignar'}</td>
+                        <td className="py-2.5 px-2.5 text-slate-600">{l.salespersonName || 'Sin asignar'}</td>
                       </tr>
                     ))}
                   </tbody>

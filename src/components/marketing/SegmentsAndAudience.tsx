@@ -25,7 +25,7 @@ export const SegmentsAndAudience: React.FC = () => {
     description: '',
     targetIndustry: 'Aislamiento Térmico & Climas',
     minTicketSize: 50000,
-    geographicScope: 'Nacional (México)',
+    geographicScope: '',
   });
 
   const handleCreate = (e: React.FormEvent) => {
@@ -35,14 +35,14 @@ export const SegmentsAndAudience: React.FC = () => {
     addMarketingSegment({
       name: formData.name,
       description: formData.description,
+      targetIndustry: formData.targetIndustry,
       criteria: {
-        industry: [formData.targetIndustry],
-        ticketMin: formData.minTicketSize,
-        location: [formData.geographicScope],
+        minCreditLimit: formData.minTicketSize,
+        states: formData.geographicScope.split(',').map(state => state.trim()).filter(Boolean),
       },
-      leadsCount: 12,
-      customersCount: 5,
-      associatedCampaignIds: [],
+      activeLeadsCount: 0,
+      estimatedAudienceSize: 0,
+      conversionRatePct: 0,
     });
 
     setIsCreateModalOpen(false);
@@ -85,7 +85,7 @@ export const SegmentsAndAudience: React.FC = () => {
       {/* Segments Cards */}
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
         {marketingSegments.map(seg => {
-          const linkedCamps = marketingCampaigns.filter(c => (seg.associatedCampaignIds || []).includes(c.id));
+          const linkedCamps = marketingCampaigns.filter(c => c.segmentId === seg.id);
           return (
             <div
               key={seg.id}
@@ -100,7 +100,7 @@ export const SegmentsAndAudience: React.FC = () => {
                     <h3 className="text-sm font-bold text-slate-900 line-clamp-1">{seg.name}</h3>
                   </div>
                   <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
-                    {seg.code}
+                    {seg.id}
                   </span>
                 </div>
 
@@ -110,17 +110,17 @@ export const SegmentsAndAudience: React.FC = () => {
                 <div className="mt-4 space-y-1.5 border-t border-slate-100 pt-3 text-[11px] text-slate-600">
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-slate-400 uppercase text-[10px]">Industria:</span>
-                    <span className="font-medium text-slate-800">{seg.criteria.industry?.join(', ') || 'Todas'}</span>
+                    <span className="font-medium text-slate-800">{seg.targetIndustry || 'Todas'}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-slate-400 uppercase text-[10px]">Ticket Mínimo:</span>
+                    <span className="font-semibold text-slate-400 uppercase text-[10px]">Crédito Mínimo:</span>
                     <span className="font-bold text-emerald-700">
-                      ${(seg.criteria.ticketMin || 0).toLocaleString('es-MX')} MXN
+                      ${(seg.criteria.minCreditLimit || 0).toLocaleString('es-MX')} MXN
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-slate-400 uppercase text-[10px]">Alcance:</span>
-                    <span className="font-medium text-slate-800">{seg.criteria.location?.join(', ') || 'Nacional'}</span>
+                    <span className="font-medium text-slate-800">{seg.criteria.states?.join(', ') || 'Nacional'}</span>
                   </div>
                 </div>
 
@@ -148,11 +148,11 @@ export const SegmentsAndAudience: React.FC = () => {
               <div className="mt-4 border-t border-slate-100 pt-3 grid grid-cols-2 gap-2 text-center">
                 <div className="rounded-lg bg-slate-50 p-2">
                   <span className="text-[10px] font-bold uppercase text-slate-400 block">Prospectos (Leads)</span>
-                  <span className="text-sm font-black text-indigo-700">{seg.leadsCount}</span>
+                  <span className="text-sm font-black text-indigo-700">{seg.activeLeadsCount}</span>
                 </div>
                 <div className="rounded-lg bg-slate-50 p-2">
-                  <span className="text-[10px] font-bold uppercase text-slate-400 block">Clientes Activos</span>
-                  <span className="text-sm font-black text-purple-700">{seg.customersCount}</span>
+                  <span className="text-[10px] font-bold uppercase text-slate-400 block">Audiencia Estimada</span>
+                  <span className="text-sm font-black text-purple-700">{seg.estimatedAudienceSize}</span>
                 </div>
               </div>
             </div>
@@ -209,7 +209,7 @@ export const SegmentsAndAudience: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold uppercase text-slate-600 mb-1">
-                    Ticket Mínimo (MXN)
+                    Crédito Mínimo (MXN)
                   </label>
                   <input
                     type="number"
@@ -224,7 +224,7 @@ export const SegmentsAndAudience: React.FC = () => {
 
               <div>
                 <label className="block text-[11px] font-bold uppercase text-slate-600 mb-1">
-                  Alcance Geográfico
+                  Estados separados por comas (vacío: todos)
                 </label>
                 <input
                   type="text"

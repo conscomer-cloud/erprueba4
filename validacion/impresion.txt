@@ -1,0 +1,33 @@
+
+========================================
+INICIANDO SUITE DE PRUEBAS DE IMPRESIÓN DE REMISIÓN
+========================================
+
+✅ PASS: TEST 1: generateOrderPDF genera instancia de jsPDF válida
+✅ PASS: TEST 2: doc.autoPrint está disponible en la instancia jsPDF
+✅ PASS: TEST 3: Salida PDF no vacía (> 500 bytes)
+✅ PASS: TEST 4: Acción de autoPrint embebida en el documento
+✅ PASS: TEST 5: Folio de pedido 1 verificado
+✅ PASS: TEST 6: Partidas de pedido 1 verificadas (2 ítems)
+✅ PASS: TEST 7: Total de pedido 1 verificado ($44,080.00)
+✅ PASS: TEST 8: Generación PDF pedido 2 PED-2050 exitosa
+✅ PASS: TEST 9: Aislamiento de folios entre pedidos
+✅ PASS: TEST 10: Aislamiento de totales entre pedidos
+✅ PASS: TEST 11: Estatus de pedido permanece inalterado (READ-ONLY)
+✅ PASS: TEST 12: Total de pedido permanece inalterado (READ-ONLY)
+✅ PASS: TEST 13: Partidas de pedido permanecen inalteradas (READ-ONLY)
+✅ PASS: TEST 14: Ejecutivo tiene acceso a visualizar e imprimir su propio pedido
+✅ PASS: TEST 15: RLS previene que otro ejecutivo acceda/imprima pedido ajeno
+✅ PASS: TEST 16: Sandbox detecta iframe y activa Blob con autoPrint
+✅ PASS: TEST 17: Fuera de sandbox activa impresión de documento aislado
+✅ PASS: TEST 18: Ventana abierta dispara diálogo
+✅ PASS: TEST 19: Si popup está bloqueado, fallback descarga PDF oficial
+✅ PASS: TEST 20: deliverOrder no fue ejecutado
+✅ PASS: TEST 21: fulfillOrder no fue ejecutado
+✅ PASS: TEST 22: Inventario modificado = false
+✅ PASS: TEST 23: Movimientos de Kardex generados = 0
+
+========================================
+RESULTADO FINAL: 23 PASSED / 0 FAILED
+========================================
+

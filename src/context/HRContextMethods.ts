@@ -39,6 +39,7 @@ import {
 } from '../services/hrService';
 
 export interface HRHandlersParams {
+  can: (module: 'RH', action: 'CREAR' | 'EDITAR' | 'AUTORIZAR') => boolean;
   currentUser: { id: string; name: string; role: UserRole } | null;
   employees: Employee[];
   setEmployees: React.Dispatch<React.SetStateAction<Employee[]>>;
@@ -161,6 +162,10 @@ export function createHRHandlers(params: HRHandlersParams) {
       read: false,
     };
     setNotifications((prev) => [notif, ...prev]);
+  };
+
+  const requireHR = (action: 'CREAR' | 'EDITAR' | 'AUTORIZAR') => {
+    if (!currentUser || !params.can('RH', action)) throw new Error('Acceso denegado a esta operación de RH');
   };
 
   // ==========================================================================
@@ -302,9 +307,11 @@ export function createHRHandlers(params: HRHandlersParams) {
   // ==========================================================================
   // ASISTENCIA & CHECADOR
   // ==========================================================================
-  const registerCheckIn = (employeeId: string, source: 'RELOJ_VIRTUAL' | 'BIOMETRICO' | 'APP_MOVIL' = 'RELOJ_VIRTUAL') => {
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const nowTimeStr = new Date().toTimeString().slice(0, 8);
+  const registerCheckIn = (employeeId: string, source: AttendanceRecord['source'] = 'RELOJ_VIRTUAL', date?: string, time?: string) => {
+    requireHR('EDITAR');
+    const todayStr = date || new Date().toISOString().slice(0, 10);
+    const nowTimeStr = time || new Date().toTimeString().slice(0, 8);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(todayStr) || !/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/.test(nowTimeStr)) throw new Error('Fecha u hora inválida');
     const emp = employees.find((e) => e.id === employeeId);
     if (!emp) return;
 
@@ -355,9 +362,11 @@ export function createHRHandlers(params: HRHandlersParams) {
     notify('Checada Exitosa', `Entrada registrada para ${emp.name} (${nowTimeStr}) - ${status === 'LATE' ? 'Con Retardo' : 'Puntual'}.`, status === 'LATE' ? 'warn' : 'success');
   };
 
-  const registerCheckOut = (employeeId: string) => {
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const nowTimeStr = new Date().toTimeString().slice(0, 8);
+  const registerCheckOut = (employeeId: string, date?: string, time?: string) => {
+    requireHR('EDITAR');
+    const todayStr = date || new Date().toISOString().slice(0, 10);
+    const nowTimeStr = time || new Date().toTimeString().slice(0, 8);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(todayStr) || !/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/.test(nowTimeStr)) throw new Error('Fecha u hora inválida');
     const emp = employees.find((e) => e.id === employeeId);
 
     setAttendanceRecords((prev) =>
@@ -378,7 +387,7 @@ export function createHRHandlers(params: HRHandlersParams) {
   // ==========================================================================
   const requestAbsence = (data: {
     employeeId: string;
-    type: 'VACACIONES' | 'INCAPACIDAD' | 'PERMISO' | 'FALTA_JUSTIFICADA';
+    type: AbsenceRequest['type'];
     startDate: string;
     endDate: string;
     reason: string;
@@ -436,8 +445,9 @@ export function createHRHandlers(params: HRHandlersParams) {
   };
 
   const reviewAbsenceRequest = (id: string, status: 'APPROVED' | 'REJECTED', comment?: string) => {
+    requireHR('AUTORIZAR');
     const req = absenceRequests.find((r) => r.id === id);
-    if (!req) return;
+    if (!req || !['PENDING', 'PENDIENTE'].includes(req.status)) return;
 
     setAbsenceRequests((prev) =>
       prev.map((r) => {
@@ -609,28 +619,35 @@ export function createHRHandlers(params: HRHandlersParams) {
   };
 
   const completeTrainingCourse = (trainingId: string, score: number, certificateRef?: string) => {
+    requireHR('EDITAR');
+    const training = employeeTrainings.find(t => t.id === trainingId);
+    const course = trainingCourses.find(c => c.id === training?.courseId);
+    if (!training || !course || !Number.isFinite(score) || score < 0 || score > 100) throw new Error('Curso o calificación inválida');
+    const passed = score >= course.passingScore;
     setEmployeeTrainings((prev) =>
       prev.map((t) => {
         if (t.id === trainingId) {
           return {
             ...t,
             score,
-            status: 'COMPLETED',
+            status: passed ? 'COMPLETED' : 'FAILED',
             completionDate: new Date().toISOString().slice(0, 10),
-            certificateReference: certificateRef || `CERT-AUTO-${Date.now().toString().slice(-6)}`,
+            certificateReference: passed ? (certificateRef || t.certificateReference) : undefined,
           };
         }
         return t;
       })
     );
     logHRAction('COMPLETADO_CAPACITACION', trainingId, `Capacitación ID ${trainingId} completada con calificación ${score}/100`);
-    notify('Capacitación Acreditada', `Curso concluido satisfactoriamente con calificación de ${score} puntos.`, 'success');
+    notify(passed ? 'Capacitación Acreditada' : 'Capacitación No Acreditada', `Calificación registrada: ${score}/100. Mínimo requerido: ${course.passingScore}.`, passed ? 'success' : 'warn');
   };
 
   // ==========================================================================
   // DESEMPEÑO & METAS
   // ==========================================================================
   const updateGoalProgress = (goalId: string, actualValue: number) => {
+    requireHR('EDITAR');
+    if (!employeeGoals.some(g => g.id === goalId) || !Number.isFinite(actualValue) || actualValue < 0) throw new Error('Avance inválido');
     setEmployeeGoals((prev) =>
       prev.map((g) => {
         if (g.id === goalId) {
@@ -672,7 +689,7 @@ export function createHRHandlers(params: HRHandlersParams) {
         if (ins.id === id) {
           return {
             ...ins,
-            status: 'APLICADO',
+            status: 'ATENDIDO',
             appliedBy: currentUser?.id,
             appliedByName: currentUser?.name,
             appliedAt: new Date().toISOString(),
@@ -692,7 +709,56 @@ export function createHRHandlers(params: HRHandlersParams) {
     notify('Insight Descartado', 'La recomendación fue archivada.', 'info');
   };
 
+  const justifyAbsence = (id: string, reason: string) => {
+    requireHR('EDITAR');
+    const record = attendanceRecords.find(item => item.id === id);
+    if (!record || !['ABSENT', 'FALTA'].includes(record.status) || !reason.trim()) throw new Error('Ausencia o justificación inválida');
+    setAttendanceRecords(prev => prev.map(item => item.id === id ? { ...item, status: 'JUSTIFIED', notes: reason.trim(), modifiedBy: currentUser!.id, modifiedByName: currentUser!.name, modifiedAt: new Date().toISOString() } : item));
+    logHRAction('JUSTIFICAR_AUSENCIA', id, reason.trim());
+  };
+  const savePerformanceReview = (data: Omit<PerformanceReview, 'id'>) => {
+    requireHR('CREAR');
+    if (!employees.some(e => e.id === data.employeeId) || !Number.isFinite(data.overallScore) || data.overallScore < 0 || data.overallScore > 100) throw new Error('Evaluación inválida');
+    if (!Object.values(data.categoryScores).every(score => Number.isFinite(score) && score >= 0 && score <= 100)) throw new Error('Calificaciones inválidas');
+    const review = { ...data, id: crypto.randomUUID(), reviewerId: currentUser!.id, reviewerName: currentUser!.name };
+    setPerformanceReviews(prev => [review, ...prev]);
+    logHRAction('CREAR_EVALUACION', review.id, data.comments);
+  };
+  const createEmployeeGoal = (data: Omit<EmployeeGoal, 'id'>) => {
+    requireHR('CREAR');
+    if (!employees.some(e => e.id === data.employeeId) || !Number.isFinite(data.targetValue) || data.targetValue <= 0) throw new Error('Meta inválida');
+    const goal = { ...data, id: crypto.randomUUID() };
+    setEmployeeGoals(prev => [goal, ...prev]);
+    logHRAction('CREAR_META', goal.id, goal.title);
+  };
+  const updateAIHRInsightStatus = (id: string, status: AIHRAdvisorInsight['status']) => {
+    requireHR('EDITAR');
+    if (status === 'ATENDIDO') return approveAIInsight(id);
+    if (status === 'DESCARTADO') return dismissAIInsight(id);
+    setAiHRInsights(prev => prev.map(item => item.id === id ? { ...item, status } : item));
+    logHRAction('ACTUALIZAR_INSIGHT', id, status);
+  };
+  const calculatePayrollRun = (id: string) => {
+    requireHR('EDITAR');
+    const period = payrollPeriods.find(p => p.id === id);
+    if (!period?.items?.length) { notify('Cálculo no disponible', 'El periodo no contiene partidas de nómina. Se requiere el detalle del proveedor de nómina; no se estimarán sueldos ni deducciones.', 'warn'); return; }
+    if (!['BORRADOR', 'EN_CALCULO'].includes(period.status)) return;
+    const totals = period.items.reduce((sum, item) => ({ totalGrossSalaries: sum.totalGrossSalaries + item.baseSalary, totalCommissions: sum.totalCommissions + item.commissionsAmount, totalBonuses: sum.totalBonuses + item.bonusesAmount, totalPerceptions: sum.totalPerceptions + item.totalPerceptions, totalDeductions: sum.totalDeductions + item.totalDeductions, totalNetToPay: sum.totalNetToPay + item.netPay }), { totalGrossSalaries: 0, totalCommissions: 0, totalBonuses: 0, totalPerceptions: 0, totalDeductions: 0, totalNetToPay: 0 });
+    if (!Object.values(totals).every(Number.isFinite)) throw new Error('Partidas de nómina inválidas');
+    setPayrollPeriods(prev => prev.map(p => p.id === id ? { ...p, ...totals, employeesCount: period.items!.length } : p));
+    logHRAction('RECALCULAR_NOMINA', id, 'Totales calculados a partir de partidas existentes');
+  };
+  const approvePayrollPeriod = (id: string) => {
+    requireHR('AUTORIZAR');
+    const period = payrollPeriods.find(p => p.id === id);
+    if (!period?.items?.length) { notify('Aprobación no disponible', 'Faltan las partidas de nómina para revisar y aprobar este periodo.', 'warn'); return; }
+    if (!['BORRADOR', 'EN_CALCULO'].includes(period.status)) return;
+    setPayrollPeriods(prev => prev.map(p => p.id === id ? { ...p, status: 'APROBADA' } : p));
+    logHRAction('APROBAR_NOMINA', id, 'Pre-nómina aprobada sin timbrado ni pago');
+  };
+
   return {
+    justifyAbsence, savePerformanceReview, createEmployeeGoal, updateAIHRInsightStatus, calculatePayrollRun, approvePayrollPeriod,
     addEmployee,
     updateEmployee,
     updateConfidentialData,

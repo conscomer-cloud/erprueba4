@@ -26,7 +26,7 @@ export const PerformanceAndGoals: React.FC = () => {
     updateGoalProgress,
   } = useERP();
 
-  const { can, user } = useAuth();
+  const { can, currentUser: user } = useAuth();
   const canManageHR = can('RH', 'EDITAR') || can('RH', 'CREAR') || user?.role === 'ADMINISTRADOR' || user?.role === 'DIRECTOR';
 
   const [activeTab, setActiveTab] = useState<'REVIEWS' | 'GOALS'>('REVIEWS');
@@ -36,9 +36,12 @@ export const PerformanceAndGoals: React.FC = () => {
   // Modal new review
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(employees[0]?.id || '');
-  const [overallScore, setOverallScore] = useState(88);
+  const [overallScore, setOverallScore] = useState<number | ''>('');
   const [reviewComments, setReviewComments] = useState('');
   const [actionPlan, setActionPlan] = useState('');
+  const [categoryScores, setCategoryScores] = useState<Record<keyof PerformanceReview['categoryScores'], number | ''>>({ kpiAchievement: '', competencies: '', leadership: '', values: '' });
+  const [reviewPeriod, setReviewPeriod] = useState('');
+  const [goalDueDate, setGoalDueDate] = useState('');
 
   // Modal new goal
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
@@ -64,29 +67,29 @@ export const PerformanceAndGoals: React.FC = () => {
   const handleSaveReview = (e: React.FormEvent) => {
     e.preventDefault();
     const emp = employees.find((e) => e.id === selectedEmployeeId);
-    if (!emp) return;
+    if (!emp || !user) return;
 
     savePerformanceReview({
       folio: `EVAL-${new Date().getFullYear()}-${(performanceReviews.length + 1).toString().padStart(3, '0')}`,
       employeeId: emp.id,
       employeeName: emp.name,
-      positionName: emp.position || 'Especialista',
-      departmentName: emp.department || 'Operaciones',
-      reviewerId: user?.id || 'USR-001',
-      reviewerName: user?.name || 'Dirección General',
-      period: '2026-S1',
+      positionName: emp.positionName || emp.position || '',
+      departmentName: emp.departmentName || emp.department || '',
+      reviewerId: user.id,
+      reviewerName: user.name,
+      period: reviewPeriod.trim(),
       reviewDate: new Date().toISOString().slice(0, 10),
       overallScore: Number(overallScore),
       categoryScores: {
-        kpiAchievement: overallScore,
-        competencies: overallScore - 2,
-        leadership: overallScore + 1,
-        values: 95,
+        kpiAchievement: Number(categoryScores.kpiAchievement),
+        competencies: Number(categoryScores.competencies),
+        leadership: Number(categoryScores.leadership),
+        values: Number(categoryScores.values),
       },
-      strengths: ['Orientación a resultados', 'Compromiso con el equipo', 'Atención a clientes'],
-      improvementAreas: ['Documentación de procesos', 'Uso intensivo de módulos ERP'],
+      strengths: [],
+      improvementAreas: [],
       comments: reviewComments,
-      actionPlan: actionPlan || 'Seguimiento mensual de objetivos y cursos de especialización.',
+      actionPlan,
       status: 'COMPLETED',
     });
 
@@ -103,17 +106,17 @@ export const PerformanceAndGoals: React.FC = () => {
     createEmployeeGoal({
       employeeId: emp.id,
       employeeName: emp.name,
-      departmentName: emp.department || 'Ventas',
+      departmentName: emp.departmentName || emp.department || '',
       title: goalTitle,
-      description: `Meta estratégica establecida para el periodo 2026.`,
-      metricType: 'VENTAS_TOTALES',
+      description: goalTitle,
+      metricType: 'OTRO',
       metricLabel: 'Cumplimiento',
       targetValue: Number(goalTarget),
       actualValue: 0,
       unit: goalUnit,
       progressPct: 0,
       startDate: new Date().toISOString().slice(0, 10),
-      dueDate: '2026-12-31',
+      dueDate: goalDueDate,
       status: 'IN_PROGRESS',
       autoCalculated: false,
     });
@@ -287,13 +290,12 @@ export const PerformanceAndGoals: React.FC = () => {
                   {canManageHR && (
                     <button
                       onClick={() => {
-                        const newPct = Math.min(goal.progressPct + 15, 100);
-                        const newVal = (goal.targetValue * newPct) / 100;
-                        updateGoalProgress(goal.id, newVal, newPct);
+                        const value = window.prompt('Valor real alcanzado (' + goal.unit + '):', String(goal.actualValue));
+                        if (value !== null && value.trim() && Number.isFinite(Number(value)) && Number(value) >= 0) updateGoalProgress(goal.id, Number(value));
                       }}
                       className="text-xs font-bold text-blue-600 hover:text-blue-700"
                     >
-                      + Actualizar Avance (+15%)
+                      Actualizar avance
                     </button>
                   )}
                 </div>
@@ -306,7 +308,7 @@ export const PerformanceAndGoals: React.FC = () => {
       {/* Modal New Review */}
       {isReviewModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl border border-slate-200">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
                 <Award className="h-4 w-4 text-blue-600" />
@@ -338,16 +340,24 @@ export const PerformanceAndGoals: React.FC = () => {
                 <label className="block font-bold text-slate-700 mb-1">Calificación Global (0 - 100)</label>
                 <input
                   type="number"
-                  min="50"
+                  min="0"
                   max="100"
                   required
                   value={overallScore}
-                  onChange={(e) => setOverallScore(parseFloat(e.target.value))}
+                  onChange={(e) => setOverallScore(e.target.value === '' ? '' : Number(e.target.value))}
                   className="w-full rounded-xl border border-slate-200 p-2.5 focus:border-blue-500 focus:outline-none font-mono font-bold"
                 />
               </div>
 
               <div>
+                <label className="block font-bold text-slate-700 mb-1">Periodo evaluado *</label>
+                <input required value={reviewPeriod} onChange={e => setReviewPeriod(e.target.value)} className="w-full border rounded p-2" placeholder="Periodo efectivamente evaluado" />
+                <div className="grid grid-cols-2 gap-2 my-2">
+                  {(['kpiAchievement', 'competencies', 'leadership', 'values'] as const).map((key, index) => <label key={key}>
+                    {['Cumplimiento KPI', 'Competencias', 'Liderazgo', 'Valores'][index]} (0–100) *
+                    <input required type="number" min="0" max="100" value={categoryScores[key]} onChange={e => setCategoryScores(prev => ({ ...prev, [key]: e.target.value === '' ? '' : Number(e.target.value) }))} className="w-full border rounded p-2" />
+                  </label>)}
+                </div>
                 <label className="block font-bold text-slate-700 mb-1">Comentarios del Evaluador</label>
                 <textarea
                   rows={2}
@@ -432,6 +442,7 @@ export const PerformanceAndGoals: React.FC = () => {
                 />
               </div>
 
+              <label className="block">Fecha límite *<input required type="date" min={new Date().toISOString().slice(0, 10)} value={goalDueDate} onChange={e => setGoalDueDate(e.target.value)} className="w-full border rounded p-2" /></label>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Meta Cuantitativa</label>

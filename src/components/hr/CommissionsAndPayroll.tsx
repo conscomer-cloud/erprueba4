@@ -26,20 +26,20 @@ export const CommissionsAndPayroll: React.FC = () => {
     employees,
     orders,
     confidentialData,
-    approveCommission,
+    approveCommissionRecord: approveCommission,
     calculatePayrollRun,
     approvePayrollPeriod,
   } = useERP();
 
-  const { can, user } = useAuth();
+  const { can, currentUser: user } = useAuth();
   const canManagePayroll = can('RH', 'EDITAR') || can('FINANZAS', 'EDITAR') || user?.role === 'ADMINISTRADOR' || user?.role === 'DIRECTOR';
 
   const [activeTab, setActiveTab] = useState<'COMMISSIONS' | 'RULES' | 'PRE_PAYROLL'>('COMMISSIONS');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
-  const [selectedPeriod, setSelectedPeriod] = useState('2026-08-Q1');
+  const [selectedPeriod, setSelectedPeriod] = useState(payrollPeriods[0]?.id || '');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const currentPayroll = payrollPeriods.find((p) => p.periodCode === selectedPeriod) || payrollPeriods[0];
+  const currentPayroll = payrollPeriods.find((p) => p.id === selectedPeriod) || payrollPeriods[0];
 
   const filteredCommissions = commissionRecords.filter((com) => {
     const matchesStatus = selectedStatus === 'ALL' || com.status === selectedStatus;
@@ -89,11 +89,11 @@ export const CommissionsAndPayroll: React.FC = () => {
           </span>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-2xl font-black text-indigo-700">
-              ${(currentPayroll?.totalNetToPay || 218540).toLocaleString('es-MX')}
+              ${(currentPayroll?.totalNetToPay ?? 0).toLocaleString('es-MX')}
             </span>
             <span className="text-xs text-indigo-600 font-semibold">Neto estimado</span>
           </div>
-          <p className="text-[11px] text-indigo-700 mt-1">Periodo: {currentPayroll?.periodName || '1ra Quincena Agosto 2026'}</p>
+          <p className="text-[11px] text-indigo-700 mt-1">Periodo: {currentPayroll?.name || 'Sin periodo'}</p>
         </div>
       </div>
 
@@ -114,7 +114,7 @@ export const CommissionsAndPayroll: React.FC = () => {
             {canManagePayroll && activeTab === 'PRE_PAYROLL' && (
               <button
                 onClick={() => {
-                  calculatePayrollRun('2026-08-Q1');
+                  calculatePayrollRun(selectedPeriod);
                   alert('Pre-nómina recalculada exitosamente con asistencias y comisiones actualizadas.');
                 }}
                 className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-indigo-700 transition"
@@ -233,7 +233,7 @@ export const CommissionsAndPayroll: React.FC = () => {
 
                     <td className="px-4 py-3 text-center">
                       <span className="rounded bg-blue-100 px-2 py-0.5 font-bold text-blue-900 text-[11px]">
-                        {com.appliedRate}%
+                        {com.commissionRate}%
                       </span>
                     </td>
 
@@ -331,7 +331,7 @@ export const CommissionsAndPayroll: React.FC = () => {
               <span className="text-[10px] font-black uppercase tracking-wider text-indigo-900 bg-indigo-200/60 px-2 py-0.5 rounded">
                 Simulación de Pre-Nómina
               </span>
-              <h3 className="text-lg font-black text-slate-900 mt-1">{currentPayroll.periodName}</h3>
+              <h3 className="text-lg font-black text-slate-900 mt-1">{currentPayroll.name}</h3>
               <p className="text-xs text-slate-600">
                 Periodo: {currentPayroll.startDate} al {currentPayroll.endDate} — Fecha de Pago Programada: {currentPayroll.paymentDate}
               </p>
@@ -374,7 +374,7 @@ export const CommissionsAndPayroll: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 font-medium">
-                  {currentPayroll.items.map((item) => (
+                  {(currentPayroll.items || []).map((item) => (
                     <tr key={item.id} className="hover:bg-slate-50/80 transition">
                       <td className="px-4 py-3">
                         <span className="font-bold text-slate-900 block">{item.employeeName}</span>

@@ -525,7 +525,7 @@ export const E2EFlowTestModal: React.FC<E2EFlowTestModalProps> = ({
                   <button
                     onClick={() => {
                       onClose();
-                      if (onNavigateModule) onNavigateModule('ALMACEN');
+                      if (onNavigateModule) onNavigateModule('ALMACENES');
                     }}
                     className="flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-950/40 px-3 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-900/50"
                   >

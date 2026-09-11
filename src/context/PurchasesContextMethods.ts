@@ -105,9 +105,9 @@ export function createPurchasesHandlers(params: PurchasesHandlersParams) {
     const newSupplier: Supplier = {
       ...supplierData,
       id,
-      rating: supplierData.rating || 5,
-      otif_score: supplierData.otif_score || 95,
-      quality_score: supplierData.quality_score || 98,
+      rating: supplierData.rating,
+      otif_score: supplierData.otif_score,
+      quality_score: supplierData.quality_score,
       status: supplierData.status || 'ACTIVO',
       created_at: now(),
     };
@@ -1105,18 +1105,23 @@ export function createPurchasesHandlers(params: PurchasesHandlersParams) {
     purchaseOrderNumber?: string;
     warehouseId: string;
     reasonSummary: string;
+    carrier?: string;
+    trackingNumber?: string;
     items: {
       productId: string;
       quantity: number;
       unitPrice?: number;
       reason: string;
+      condition?: SupplierReturnItem['condition'];
       lotNumber?: string;
     }[];
     notes?: string;
   }): { success: boolean; supplierReturn?: SupplierReturn; error?: string } => {
     const supplier = suppliers.find((s) => s.id === data.supplierId);
-    const supplierName = supplier?.name || 'Proveedor';
-    const warehouse = warehouses.find((w) => w.id === data.warehouseId) || warehouses[0];
+    const warehouse = warehouses.find((w) => w.id === data.warehouseId);
+    if (!supplier || !warehouse) return { success: false, error: 'Proveedor o almacén inválido.' };
+    if (!data.items.length || data.items.some(item => !products.some(p => p.id === item.productId || p.code === item.productId) || !Number.isFinite(item.quantity) || item.quantity <= 0 || !Number.isFinite(item.unitPrice) || item.unitPrice < 0)) return { success: false, error: 'Productos, cantidades y precios de devolución deben ser válidos.' };
+    const supplierName = supplier.name;
 
     const nextRetNum = supplierReturns.length + 1;
     const return_number = `DEV-PRV-2026-${String(nextRetNum).padStart(3, '0')}`;
@@ -1125,7 +1130,7 @@ export function createPurchasesHandlers(params: PurchasesHandlersParams) {
     let total_amount = 0;
     const items: SupplierReturnItem[] = data.items.map((item, idx) => {
       const product = products.find((p) => p.id === item.productId || p.code === item.productId);
-      const unitPrice = item.unitPrice || product?.cost || 100;
+      const unitPrice = item.unitPrice!;
       const subtotal = item.quantity * unitPrice;
       total_amount += subtotal;
 
@@ -1141,6 +1146,7 @@ export function createPurchasesHandlers(params: PurchasesHandlersParams) {
         total_amount: subtotal,
         reason: item.reason,
         lot_number: item.lotNumber,
+        condition: item.condition,
       };
     });
 
@@ -1157,6 +1163,8 @@ export function createPurchasesHandlers(params: PurchasesHandlersParams) {
       warehouse_name: warehouse.name,
       status: 'BORRADOR',
       reason_summary: data.reasonSummary,
+      carrier: data.carrier,
+      tracking_number: data.trackingNumber,
       requested_by: user.id,
       requested_by_name: user.name,
       items,

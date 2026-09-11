@@ -54,7 +54,7 @@ const formatPercent = (val: any): string => {
 
 
 
-class ProfitabilityErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+class ProfitabilityErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   props!: ErrorBoundaryProps;
   constructor(props: ErrorBoundaryProps) {
     super(props);

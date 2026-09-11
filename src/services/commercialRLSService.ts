@@ -84,6 +84,24 @@ export interface ReassignmentLog {
 }
 
 export class CommercialRLSService {
+  /** Only disclose that a duplicate exists, never the foreign record or its id. */
+  public static maskCrossVendorDuplicate(): Customer & { isCrossVendor: true } {
+    return {
+      id: 'PROTECTED-CROSS',
+      businessName: 'Cliente registrado en otra cartera comercial',
+      companyName: 'Cliente registrado en otra cartera comercial',
+      contactName: 'Protegido por política RLS',
+      phone: '••••••••••',
+      email: '',
+      creditLimit: 0,
+      currentBalance: 0,
+      totalPurchases: 0,
+      sellerName: 'Otro Ejecutivo Comercial',
+      salesExecutiveId: 'OTRO_EJECUTIVO',
+      isCrossVendor: true,
+    } as Customer & { isCrossVendor: true };
+  }
+
   private static securityLogs: SecurityViolationLog[] = [];
   private static reassignmentLogs: ReassignmentLog[] = [];
 

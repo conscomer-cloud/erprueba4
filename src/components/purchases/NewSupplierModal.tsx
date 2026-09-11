@@ -14,7 +14,7 @@ export const NewSupplierModal: React.FC<NewSupplierModalProps> = ({
   onClose,
   supplierToEdit,
 }) => {
-  const { createSupplier, updateSupplier } = useERP();
+  const { addSupplier, updateSupplier } = useERP();
 
   const [name, setName] = useState(supplierToEdit?.name || '');
   const [legalName, setLegalName] = useState(supplierToEdit?.legal_name || supplierToEdit?.name || '');
@@ -28,7 +28,7 @@ export const NewSupplierModal: React.FC<NewSupplierModalProps> = ({
   const [leadTimeDays, setLeadTimeDays] = useState(supplierToEdit?.lead_time_days || 5);
   const [bankAccount, setBankAccount] = useState(supplierToEdit?.bankAccount || '');
   const [bankName, setBankName] = useState(supplierToEdit?.bankName || 'BBVA Bancomer');
-  const [clabe, setClabe] = useState(supplierToEdit?.clabe || '');
+  const [clabe, setClabe] = useState(supplierToEdit?.bankClabe || '');
   const [currency, setCurrency] = useState(supplierToEdit?.currency || 'MXN');
   const [notes, setNotes] = useState(supplierToEdit?.notes || '');
 
@@ -60,16 +60,15 @@ export const NewSupplierModal: React.FC<NewSupplierModalProps> = ({
           payment_terms: paymentTerms,
           credit_limit: Number(creditLimit),
           lead_time_days: Number(leadTimeDays),
-          bank_account: bankAccount.trim(),
-          bank_name: bankName.trim(),
-          clabe: clabe.trim(),
+          bankAccount: bankAccount.trim(),
+          bankName: bankName.trim(),
+          bankClabe: clabe.trim(),
           currency,
           notes: notes.trim(),
         });
-        if (res.success) onClose();
-        else setError(res.error || 'No se pudo actualizar el proveedor.');
+        onClose();
       } else {
-        const res = await createSupplier({
+        const res = await addSupplier({
           name: name.trim(),
           legal_name: legalName.trim() || name.trim(),
           rfc: rfc.trim().toUpperCase(),
@@ -80,18 +79,14 @@ export const NewSupplierModal: React.FC<NewSupplierModalProps> = ({
           payment_terms: paymentTerms,
           credit_limit: Number(creditLimit),
           lead_time_days: Number(leadTimeDays),
-          bank_account: bankAccount.trim(),
-          bank_name: bankName.trim(),
-          clabe: clabe.trim(),
+          bankAccount: bankAccount.trim(),
+          bankName: bankName.trim(),
+          bankClabe: clabe.trim(),
           currency,
           notes: notes.trim(),
-          rating: 5.0,
-          on_time_delivery_rate: 98,
-          quality_compliance_rate: 99,
           status: 'ACTIVO',
         });
-        if (res.success) onClose();
-        else setError(res.error || 'No se pudo dar de alta el proveedor.');
+        if (res.id) onClose();
       }
     } catch (err: any) {
       setError(err?.message || 'Error inesperado al procesar proveedor.');

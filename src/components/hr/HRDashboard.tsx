@@ -42,7 +42,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({ onNavigateTab }) => {
 
   const kpis = computedHRKPIs || hrKPIs || ({} as any);
 
-  const { can, user } = useAuth();
+  const { can, currentUser: user } = useAuth();
   const canViewConfidential = can('RH', 'EDITAR') || user?.role === 'ADMINISTRADOR' || user?.role === 'DIRECTOR';
 
   const todayStr = new Date().toISOString().slice(0, 10);
@@ -125,7 +125,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({ onNavigateTab }) => {
 
         {/* Costo Laboral / Pre-Nómina */}
         <div
-          onClick={() => onNavigateTab('COMMISSIONS_PAYROLL')}
+          onClick={() => onNavigateTab('COMMISSIONS')}
           className="group cursor-pointer rounded-2xl border border-slate-200 bg-white p-5 shadow-xs transition hover:border-indigo-400 hover:shadow-md"
         >
           <div className="flex items-center justify-between">
@@ -196,7 +196,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({ onNavigateTab }) => {
           <div className="space-y-3">
             {/* Vacaciones pendientes */}
             <div
-              onClick={() => onNavigateTab('VACATIONS_INCIDENCES')}
+              onClick={() => onNavigateTab('VACATIONS')}
               className="cursor-pointer rounded-xl border border-slate-100 bg-slate-50 p-3.5 hover:bg-blue-50/50 hover:border-blue-200 transition"
             >
               <div className="flex items-center justify-between">
@@ -210,14 +210,14 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({ onNavigateTab }) => {
               </div>
               <p className="text-xs text-slate-500 mt-1">
                 {pendingAbsences.length > 0
-                  ? `${pendingAbsences[0].employeeName} solicita ${pendingAbsences[0].daysRequested} días de ${pendingAbsences[0].type.toLowerCase()}`
+                  ? `${pendingAbsences[0].employeeName} solicita ${pendingAbsences[0].totalDays} días de ${pendingAbsences[0].type.toLowerCase()}`
                   : 'No hay solicitudes de vacaciones pendientes.'}
               </p>
             </div>
 
             {/* Evaluaciones por revisar */}
             <div
-              onClick={() => onNavigateTab('PERFORMANCE_GOALS')}
+              onClick={() => onNavigateTab('PERFORMANCE')}
               className="cursor-pointer rounded-xl border border-slate-100 bg-slate-50 p-3.5 hover:bg-indigo-50/50 hover:border-indigo-200 transition"
             >
               <div className="flex items-center justify-between">
@@ -269,7 +269,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({ onNavigateTab }) => {
               <p className="text-xs text-slate-500">Distribución por departamento y estado de competencias</p>
             </div>
             <button
-              onClick={() => onNavigateTab('TRAINING_SKILLS')}
+              onClick={() => onNavigateTab('TRAINING')}
               className="text-xs font-bold text-blue-600 hover:text-blue-700"
             >
               Matriz de Brechas →
@@ -286,7 +286,7 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({ onNavigateTab }) => {
               <div className="mt-3 flex items-center justify-between">
                 <div>
                   <h4 className="text-base font-black text-slate-900">
-                    {kpis?.topSalesCommissionLeader?.name || 'Sofía Villalobos Cruz'}
+                    {kpis?.topSalesCommissionLeader?.name || 'Sin comisiones registradas'}
                   </h4>
                   <p className="text-xs text-slate-500">Ventas Facturadas: ${(kpis?.topSalesCommissionLeader?.salesAmount || 0).toLocaleString('es-MX')}</p>
                 </div>
@@ -308,13 +308,13 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({ onNavigateTab }) => {
               <div className="mt-3 flex items-center justify-between">
                 <div>
                   <h4 className="text-base font-black text-slate-900">
-                    {kpis?.topSkillsGapArea?.skillName || 'Venta Consultiva B2B'}
+                    {kpis?.topSkillsGapArea?.skillName || 'Sin brechas registradas'}
                   </h4>
-                  <p className="text-xs text-slate-500">Área: {kpis?.topSkillsGapArea?.department || 'Comercial & Ventas'}</p>
+                  <p className="text-xs text-slate-500">Área: {kpis?.topSkillsGapArea?.department || 'Sin departamento registrado'}</p>
                 </div>
                 <div className="text-right">
                   <span className="rounded-md bg-amber-100 px-2 py-1 text-xs font-black text-amber-900">
-                    Brecha {kpis?.topSkillsGapArea?.gapScore ?? 1.0} pts
+                    Brecha {kpis?.topSkillsGapArea?.gapScore ?? 0} pts
                   </span>
                   <p className="text-[10px] font-bold text-slate-400 mt-1">Requiere Curso</p>
                 </div>

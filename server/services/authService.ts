@@ -347,7 +347,15 @@ export class AuthService {
     }
 
     const cached = activeSessions.get(token);
-    if (cached) return cached;
+    if (cached) {
+      const current = db.getUsers().find(u => u.id === claims.userId);
+      if (!current || current.status !== 'ACTIVO') {
+        activeSessions.delete(token);
+        return null;
+      }
+      cached.user = sanitizeUser(current);
+      return cached;
+    }
 
     // La firma es valida pero la cache se perdio (reinicio del proceso).
     // Reconstruimos la sesion solo si el usuario sigue existiendo y activo.

@@ -70,7 +70,7 @@ export const IncidentsReturnsTab: React.FC = () => {
   const handleConfirmResolveIncident = (e: React.FormEvent) => {
     e.preventDefault();
     if (!resolvingIncident) return;
-    resolveLogisticsIncident(resolvingIncident.id, resolutionAction, resolutionNotes.trim() || 'Incidencia atendida y resuelta.');
+    resolveLogisticsIncident(resolvingIncident.id, [resolutionAction, resolutionNotes.trim()].filter(Boolean).join(': '));
     setResolvingIncident(null);
   };
 

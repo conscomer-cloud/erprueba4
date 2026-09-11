@@ -45,7 +45,7 @@ import {
 // ==========================================
 
 
-export class CorporateDocumentErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+export class CorporateDocumentErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   props!: ErrorBoundaryProps;
   state: ErrorBoundaryState;
 

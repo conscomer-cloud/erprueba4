@@ -116,14 +116,14 @@ export const SuppliersTab: React.FC<SuppliersTabProps> = ({
                       <div className="flex items-center gap-2">
                         <h3 className="font-bold text-slate-900 text-sm">{sup.name}</h3>
                         <span className="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                          {sup.code}
+                          {sup.supplier_number}
                         </span>
                       </div>
                       <p className="text-xs text-slate-500 mt-0.5">{sup.legal_name}</p>
                     </div>
                     <div className="flex items-center gap-1 text-amber-500 font-black text-xs bg-amber-50 px-2 py-1 rounded-lg border border-amber-100">
                       <Star className="h-3.5 w-3.5 fill-current" />
-                      <span>{((sup.rating ?? 5.0)).toFixed(1)}</span>
+                      <span>{sup.rating?.toFixed(1) ?? 'Sin datos'}</span>
                     </div>
                   </div>
 
@@ -197,19 +197,19 @@ export const SuppliersTab: React.FC<SuppliersTabProps> = ({
                 <div className="rounded-lg bg-white p-2 border border-slate-200">
                   <span className="text-[10px] text-slate-500 uppercase block">Calificación</span>
                   <span className="text-base font-black text-amber-600">
-                    ⭐ {((selectedSupplier.rating ?? 5.0)).toFixed(1)} / 5.0
+                    ⭐ {selectedSupplier.rating?.toFixed(1) ?? 'Sin datos'} / 5.0
                   </span>
                 </div>
                 <div className="rounded-lg bg-white p-2 border border-slate-200">
                   <span className="text-[10px] text-slate-500 uppercase block">A Tiempo (OTD)</span>
                   <span className="text-base font-black text-emerald-600">
-                    {selectedSupplier.on_time_delivery_rate || 98}%
+                    {selectedSupplier.otif_score == null ? 'Sin datos' : selectedSupplier.otif_score + '%'}
                   </span>
                 </div>
                 <div className="rounded-lg bg-white p-2 border border-slate-200">
                   <span className="text-[10px] text-slate-500 uppercase block">Calidad (QC)</span>
                   <span className="text-base font-black text-blue-600">
-                    {selectedSupplier.quality_compliance_rate || 99}%
+                    {selectedSupplier.quality_score == null ? 'Sin datos' : selectedSupplier.quality_score + '%'}
                   </span>
                 </div>
               </div>
@@ -247,7 +247,7 @@ export const SuppliersTab: React.FC<SuppliersTabProps> = ({
                 <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200 font-mono text-[11px] text-slate-700">
                   <div>Banco: <b>{selectedSupplier.bankName}</b></div>
                   <div>Cuenta: <b>{selectedSupplier.bankAccount || 'N/D'}</b></div>
-                  <div>CLABE: <b>{selectedSupplier.clabe || 'N/D'}</b></div>
+                  <div>CLABE: <b>{selectedSupplier.bankClabe || 'N/D'}</b></div>
                 </div>
               </div>
             )}
@@ -269,12 +269,12 @@ export const SuppliersTab: React.FC<SuppliersTabProps> = ({
                             [{prod?.code || 'SKU'}] {prod?.name || 'Producto'}
                           </div>
                           <div className="text-[11px] text-slate-400">
-                            Cód. Proveedor: {sp.supplier_product_code || 'N/A'} • Min: {sp.minimum_order_quantity} {prod?.unit || 'PZA'}
+                            Cód. Proveedor: {sp.supplier_sku || 'N/A'} • Min: {sp.minimum_order_quantity} {prod?.unit || 'PZA'}
                           </div>
                         </div>
                         <div className="text-right">
                           <div className="font-black text-slate-900">
-                            ${(sp?.cost || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })} {sp.currency}
+                            ${(sp?.purchase_price || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })} {sp.currency}
                           </div>
                           <div className="text-[10px] text-slate-400">
                             Lead Time: {sp.lead_time_days || selectedSupplier.lead_time_days}d

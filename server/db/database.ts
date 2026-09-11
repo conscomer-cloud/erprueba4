@@ -4,6 +4,7 @@
  * Transaccional con soporte ACID, Rollback y persistencia en disco.
  */
 
+import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';

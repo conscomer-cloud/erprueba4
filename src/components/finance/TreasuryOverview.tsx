@@ -38,7 +38,7 @@ export const TreasuryOverview: React.FC = () => {
   const [newTxData, setNewTxData] = useState<{
     bankAccountId: string;
     type: 'INGRESO' | 'EGRESO';
-    category: 'COBRO_CLIENTE' | 'PAGO_PROVEEDOR' | 'PAGO_GASTO' | 'NOMINA' | 'TRANSFERENCIA_INTERNA' | 'OTRO';
+    category: 'COBRO_CLIENTE' | 'PAGO_PROVEEDOR' | 'PAGO_GASTO' | 'PAGO_NOMINA' | 'TRANSFERENCIA_INTERNA' | 'OTRO';
     amount: number;
     reference: string;
     concept: string;
@@ -117,7 +117,7 @@ export const TreasuryOverview: React.FC = () => {
             </div>
           </div>
           <div className="text-2xl font-bold text-emerald-700">
-            +${(financialKPIs?.ingresosMes || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+            +${(financialKPIs?.totalInflowsPeriod || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
           </div>
           <div className="text-xs text-slate-500 mt-2">
             Cobranza efectiva y depósitos
@@ -133,7 +133,7 @@ export const TreasuryOverview: React.FC = () => {
             </div>
           </div>
           <div className="text-2xl font-bold text-rose-700">
-            -${(financialKPIs?.egresosMes || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+            -${(financialKPIs?.totalOutflowsPeriod || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
           </div>
           <div className="text-xs text-slate-500 mt-2">
             Proveedores, nómina y gastos
@@ -148,11 +148,11 @@ export const TreasuryOverview: React.FC = () => {
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
-          <div className={`text-2xl font-bold ${(financialKPIs?.flujoNetoMes || 0) >= 0 ? 'text-indigo-900' : 'text-rose-900'}`}>
-            ${(financialKPIs?.flujoNetoMes || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+          <div className={`text-2xl font-bold ${(financialKPIs?.netCashFlowPeriod || 0) >= 0 ? 'text-indigo-900' : 'text-rose-900'}`}>
+            ${(financialKPIs?.netCashFlowPeriod || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
           </div>
           <div className="text-xs text-indigo-600 font-medium mt-2">
-            Runway estimado: {financialKPIs?.runwayDays || 90} días de operación
+            Runway: sin estimación disponible
           </div>
         </div>
       </div>
@@ -179,10 +179,10 @@ export const TreasuryOverview: React.FC = () => {
                 </div>
                 <span
                   className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                    acc.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                    acc.status === 'ACTIVA' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
                   }`}
                 >
-                  {acc.isActive ? 'ACTIVA' : 'INACTIVA'}
+                  {acc.status === 'ACTIVA' ? 'ACTIVA' : 'INACTIVA'}
                 </span>
               </div>
 
@@ -351,7 +351,7 @@ export const TreasuryOverview: React.FC = () => {
                     <option value="COBRO_CLIENTE">Cobro de Cliente</option>
                     <option value="PAGO_PROVEEDOR">Pago a Proveedor</option>
                     <option value="PAGO_GASTO">Pago de Gasto Operativo</option>
-                    <option value="NOMINA">Dispersión de Nómina</option>
+                    <option value="PAGO_NOMINA">Dispersión de Nómina</option>
                     <option value="TRANSFERENCIA_INTERNA">Traspaso entre Cuentas</option>
                     <option value="OTRO">Otro Concepto</option>
                   </select>

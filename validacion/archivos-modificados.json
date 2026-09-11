@@ -1,0 +1,142 @@
+{
+  "initialTypeScriptErrors": 304,
+  "modified": [
+    "ERRORES-PENDIENTES.md",
+    "package-lock.json",
+    "package.json",
+    "scripts/test_observation_16_hotfix.ts",
+    "server/db/database.ts",
+    "server/services/authService.ts",
+    "server/services/eventBus.ts",
+    "server.ts",
+    "src/components/automation/AutomationObservabilityView.tsx",
+    "src/components/automation/BusinessRulesEngineView.tsx",
+    "src/components/automation/ChaosTestingSuiteView.tsx",
+    "src/components/automation/EventBusMonitorView.tsx",
+    "src/components/automation/NotificationEscalationCenterView.tsx",
+    "src/components/automation/PreconfiguredAutomationsView.tsx",
+    "src/components/automation/RpaBotsManagerView.tsx",
+    "src/components/automation/WorkflowBpmStudioView.tsx",
+    "src/components/common/AppErrorBoundary.tsx",
+    "src/components/common/MultiUserLiveSimulatorModal.tsx",
+    "src/components/config/UserManagementView.tsx",
+    "src/components/crm/ActivityModal.tsx",
+    "src/components/crm/Client360View.tsx",
+    "src/components/crm/CommercialRLSCertificationModal.tsx",
+    "src/components/crm/CRMModule.tsx",
+    "src/components/crm/FollowUpModal.tsx",
+    "src/components/crm/LeadModal.tsx",
+    "src/components/crm/OpportunityModal.tsx",
+    "src/components/crm/OrdersModule.tsx",
+    "src/components/crm/QuotesModule.tsx",
+    "src/components/crm/SalesForecast.tsx",
+    "src/components/crm/SalesGoalsAndCommissions.tsx",
+    "src/components/executive/DataIntegrityReportViewer.tsx",
+    "src/components/executive/MasterCertificationDashboard.tsx",
+    "src/components/executive/MasterE2ETestModal.tsx",
+    "src/components/finance/AIFinancialAdvisorView.tsx",
+    "src/components/finance/BudgetAndExpenseControl.tsx",
+    "src/components/finance/CustomerStatementModal.tsx",
+    "src/components/finance/CXCManagement.tsx",
+    "src/components/finance/CXPManagement.tsx",
+    "src/components/finance/FinancialDashboard.tsx",
+    "src/components/finance/FinancialScenarioSimulator.tsx",
+    "src/components/finance/ProfitabilityAnalysisView.tsx",
+    "src/components/finance/TreasuryOverview.tsx",
+    "src/components/governance/AIRiskAdvisorView.tsx",
+    "src/components/governance/AnomalyDetectionView.tsx",
+    "src/components/governance/ComplianceCenterView.tsx",
+    "src/components/governance/CorporateDocumentManagerView.tsx",
+    "src/components/governance/EnterpriseAlertEngineView.tsx",
+    "src/components/governance/ExecutiveAuditCenterView.tsx",
+    "src/components/governance/GovernanceExecutiveActionView.tsx",
+    "src/components/governance/Phase13CertificationView.tsx",
+    "src/components/hr/AIHRAdvisor.tsx",
+    "src/components/hr/AttendanceTracker.tsx",
+    "src/components/hr/CommissionsAndPayroll.tsx",
+    "src/components/hr/EmployeeDirectory.tsx",
+    "src/components/hr/EmployeeDocuments.tsx",
+    "src/components/hr/HRDashboard.tsx",
+    "src/components/hr/HRModule.tsx",
+    "src/components/hr/PerformanceAndGoals.tsx",
+    "src/components/hr/TrainingAndSkills.tsx",
+    "src/components/hr/VacationsAndAbsences.tsx",
+    "src/components/logistics/DepartureChecklistModal.tsx",
+    "src/components/logistics/DriverDeliveryModal.tsx",
+    "src/components/logistics/EmbarquesTable.tsx",
+    "src/components/logistics/FleetManagementTab.tsx",
+    "src/components/logistics/IncidentsReturnsTab.tsx",
+    "src/components/logistics/Observation14Modal.tsx",
+    "src/components/marketing/AIMarketingAdvisor.tsx",
+    "src/components/marketing/CampaignDetailModal.tsx",
+    "src/components/marketing/E2EFlowTestModal.tsx",
+    "src/components/marketing/SegmentsAndAudience.tsx",
+    "src/components/modules/ModulePlaceholder.tsx",
+    "src/components/predictive/StockCapacityAlertCenter.tsx",
+    "src/components/purchases/NewGoodsReceiptModal.tsx",
+    "src/components/purchases/NewPurchaseOrderModal.tsx",
+    "src/components/purchases/NewPurchaseRequestModal.tsx",
+    "src/components/purchases/NewSupplierModal.tsx",
+    "src/components/purchases/NewSupplierReturnModal.tsx",
+    "src/components/purchases/PurchaseOrdersTab.tsx",
+    "src/components/purchases/SuppliersTab.tsx",
+    "src/components/service/CustomerServiceCenter.tsx",
+    "src/components/strategy/StrategicPlanningModule.tsx",
+    "src/components/warehouse/CatalogImportExportModal.tsx",
+    "src/components/warehouse/PickingSheetModal.tsx",
+    "src/components/warehouse/ReorderAlertPanel.tsx",
+    "src/context/ERPContext.tsx",
+    "src/context/FinanceContextMethods.ts",
+    "src/context/HRContextMethods.ts",
+    "src/context/MarketingContextMethods.ts",
+    "src/context/PurchasesContextMethods.ts",
+    "src/services/commercialRLSService.ts",
+    "src/services/executiveIntelligenceService.ts",
+    "src/services/hrService.ts",
+    "src/services/inventoryBackupService.ts",
+    "src/types/erp.ts"
+  ],
+  "added": [
+    "src/tests/hotfixRegression.test.ts",
+    "scripts/verify-hotfix.mjs",
+    "INFORME-CORRECCIONES.md"
+  ],
+  "originalData": [
+    {
+      "file": "src/data/defaultPermissions.ts",
+      "unchanged": true
+    },
+    {
+      "file": "src/data/initialCRMData.ts",
+      "unchanged": true
+    },
+    {
+      "file": "src/data/initialData.ts",
+      "unchanged": true
+    },
+    {
+      "file": "src/data/initialFinanceData.ts",
+      "unchanged": true
+    },
+    {
+      "file": "src/data/initialHRData.ts",
+      "unchanged": true
+    },
+    {
+      "file": "src/data/initialLogisticsData.ts",
+      "unchanged": true
+    },
+    {
+      "file": "src/data/initialMarketingData.ts",
+      "unchanged": true
+    },
+    {
+      "file": "src/data/initialPurchasesData.ts",
+      "unchanged": true
+    },
+    {
+      "file": "src/data/initialWarehouseData.ts",
+      "unchanged": true
+    }
+  ]
+}

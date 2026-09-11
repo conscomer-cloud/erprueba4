@@ -18,17 +18,22 @@ import { useERP } from '../../context/ERPContext';
 import { useAuth } from '../../context/AuthContext';
 import { AttendanceRecord, AttendanceStatus } from '../../types/erp';
 
+const overtimeMinutes = (record: AttendanceRecord): number => {
+  if (!record.checkOut || !record.scheduledCheckOut) return 0;
+  const minutes = (value: string) => { const [h, m] = value.split(':').map(Number); return h * 60 + m; };
+  return Math.max(0, minutes(record.checkOut) - minutes(record.scheduledCheckOut));
+};
 export const AttendanceTracker: React.FC = () => {
   const {
     attendanceRecords,
     employees,
     shifts,
-    recordAttendanceCheckIn,
-    recordAttendanceCheckOut,
+    registerCheckIn,
+    registerCheckOut,
     justifyAbsence,
   } = useERP();
 
-  const { can, user } = useAuth();
+  const { can, currentUser: user } = useAuth();
   const canManageHR = can('RH', 'EDITAR') || can('RH', 'CREAR') || user?.role === 'ADMINISTRADOR';
 
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
@@ -43,7 +48,6 @@ export const AttendanceTracker: React.FC = () => {
   const [punchTime, setPunchTime] = useState(
     new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false })
   );
-  const [punchMethod, setPunchMethod] = useState<'BIOMETRIC' | 'PIN' | 'QR' | 'MANUAL'>('BIOMETRIC');
 
   // Justification modal
   const [isJustifyModalOpen, setIsJustifyModalOpen] = useState(false);
@@ -68,9 +72,9 @@ export const AttendanceTracker: React.FC = () => {
     if (!selectedEmployeeId) return;
 
     if (punchType === 'CHECK_IN') {
-      recordAttendanceCheckIn(selectedEmployeeId, selectedDate, punchTime, punchMethod);
+      registerCheckIn(selectedEmployeeId, 'MANUAL_SUPERVISOR', selectedDate, punchTime);
     } else {
-      recordAttendanceCheckOut(selectedEmployeeId, selectedDate, punchTime);
+      registerCheckOut(selectedEmployeeId, selectedDate, punchTime);
     }
 
     setIsPunchModalOpen(false);
@@ -90,7 +94,7 @@ export const AttendanceTracker: React.FC = () => {
   const presentCount = dayRecords.filter((r) => r.status === 'PRESENT' || r.status === 'REMOTE').length;
   const lateCount = dayRecords.filter((r) => r.status === 'LATE').length;
   const absentCount = dayRecords.filter((r) => r.status === 'ABSENT' || r.status === 'JUSTIFIED').length;
-  const punctualityRate = dayRecords.length > 0 ? ((presentCount / dayRecords.length) * 100).toFixed(0) : '95';
+  const punctualityRate = dayRecords.length > 0 ? ((presentCount / dayRecords.length) * 100).toFixed(0) : '—';
 
   return (
     <div className="space-y-6">
@@ -99,7 +103,7 @@ export const AttendanceTracker: React.FC = () => {
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Puntuales Hoy</span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-emerald-600">{presentCount || 18}</span>
+            <span className="text-2xl font-black text-emerald-600">{presentCount}</span>
             <span className="text-xs text-slate-500">colaboradores</span>
           </div>
         </div>
@@ -107,7 +111,7 @@ export const AttendanceTracker: React.FC = () => {
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Retardos</span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-amber-600">{lateCount || 1}</span>
+            <span className="text-2xl font-black text-amber-600">{lateCount}</span>
             <span className="text-xs text-slate-500">con incidencia</span>
           </div>
         </div>
@@ -115,7 +119,7 @@ export const AttendanceTracker: React.FC = () => {
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Ausencias / Faltas</span>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-red-600">{absentCount || 1}</span>
+            <span className="text-2xl font-black text-red-600">{absentCount}</span>
             <span className="text-xs text-slate-500">registradas</span>
           </div>
         </div>
@@ -268,9 +272,9 @@ export const AttendanceTracker: React.FC = () => {
                     </td>
 
                     <td className="px-4 py-3">
-                      {rec.lateMinutes && rec.lateMinutes > 0 ? (
+                      {rec.delayMinutes && rec.delayMinutes > 0 ? (
                         <span className="rounded bg-amber-100 px-2 py-0.5 font-bold text-amber-800 text-[11px]">
-                          +{rec.lateMinutes} min
+                          +{rec.delayMinutes} min
                         </span>
                       ) : (
                         <span className="text-slate-400">—</span>
@@ -278,9 +282,9 @@ export const AttendanceTracker: React.FC = () => {
                     </td>
 
                     <td className="px-4 py-3">
-                      {rec.overtimeMinutes && rec.overtimeMinutes > 0 ? (
+                      {overtimeMinutes(rec) && overtimeMinutes(rec) > 0 ? (
                         <span className="rounded bg-indigo-100 px-2 py-0.5 font-bold text-indigo-800 text-[11px]">
-                          +{(rec.overtimeMinutes / 60).toFixed(1)} hrs
+                          +{(overtimeMinutes(rec) / 60).toFixed(1)} hrs
                         </span>
                       ) : (
                         <span className="text-slate-400">—</span>
@@ -388,16 +392,7 @@ export const AttendanceTracker: React.FC = () => {
 
               <div>
                 <label className="block font-bold text-slate-700 mb-1">Dispositivo de Registro</label>
-                <select
-                  value={punchMethod}
-                  onChange={(e) => setPunchMethod(e.target.value as any)}
-                  className="w-full rounded-xl border border-slate-200 p-2.5 focus:border-blue-500 focus:outline-none"
-                >
-                  <option value="BIOMETRIC">Lector Huella Biométrico (ZK-01 Almacén)</option>
-                  <option value="QR">Código QR Credencial Móvil</option>
-                  <option value="PIN">Teclado PIN Entrada Principal</option>
-                  <option value="MANUAL">Ajuste Manual por RH</option>
-                </select>
+                <p className="w-full rounded-xl border border-slate-200 p-2.5">Registro manual por RH</p>
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">

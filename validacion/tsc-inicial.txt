@@ -1,0 +1,402 @@
+src/App.tsx(190,13): error TS2322: Type 'Dispatch<SetStateAction<ERPModule>>' is not assignable to type '(module: string) => void'.
+  Types of parameters 'value' and 'module' are incompatible.
+    Type 'string' is not assignable to type 'SetStateAction<ERPModule>'.
+src/App.tsx(201,13): error TS2322: Type 'Dispatch<SetStateAction<ERPModule>>' is not assignable to type '(module: string) => void'.
+  Types of parameters 'value' and 'module' are incompatible.
+    Type 'string' is not assignable to type 'SetStateAction<ERPModule>'.
+src/App.tsx(281,12): error TS2786: 'AppErrorBoundary' cannot be used as a JSX component.
+  Its type 'typeof AppErrorBoundary' is not a valid JSX element type.
+    Type 'typeof AppErrorBoundary' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+      Type 'AppErrorBoundary' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate
+src/components/automation/AutomationObservabilityView.tsx(57,38): error TS2339: Property 'engineUptimePct' does not exist on type 'AutomationObservabilityMetrics'.
+src/components/automation/AutomationObservabilityView.tsx(111,74): error TS2339: Property 'eventsPerSecond' does not exist on type 'AutomationObservabilityMetrics'.
+src/components/automation/AutomationObservabilityView.tsx(164,27): error TS2339: Property 'errorMessage' does not exist on type 'DeadLetterQueueItem'.
+src/components/automation/AutomationObservabilityView.tsx(169,42): error TS2339: Property 'failedAt' does not exist on type 'DeadLetterQueueItem'.
+src/components/automation/AutomationObservabilityView.tsx(183,103): error TS2339: Property 'masterTransactionId' does not exist on type 'DeadLetterQueueItem'.
+src/components/automation/AutomationObservabilityView.tsx(203,76): error TS2339: Property 'errorMessage' does not exist on type 'DeadLetterQueueItem'.
+src/components/automation/AutomationObservabilityView.tsx(209,49): error TS2339: Property 'payloadSnapshot' does not exist on type 'DeadLetterQueueItem'.
+src/components/automation/BusinessRulesEngineView.tsx(214,30): error TS2339: Property 'groupId' does not exist on type 'RuleConditionGroup'.
+src/components/automation/ChaosTestingSuiteView.tsx(46,49): error TS2339: Property 'status' does not exist on type 'ChaosTestScenario'.
+src/components/automation/ChaosTestingSuiteView.tsx(106,27): error TS2339: Property 'name' does not exist on type 'ChaosTestScenario'.
+src/components/automation/ChaosTestingSuiteView.tsx(110,25): error TS2339: Property 'description' does not exist on type 'ChaosTestScenario'.
+src/components/automation/ChaosTestingSuiteView.tsx(113,34): error TS2339: Property 'resilienceMechanism' does not exist on type 'ChaosTestScenario'.
+src/components/automation/ChaosTestingSuiteView.tsx(120,25): error TS2339: Property 'status' does not exist on type 'ChaosTestScenario'.
+src/components/automation/ChaosTestingSuiteView.tsx(157,77): error TS2339: Property 'description' does not exist on type 'ChaosTestScenario'.
+src/components/automation/ChaosTestingSuiteView.tsx(162,76): error TS2339: Property 'resilienceMechanism' does not exist on type 'ChaosTestScenario'.
+src/components/automation/ChaosTestingSuiteView.tsx(167,95): error TS2339: Property 'evidence' does not exist on type 'ChaosTestScenario'.
+src/components/automation/EventBusMonitorView.tsx(62,9): error TS2322: Type 'string' is not assignable to type 'EnterpriseModule'.
+src/components/automation/NotificationEscalationCenterView.tsx(216,54): error TS2339: Property 'escalatedToRole' does not exist on type 'EscalationIncident'.
+src/components/automation/NotificationEscalationCenterView.tsx(220,41): error TS2339: Property 'elapsedHours' does not exist on type 'EscalationIncident'.
+src/components/automation/NotificationEscalationCenterView.tsx(224,66): error TS2339: Property 'reason' does not exist on type 'EscalationIncident'.
+src/components/automation/NotificationEscalationCenterView.tsx(229,26): error TS2339: Property 'chainOfNotifiedRoles' does not exist on type 'EscalationIncident'.
+src/components/automation/PreconfiguredAutomationsView.tsx(168,70): error TS2339: Property 'targetWorkflow' does not exist on type 'PreconfiguredAutomation'.
+src/components/automation/PreconfiguredAutomationsView.tsx(220,83): error TS2339: Property 'targetWorkflow' does not exist on type 'PreconfiguredAutomation'.
+src/components/automation/PreconfiguredAutomationsView.tsx(224,83): error TS2339: Property 'actionType' does not exist on type 'PreconfiguredAutomation'.
+src/components/automation/PreconfiguredAutomationsView.tsx(228,83): error TS2339: Property 'targetRole' does not exist on type 'PreconfiguredAutomation'.
+src/components/automation/PreconfiguredAutomationsView.tsx(232,35): error TS2339: Property 'requiresHumanValidation' does not exist on type 'PreconfiguredAutomation'.
+src/components/automation/RpaBotsManagerView.tsx(95,49): error TS2339: Property 'targetModule' does not exist on type 'RpaRobotTask'.
+src/components/automation/RpaBotsManagerView.tsx(131,34): error TS2339: Property 'guardrailPolicy' does not exist on type 'RpaRobotTask'.
+src/components/automation/WorkflowBpmStudioView.tsx(60,33): error TS2339: Property 'module' does not exist on type 'BpmWorkflowDefinition'.
+src/components/automation/WorkflowBpmStudioView.tsx(118,44): error TS2339: Property 'code' does not exist on type 'BpmWorkflowDefinition'.
+src/components/automation/WorkflowBpmStudioView.tsx(121,25): error TS2339: Property 'description' does not exist on type 'BpmWorkflowDefinition'.
+src/components/automation/WorkflowBpmStudioView.tsx(133,21): error TS2339: Property 'code' does not exist on type 'BpmWorkflowDefinition'.
+src/components/automation/WorkflowBpmStudioView.tsx(263,37): error TS2339: Property 'slaMinutes' does not exist on type 'WorkflowStep'.
+src/components/automation/WorkflowBpmStudioView.tsx(323,37): error TS2339: Property 'slaMinutes' does not exist on type 'WorkflowStep'.
+src/components/automation/WorkflowBpmStudioView.tsx(334,33): error TS2339: Property 'conditionExpression' does not exist on type 'WorkflowStep'.
+src/components/automation/WorkflowBpmStudioView.tsx(340,39): error TS2339: Property 'conditionExpression' does not exist on type 'WorkflowStep'.
+src/components/automation/WorkflowBpmStudioView.tsx(461,62): error TS2322: Type 'WorkflowRollbackStrategy' is not assignable to type 'ReactNode'.
+src/components/common/MultiUserLiveSimulatorModal.tsx(599,29): error TS2322: Type 'string | { warehouseId: string; warehouseName: string; locationCode: string; nave: string; rack: string; pasillo: string; nivel: string; }' is not assignable to type 'ReactNode'.
+  Type '{ warehouseId: string; warehouseName: string; locationCode: string; nave: string; rack: string; pasillo: string; nivel: string; }' is not assignable to type 'ReactNode'.
+src/components/config/UserManagementView.tsx(279,11): error TS2322: Type '"EXITO" | "ALERTA"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+  Type '"ALERTA"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+src/components/crm/ActivityModal.tsx(44,17): error TS2345: Argument of type '{ customerId: string; customerName: string; opportunityId: string; opportunityTitle: string; salespersonId: string; salespersonName: string; type: ActivityType; result: string; nextAction: string; date: string; }' is not assignable to parameter of type 'Omit<CRMActivity, "id" | "createdAt">'.
+  Type '{ customerId: string; customerName: string; opportunityId: string; opportunityTitle: string; salespersonId: string; salespersonName: string; type: ActivityType; result: string; nextAction: string; date: string; }' is missing the following properties from type 'Omit<CRMActivity, "id" | "createdAt">': userId, userName, time
+src/components/crm/CommercialRLSCertificationModal.tsx(32,11): error TS2339: Property 'user' does not exist on type 'AuthContextType'.
+src/components/crm/ConvertLeadModal.tsx(86,35): error TS2339: Property 'isCrossVendor' does not exist on type 'Customer'.
+src/components/crm/ConvertLeadModal.tsx(90,34): error TS2339: Property 'isCrossVendor' does not exist on type 'Customer'.
+src/components/crm/FollowUpModal.tsx(59,7): error TS2322: Type '"WHATSAPP" | "COTIZACION" | "LLAMADA" | "CORREO" | "REUNION" | "VISITA"' is not assignable to type 'ActivityType'.
+  Type '"COTIZACION"' is not assignable to type 'ActivityType'.
+src/components/crm/LeadModal.tsx(87,17): error TS2345: Argument of type '{ salespersonId: string; salespersonName: string; salesExecutiveId: any; name: string; company: string; phone: string; email: string; city: string; state: string; source: LeadSource; productInterest: string; estimatedValue: number; status: LeadStatus; notes: string; }' is not assignable to parameter of type 'Omit<Lead, "id" | "createdAt" | "updatedAt">'.
+  Property 'creationDate' is missing in type '{ salespersonId: string; salespersonName: string; salesExecutiveId: any; name: string; company: string; phone: string; email: string; city: string; state: string; source: LeadSource; productInterest: string; estimatedValue: number; status: LeadStatus; notes: string; }' but required in type 'Omit<Lead, "id" | "createdAt" | "updatedAt">'.
+src/components/crm/OpportunityModal.tsx(317,73): error TS2322: Type '{ className: string; title: string; }' is not assignable to type 'IntrinsicAttributes & Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>'.
+src/components/crm/OpportunityModal.tsx(339,61): error TS2322: Type 'string' is not assignable to type 'LeadSource'.
+src/components/crm/OrdersModule.tsx(82,81): error TS2339: Property 'warehouses' does not exist on type 'CompanyConfig'.
+src/components/crm/OrdersModule.tsx(1009,37): error TS2339: Property 'warehouses' does not exist on type 'CompanyConfig'.
+src/components/crm/OrdersModule.tsx(1091,81): error TS2339: Property 'reserved' does not exist on type 'Product'.
+src/components/crm/OrdersModule.tsx(1102,97): error TS2339: Property 'reserved' does not exist on type 'Product'.
+src/components/crm/QuotesModule.tsx(745,27): error TS2554: Expected 2-3 arguments, but got 1.
+src/components/crm/QuotesModule.tsx(2355,45): error TS2551: Property 'financialRejectionReason' does not exist on type 'Quote'. Did you mean 'financialRejectedAt'?
+src/components/crm/QuotesModule.tsx(2598,9): error TS2322: Type '{ isOpen: boolean; onClose: () => void; onSelectProduct: (product: Product, quantity: number) => void; products: Product[]; isManagerOrAdmin: boolean; }' is not assignable to type 'IntrinsicAttributes & QuoteProductSelectorModalProps'.
+  Property 'isManagerOrAdmin' does not exist on type 'IntrinsicAttributes & QuoteProductSelectorModalProps'.
+src/components/crm/SalesForecast.tsx(46,50): error TS2339: Property 'month' does not exist on type 'SalesGoal'.
+src/components/crm/SalesGoalsAndCommissions.tsx(46,39): error TS2559: Type 'number' has no properties in common with type 'Partial<SalesGoal>'.
+src/components/crm/SalesGoalsAndCommissions.tsx(278,25): error TS2339: Property 'commissionPct' does not exist on type 'CommissionRule'.
+src/components/crm/SalesGoalsAndCommissions.tsx(282,48): error TS2339: Property 'minSales' does not exist on type 'CommissionRule'.
+src/components/crm/SalesGoalsAndCommissions.tsx(283,23): error TS2339: Property 'maxSales' does not exist on type 'CommissionRule'.
+src/components/crm/SalesGoalsAndCommissions.tsx(283,51): error TS2339: Property 'maxSales' does not exist on type 'CommissionRule'.
+src/components/crm/SalesGoalsAndCommissions.tsx(285,21): error TS2339: Property 'bonusPct' does not exist on type 'CommissionRule'.
+src/components/crm/SalesGoalsAndCommissions.tsx(288,27): error TS2339: Property 'bonusPct' does not exist on type 'CommissionRule'.
+src/components/executive/DataIntegrityReportViewer.tsx(42,7): error TS2322: Type 'DeliveryEvidence[]' is not assignable to type 'DeliveryItem[]'.
+  Type 'DeliveryEvidence' is missing the following properties from type 'DeliveryItem': orderItemId, productId, productCode, productName, and 5 more.
+src/components/executive/DataIntegrityReportViewer.tsx(45,7): error TS2740: Type 'Budget[]' is missing the following properties from type 'Budget': id, code, year, period, and 10 more.
+src/components/executive/MasterCertificationDashboard.tsx(89,9): error TS2322: Type 'DeliveryEvidence[]' is not assignable to type 'DeliveryItem[]'.
+  Type 'DeliveryEvidence' is missing the following properties from type 'DeliveryItem': orderItemId, productId, productCode, productName, and 5 more.
+src/components/executive/MasterCertificationDashboard.tsx(92,9): error TS2740: Type 'Budget[]' is missing the following properties from type 'Budget': id, code, year, period, and 10 more.
+src/components/executive/MasterE2ETestModal.tsx(95,5): error TS2339: Property 'arInvoices' does not exist on type 'ERPContextType'.
+src/components/executive/MasterE2ETestModal.tsx(96,5): error TS2339: Property 'apBills' does not exist on type 'ERPContextType'.
+src/components/executive/MasterE2ETestModal.tsx(97,5): error TS2339: Property 'operatingExpenses' does not exist on type 'ERPContextType'.
+src/components/executive/MasterE2ETestModal.tsx(98,5): error TS2339: Property 'payrollRecords' does not exist on type 'ERPContextType'.
+src/components/executive/MasterE2ETestModal.tsx(99,5): error TS2339: Property 'companyBudget' does not exist on type 'ERPContextType'.
+src/components/executive/MasterE2ETestModal.tsx(532,11): error TS2322: Type '"GOOGLE_ADS"' is not assignable to type 'LeadSource'.
+src/components/executive/MasterE2ETestModal.tsx(567,11): error TS2322: Type '{ productId: string; productCode: any; productName: string; quantityOrdered: number; unitPrice: number; subtotal: number; }[]' is not assignable to type 'QuoteItem[] & any[]'.
+  Type '{ productId: string; productCode: any; productName: string; quantityOrdered: number; unitPrice: number; subtotal: number; }[]' is not assignable to type 'QuoteItem[]'.
+    Property 'quantity' is missing in type '{ productId: string; productCode: any; productName: string; quantityOrdered: number; unitPrice: number; subtotal: number; }' but required in type 'QuoteItem'.
+src/components/executive/MasterE2ETestModal.tsx(657,11): error TS2353: Object literal may only specify known properties, and 'customerRfc' does not exist in type 'Omit<AccountsReceivableInvoice, "id" | "status" | "createdAt" | "folio" | "balance" | "createdBy" | "paidAmount" | "overdueDays">'.
+src/components/finance/AIFinancialAdvisorView.tsx(32,5): error TS2339: Property 'askFinancialAI' does not exist on type 'ERPContextType'.
+src/components/finance/AIFinancialAdvisorView.tsx(33,5): error TS2339: Property 'closeAccountingPeriod' does not exist on type 'ERPContextType'.
+src/components/finance/AIFinancialAdvisorView.tsx(34,5): error TS2339: Property 'reopenAccountingPeriod' does not exist on type 'ERPContextType'.
+src/components/finance/AIFinancialAdvisorView.tsx(223,33): error TS2339: Property 'totalIncome' does not exist on type 'FinancialPeriodClosing'.
+src/components/finance/AIFinancialAdvisorView.tsx(226,33): error TS2339: Property 'totalExpense' does not exist on type 'FinancialPeriodClosing'.
+src/components/finance/AIFinancialAdvisorView.tsx(229,33): error TS2339: Property 'netResult' does not exist on type 'FinancialPeriodClosing'.
+src/components/finance/AIFinancialAdvisorView.tsx(241,24): error TS2339: Property 'isLocked' does not exist on type 'FinancialPeriodClosing'.
+src/components/finance/BudgetAndExpenseControl.tsx(235,81): error TS2339: Property 'departmentName' does not exist on type 'Budget'.
+src/components/finance/BudgetAndExpenseControl.tsx(236,83): error TS2339: Property 'costCenterName' does not exist on type 'Budget'.
+src/components/finance/BudgetAndExpenseControl.tsx(334,28): error TS2339: Property 'isTaxDeductible' does not exist on type 'Expense'.
+src/components/finance/BudgetAndExpenseControl.tsx(338,69): error TS2339: Property 'paymentMethod' does not exist on type 'Expense'.
+src/components/finance/BudgetAndExpenseControl.tsx(399,67): error TS2353: Object literal may only specify known properties, and 'description' does not exist in type 'SetStateAction<{ costCenterId: string; accountId: string; title: string; category: ExpenseCategory; supplierOrPayee: string; payeeRfc: string; receiptFolio: string; subtotal: number; ... 4 more ...; notes: string; }>'.
+src/components/finance/BudgetAndExpenseControl.tsx(446,69): error TS2353: Object literal may only specify known properties, and 'vendor' does not exist in type 'SetStateAction<{ costCenterId: string; accountId: string; title: string; category: ExpenseCategory; supplierOrPayee: string; payeeRfc: string; receiptFolio: string; subtotal: number; ... 4 more ...; notes: string; }>'.
+src/components/finance/BudgetAndExpenseControl.tsx(457,69): error TS2353: Object literal may only specify known properties, and 'invoiceNumber' does not exist in type 'SetStateAction<{ costCenterId: string; accountId: string; title: string; category: ExpenseCategory; supplierOrPayee: string; payeeRfc: string; receiptFolio: string; subtotal: number; ... 4 more ...; notes: string; }>'.
+src/components/finance/CustomerStatementModal.tsx(19,11): error TS2339: Property 'customer' does not exist on type 'CustomerFinancialStatement'.
+src/components/finance/CustomerStatementModal.tsx(19,21): error TS2339: Property 'invoices' does not exist on type 'CustomerFinancialStatement'.
+src/components/finance/CustomerStatementModal.tsx(19,31): error TS2339: Property 'payments' does not exist on type 'CustomerFinancialStatement'.
+src/components/finance/CustomerStatementModal.tsx(19,41): error TS2339: Property 'creditNotes' does not exist on type 'CustomerFinancialStatement'.
+src/components/finance/CustomerStatementModal.tsx(19,54): error TS2339: Property 'aging' does not exist on type 'CustomerFinancialStatement'.
+src/components/finance/CustomerStatementModal.tsx(19,61): error TS2339: Property 'totalDebt' does not exist on type 'CustomerFinancialStatement'.
+src/components/finance/CustomerStatementModal.tsx(19,72): error TS2339: Property 'overdueDebt' does not exist on type 'CustomerFinancialStatement'.
+src/components/finance/CustomerStatementModal.tsx(38,96): error TS2339: Property 'generatedAt' does not exist on type 'CustomerFinancialStatement'.
+src/components/finance/CXCManagement.tsx(71,12): error TS2339: Property 'customerRfc' does not exist on type 'AccountsReceivableInvoice'.
+src/components/finance/CXCManagement.tsx(126,27): error TS2345: Argument of type '{ customerId: string; customerName: string; type: "WHATSAPP" | "LLAMADA" | "CORREO" | "PROMESA_PAGO" | "VISITA" | "NOTA_SEGUIMIENTO"; outcome: string; notes: string; promiseDate: string; promiseAmount: number; }' is not assignable to parameter of type 'Omit<CollectionActivity, "id" | "createdAt" | "recordedBy">'.
+  Type '{ customerId: string; customerName: string; type: "WHATSAPP" | "LLAMADA" | "CORREO" | "PROMESA_PAGO" | "VISITA" | "NOTA_SEGUIMIENTO"; outcome: string; notes: string; promiseDate: string; promiseAmount: number; }' is missing the following properties from type 'Omit<CollectionActivity, "id" | "createdAt" | "recordedBy">': status, date
+src/components/finance/CXCManagement.tsx(262,91): error TS2339: Property 'customerRfc' does not exist on type 'AccountsReceivableInvoice'.
+src/components/finance/CXCManagement.tsx(490,38): error TS2339: Property 'semaphore' does not exist on type 'CreditEvaluation'.
+src/components/finance/CXCManagement.tsx(492,42): error TS2339: Property 'semaphore' does not exist on type 'CreditEvaluation'.
+src/components/finance/CXCManagement.tsx(497,37): error TS2339: Property 'semaphore' does not exist on type 'CreditEvaluation'.
+src/components/finance/CXCManagement.tsx(497,84): error TS2339: Property 'semaphore' does not exist on type 'CreditEvaluation'.
+src/components/finance/CXCManagement.tsx(502,39): error TS2339: Property 'semaphore' does not exist on type 'CreditEvaluation'.
+src/components/finance/CXCManagement.tsx(503,39): error TS2339: Property 'semaphore' does not exist on type 'CreditEvaluation'.
+src/components/finance/CXCManagement.tsx(504,39): error TS2339: Property 'semaphore' does not exist on type 'CreditEvaluation'.
+src/components/finance/CXCManagement.tsx(506,74): error TS2339: Property 'recommendation' does not exist on type 'CreditEvaluation'.
+src/components/finance/CXPManagement.tsx(281,96): error TS2339: Property 'weekNumber' does not exist on type 'PaymentScheduleItem'.
+src/components/finance/CXPManagement.tsx(283,82): error TS2339: Property 'payeeName' does not exist on type 'PaymentScheduleItem'.
+src/components/finance/CXPManagement.tsx(284,70): error TS2339: Property 'concept' does not exist on type 'PaymentScheduleItem'.
+src/components/finance/FinancialDashboard.tsx(38,5): error TS2339: Property 'resetFinanceData' does not exist on type 'ERPContextType'.
+src/components/finance/FinancialDashboard.tsx(39,5): error TS2339: Property 'currentUser' does not exist on type 'ERPContextType'.
+src/components/finance/FinancialScenarioSimulator.tsx(880,6): error TS2786: 'SimulatorErrorBoundary' cannot be used as a JSX component.
+  Its type 'typeof SimulatorErrorBoundary' is not a valid JSX element type.
+    Types of construct signatures are incompatible.
+      Type 'new (props: SimulatorErrorBoundaryProps) => SimulatorErrorBoundary' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+        Type 'SimulatorErrorBoundary' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate
+src/components/finance/ProfitabilityAnalysisView.tsx(865,6): error TS2786: 'ProfitabilityErrorBoundary' cannot be used as a JSX component.
+  Its type 'typeof ProfitabilityErrorBoundary' is not a valid JSX element type.
+    Types of construct signatures are incompatible.
+      Type 'new (props: ErrorBoundaryProps) => ProfitabilityErrorBoundary' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+        Type 'ProfitabilityErrorBoundary' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate, state
+src/components/finance/TreasuryOverview.tsx(71,7): error TS2322: Type '"OTRO" | "COBRO_CLIENTE" | "PAGO_PROVEEDOR" | "PAGO_GASTO" | "TRANSFERENCIA_INTERNA" | "NOMINA"' is not assignable to type 'BankTransactionCategory'.
+  Type '"NOMINA"' is not assignable to type 'BankTransactionCategory'.
+src/components/finance/TreasuryOverview.tsx(120,32): error TS2339: Property 'ingresosMes' does not exist on type 'FinancialKPIs'.
+src/components/finance/TreasuryOverview.tsx(136,32): error TS2339: Property 'egresosMes' does not exist on type 'FinancialKPIs'.
+src/components/finance/TreasuryOverview.tsx(151,65): error TS2339: Property 'flujoNetoMes' does not exist on type 'FinancialKPIs'.
+src/components/finance/TreasuryOverview.tsx(152,31): error TS2339: Property 'flujoNetoMes' does not exist on type 'FinancialKPIs'.
+src/components/finance/TreasuryOverview.tsx(155,46): error TS2339: Property 'runwayDays' does not exist on type 'FinancialKPIs'.
+src/components/finance/TreasuryOverview.tsx(182,25): error TS2339: Property 'isActive' does not exist on type 'BankAccount'.
+src/components/finance/TreasuryOverview.tsx(185,24): error TS2339: Property 'isActive' does not exist on type 'BankAccount'.
+src/components/governance/AIRiskAdvisorView.tsx(190,35): error TS2339: Property 'dataHonestyClassification' does not exist on type 'AIRiskAdvisorResponse'.
+src/components/governance/AIRiskAdvisorView.tsx(193,55): error TS2339: Property 'dataHonestyClassification' does not exist on type 'AIRiskAdvisorResponse'.
+src/components/governance/AIRiskAdvisorView.tsx(200,30): error TS2339: Property 'responseNarrative' does not exist on type 'AIRiskAdvisorResponse'.
+src/components/governance/AIRiskAdvisorView.tsx(214,66): error TS2339: Property 'estimatedFinancialImpact' does not exist on type 'AIRiskAdvisorResponse'.
+src/components/governance/AIRiskAdvisorView.tsx(219,38): error TS2339: Property 'affectedDrivers' does not exist on type 'AIRiskAdvisorResponse'.
+src/components/governance/AIRiskAdvisorView.tsx(238,36): error TS2339: Property 'suggestedMitigations' does not exist on type 'AIRiskAdvisorResponse'.
+src/components/governance/AIRiskAdvisorView.tsx(258,47): error TS2339: Property 'auditTraceId' does not exist on type 'AIRiskAdvisorResponse'.
+src/components/governance/AnomalyDetectionView.tsx(197,6): error TS2786: 'AnomalyErrorBoundary' cannot be used as a JSX component.
+  Its type 'typeof AnomalyErrorBoundary' is not a valid JSX element type.
+    Type 'typeof AnomalyErrorBoundary' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+      Type 'AnomalyErrorBoundary' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate
+src/components/governance/ComplianceCenterView.tsx(1259,6): error TS2786: 'ComplianceErrorBoundary' cannot be used as a JSX component.
+  Its type 'typeof ComplianceErrorBoundary' is not a valid JSX element type.
+    Types of construct signatures are incompatible.
+      Type 'new (props: ErrorBoundaryProps) => ComplianceErrorBoundary' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+        Type 'ComplianceErrorBoundary' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate
+src/components/governance/CorporateDocumentManagerView.tsx(1187,6): error TS2786: 'CorporateDocumentErrorBoundary' cannot be used as a JSX component.
+  Its type 'typeof CorporateDocumentErrorBoundary' is not a valid JSX element type.
+    Types of construct signatures are incompatible.
+      Type 'new (props: ErrorBoundaryProps) => CorporateDocumentErrorBoundary' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+        Type 'CorporateDocumentErrorBoundary' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate
+src/components/governance/EnterpriseAlertEngineView.tsx(1791,6): error TS2786: 'EnterpriseAlertEngineErrorBoundary' cannot be used as a JSX component.
+  Its type 'typeof EnterpriseAlertEngineErrorBoundary' is not a valid JSX element type.
+    Type 'typeof EnterpriseAlertEngineErrorBoundary' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+      Type 'EnterpriseAlertEngineErrorBoundary' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate
+src/components/governance/ExecutiveAuditCenterView.tsx(1001,6): error TS2786: 'ExecutiveAuditCenterErrorBoundary' cannot be used as a JSX component.
+  Its type 'typeof ExecutiveAuditCenterErrorBoundary' is not a valid JSX element type.
+    Types of construct signatures are incompatible.
+      Type 'new (props: ErrorBoundaryProps) => ExecutiveAuditCenterErrorBoundary' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+        Type 'ExecutiveAuditCenterErrorBoundary' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate
+src/components/governance/GovernanceExecutiveActionView.tsx(1273,6): error TS2786: 'GovernanceActionsErrorBoundary' cannot be used as a JSX component.
+  Its type 'typeof GovernanceActionsErrorBoundary' is not a valid JSX element type.
+    Type 'typeof GovernanceActionsErrorBoundary' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+      Type 'GovernanceActionsErrorBoundary' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate
+src/components/governance/Phase13CertificationView.tsx(73,24): error TS2339: Property 'isCertified' does not exist on type 'Phase13CertificationSuiteResult'.
+src/components/governance/Phase13CertificationView.tsx(81,29): error TS2339: Property 'certificationId' does not exist on type 'Phase13CertificationSuiteResult'.
+src/components/governance/Phase13CertificationView.tsx(84,29): error TS2339: Property 'isCertified' does not exist on type 'Phase13CertificationSuiteResult'.
+src/components/governance/Phase13CertificationView.tsx(97,29): error TS2339: Property 'summary' does not exist on type 'Phase13CertificationSuiteResult'.
+src/components/governance/Phase13CertificationView.tsx(104,31): error TS2339: Property 'passedCount' does not exist on type 'Phase13CertificationSuiteResult'.
+src/components/governance/Phase13CertificationView.tsx(113,31): error TS2339: Property 'percentage' does not exist on type 'Phase13CertificationSuiteResult'.
+src/components/governance/Phase13CertificationView.tsx(145,25): error TS2339: Property 'checklist' does not exist on type 'Phase13CertificationSuiteResult'.
+src/components/hr/AIHRAdvisor.tsx(23,25): error TS2339: Property 'generateAIHRAnalysis' does not exist on type 'ERPContextType'.
+src/components/hr/AIHRAdvisor.tsx(23,47): error TS2339: Property 'updateAIHRInsightStatus' does not exist on type 'ERPContextType'.
+src/components/hr/AIHRAdvisor.tsx(24,16): error TS2339: Property 'user' does not exist on type 'AuthContextType'.
+src/components/hr/AttendanceTracker.tsx(26,5): error TS2339: Property 'recordAttendanceCheckIn' does not exist on type 'ERPContextType'.
+src/components/hr/AttendanceTracker.tsx(27,5): error TS2339: Property 'recordAttendanceCheckOut' does not exist on type 'ERPContextType'.
+src/components/hr/AttendanceTracker.tsx(28,5): error TS2339: Property 'justifyAbsence' does not exist on type 'ERPContextType'.
+src/components/hr/AttendanceTracker.tsx(31,16): error TS2339: Property 'user' does not exist on type 'AuthContextType'.
+src/components/hr/AttendanceTracker.tsx(271,28): error TS2339: Property 'lateMinutes' does not exist on type 'AttendanceRecord'.
+src/components/hr/AttendanceTracker.tsx(271,47): error TS2339: Property 'lateMinutes' does not exist on type 'AttendanceRecord'.
+src/components/hr/AttendanceTracker.tsx(273,33): error TS2339: Property 'lateMinutes' does not exist on type 'AttendanceRecord'.
+src/components/hr/AttendanceTracker.tsx(281,28): error TS2339: Property 'overtimeMinutes' does not exist on type 'AttendanceRecord'.
+src/components/hr/AttendanceTracker.tsx(281,51): error TS2339: Property 'overtimeMinutes' does not exist on type 'AttendanceRecord'.
+src/components/hr/AttendanceTracker.tsx(283,34): error TS2339: Property 'overtimeMinutes' does not exist on type 'AttendanceRecord'.
+src/components/hr/CommissionsAndPayroll.tsx(29,5): error TS2339: Property 'approveCommission' does not exist on type 'ERPContextType'.
+src/components/hr/CommissionsAndPayroll.tsx(30,5): error TS2339: Property 'calculatePayrollRun' does not exist on type 'ERPContextType'.
+src/components/hr/CommissionsAndPayroll.tsx(31,5): error TS2339: Property 'approvePayrollPeriod' does not exist on type 'ERPContextType'.
+src/components/hr/CommissionsAndPayroll.tsx(34,16): error TS2339: Property 'user' does not exist on type 'AuthContextType'.
+src/components/hr/CommissionsAndPayroll.tsx(42,55): error TS2339: Property 'periodCode' does not exist on type 'PayrollPeriod'.
+src/components/hr/CommissionsAndPayroll.tsx(96,85): error TS2339: Property 'periodName' does not exist on type 'PayrollPeriod'.
+src/components/hr/CommissionsAndPayroll.tsx(236,30): error TS2339: Property 'appliedRate' does not exist on type 'CommissionRecord'.
+src/components/hr/CommissionsAndPayroll.tsx(334,86): error TS2339: Property 'periodName' does not exist on type 'PayrollPeriod'.
+src/components/hr/CommissionsAndPayroll.tsx(377,35): error TS2339: Property 'items' does not exist on type 'PayrollPeriod'.
+src/components/hr/EmployeeDirectory.tsx(78,5): error TS2339: Property 'createEmployee' does not exist on type 'ERPContextType'.
+src/components/hr/EmployeeDirectory.tsx(81,5): error TS2339: Property 'users' does not exist on type 'ERPContextType'.
+src/components/hr/EmployeeDirectory.tsx(84,16): error TS2339: Property 'user' does not exist on type 'AuthContextType'.
+src/components/hr/EmployeeDirectory.tsx(793,29): error TS2353: Object literal may only specify known properties, and 'bankAccountClabe' does not exist in type 'SetStateAction<Partial<EmployeeConfidentialData>>'.
+src/components/hr/EmployeeDirectory.tsx(835,6): error TS2786: 'EmployeeDirectoryErrorBoundary' cannot be used as a JSX component.
+  Its type 'typeof EmployeeDirectoryErrorBoundary' is not a valid JSX element type.
+    Types of construct signatures are incompatible.
+      Type 'new (props: ErrorBoundaryProps) => EmployeeDirectoryErrorBoundary' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+        Type 'EmployeeDirectoryErrorBoundary' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate, state
+src/components/hr/EmployeeDocuments.tsx(20,41): error TS2339: Property 'uploadEmployeeDocument' does not exist on type 'ERPContextType'.
+src/components/hr/EmployeeDocuments.tsx(21,16): error TS2339: Property 'user' does not exist on type 'AuthContextType'.
+src/components/hr/EmployeeDocuments.tsx(31,56): error TS2345: Argument of type '"CONTRATO_LABORAL"' is not assignable to parameter of type 'DocumentType | (() => DocumentType)'.
+src/components/hr/EmployeeDocuments.tsx(38,63): error TS2339: Property 'type' does not exist on type 'EmployeeDocument'.
+src/components/hr/EmployeeDocuments.tsx(205,28): error TS2339: Property 'type' does not exist on type 'EmployeeDocument'.
+src/components/hr/EmployeeDocuments.tsx(247,98): error TS2339: Property 'fileName' does not exist on type 'EmployeeDocument'.
+src/components/hr/HRDashboard.tsx(45,16): error TS2339: Property 'user' does not exist on type 'AuthContextType'.
+src/components/hr/HRDashboard.tsx(213,87): error TS2339: Property 'daysRequested' does not exist on type 'AbsenceRequest'.
+src/components/hr/HRModule.tsx(40,11): error TS2339: Property 'user' does not exist on type 'AuthContextType'.
+src/components/hr/HRModule.tsx(116,40): error TS2741: Property 'onNavigateTab' is missing in type '{}' but required in type 'HRDashboardProps'.
+src/components/hr/PerformanceAndGoals.tsx(24,5): error TS2339: Property 'savePerformanceReview' does not exist on type 'ERPContextType'.
+src/components/hr/PerformanceAndGoals.tsx(25,5): error TS2339: Property 'createEmployeeGoal' does not exist on type 'ERPContextType'.
+src/components/hr/PerformanceAndGoals.tsx(29,16): error TS2339: Property 'user' does not exist on type 'AuthContextType'.
+src/components/hr/PerformanceAndGoals.tsx(292,61): error TS2554: Expected 2 arguments, but got 3.
+src/components/hr/TrainingAndSkills.tsx(25,5): error TS2339: Property 'assignCourseToEmployee' does not exist on type 'ERPContextType'.
+src/components/hr/TrainingAndSkills.tsx(26,5): error TS2339: Property 'recordSkillEvaluation' does not exist on type 'ERPContextType'.
+src/components/hr/TrainingAndSkills.tsx(27,5): error TS2339: Property 'updateTrainingStatus' does not exist on type 'ERPContextType'.
+src/components/hr/TrainingAndSkills.tsx(30,16): error TS2339: Property 'user' does not exist on type 'AuthContextType'.
+src/components/hr/VacationsAndAbsences.tsx(24,5): error TS2339: Property 'approveAbsence' does not exist on type 'ERPContextType'.
+src/components/hr/VacationsAndAbsences.tsx(25,5): error TS2339: Property 'rejectAbsence' does not exist on type 'ERPContextType'.
+src/components/hr/VacationsAndAbsences.tsx(28,16): error TS2339: Property 'user' does not exist on type 'AuthContextType'.
+src/components/hr/VacationsAndAbsences.tsx(58,7): error TS2322: Type 'AbsenceType' is not assignable to type '"VACACIONES" | "PERMISO" | "INCAPACIDAD" | "FALTA_JUSTIFICADA"'.
+  Type '"OTRO"' is not assignable to type '"VACACIONES" | "PERMISO" | "INCAPACIDAD" | "FALTA_JUSTIFICADA"'.
+src/components/hr/VacationsAndAbsences.tsx(184,28): error TS2339: Property 'daysRequested' does not exist on type 'AbsenceRequest'.
+src/components/logistics/DepartureChecklistModal.tsx(22,79): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number | (() => number)'.
+src/components/logistics/DepartureChecklistModal.tsx(179,47): error TS2352: Conversion of type 'string' to type 'number' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+src/components/logistics/DriverDeliveryModal.tsx(156,11): error TS2339: Property 'currentUser' does not exist on type 'ERPContextType'.
+src/components/logistics/EmbarquesTable.tsx(297,32): error TS2339: Property 'expectedDeliveryDate' does not exist on type 'Order'.
+src/components/logistics/FleetManagementTab.tsx(110,18): error TS2345: Argument of type '{ economicNumber: string; plate: string; brandModel: string; type: string; capacityWeight: number; capacityVolume: number; insurancePolicy: string; insuranceExpiration: string; verificationExpiration: string; status: VehicleStatus; }' is not assignable to parameter of type 'Omit<Vehicle, "id">'.
+  Property 'currentOdometer' is missing in type '{ economicNumber: string; plate: string; brandModel: string; type: string; capacityWeight: number; capacityVolume: number; insurancePolicy: string; insuranceExpiration: string; verificationExpiration: string; status: VehicleStatus; }' but required in type 'Omit<Vehicle, "id">'.
+src/components/logistics/IncidentsReturnsTab.tsx(73,70): error TS2554: Expected 2 arguments, but got 3.
+src/components/logistics/Observation14Modal.tsx(14,27): error TS2339: Property 'currentUser' does not exist on type 'ERPContextType'.
+src/components/marketing/AIMarketingAdvisor.tsx(27,5): error TS2339: Property 'askMarketingAI' does not exist on type 'ERPContextType'.
+src/components/marketing/AIMarketingAdvisor.tsx(72,44): error TS2554: Expected 1 arguments, but got 2.
+src/components/marketing/CampaignDetailModal.tsx(38,75): error TS2339: Property 'originLeadId' does not exist on type 'Opportunity'.
+src/components/marketing/CampaignDetailModal.tsx(43,75): error TS2339: Property 'originLeadId' does not exist on type 'Order'.
+src/components/marketing/CampaignDetailModal.tsx(187,93): error TS2339: Property 'code' does not exist on type 'Lead'.
+src/components/marketing/CampaignDetailModal.tsx(191,35): error TS2339: Property 'contactName' does not exist on type 'Lead'.
+src/components/marketing/CampaignDetailModal.tsx(215,73): error TS2339: Property 'assignedToName' does not exist on type 'Lead'.
+src/components/marketing/E2EFlowTestModal.tsx(528,62): error TS2345: Argument of type '"ALMACEN"' is not assignable to parameter of type 'ERPModule'.
+src/components/marketing/SegmentsAndAudience.tsx(39,9): error TS2353: Object literal may only specify known properties, and 'industry' does not exist in type '{ states?: string[]; minCreditLimit?: number; productInterest?: string[]; leadStatus?: LeadStatus[]; }'.
+src/components/marketing/SegmentsAndAudience.tsx(88,67): error TS2339: Property 'associatedCampaignIds' does not exist on type 'MarketingSegment'.
+src/components/marketing/SegmentsAndAudience.tsx(103,26): error TS2339: Property 'code' does not exist on type 'MarketingSegment'.
+src/components/marketing/SegmentsAndAudience.tsx(113,80): error TS2339: Property 'industry' does not exist on type '{ states?: string[]; minCreditLimit?: number; productInterest?: string[]; leadStatus?: LeadStatus[]; }'.
+src/components/marketing/SegmentsAndAudience.tsx(118,39): error TS2339: Property 'ticketMin' does not exist on type '{ states?: string[]; minCreditLimit?: number; productInterest?: string[]; leadStatus?: LeadStatus[]; }'.
+src/components/marketing/SegmentsAndAudience.tsx(123,80): error TS2339: Property 'location' does not exist on type '{ states?: string[]; minCreditLimit?: number; productInterest?: string[]; leadStatus?: LeadStatus[]; }'.
+src/components/marketing/SegmentsAndAudience.tsx(151,77): error TS2339: Property 'leadsCount' does not exist on type 'MarketingSegment'.
+src/components/marketing/SegmentsAndAudience.tsx(155,77): error TS2339: Property 'customersCount' does not exist on type 'MarketingSegment'.
+src/components/modules/ModulePlaceholder.tsx(220,28): error TS2339: Property 'customerType' does not exist on type 'Customer'.
+src/components/modules/ModulePlaceholder.tsx(230,81): error TS2339: Property 'assignedSellerName' does not exist on type 'Customer'.
+src/components/modules/WarehouseLiveKardex.tsx(71,5): error TS2339: Property 'logAudit' does not exist on type 'ERPContextType'.
+src/components/predictive/StockCapacityAlertCenter.tsx(74,15): error TS2322: Type '"ADVERTENCIA" | "ERROR"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+  Type '"ERROR"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+src/components/purchases/NewGoodsReceiptModal.tsx(66,34): error TS2339: Property 'location' does not exist on type 'Product'.
+src/components/purchases/NewPurchaseOrderModal.tsx(88,32): error TS2339: Property 'cost' does not exist on type 'SupplierProduct'.
+src/components/purchases/NewPurchaseOrderModal.tsx(113,35): error TS2339: Property 'cost' does not exist on type 'SupplierProduct'.
+src/components/purchases/NewPurchaseOrderModal.tsx(201,24): error TS2339: Property 'cost' does not exist on type 'SupplierProduct'.
+src/components/purchases/NewPurchaseOrderModal.tsx(221,22): error TS2339: Property 'cost' does not exist on type 'SupplierProduct'.
+src/components/purchases/NewPurchaseOrderModal.tsx(264,22): error TS2339: Property 'cost' does not exist on type 'SupplierProduct'.
+src/components/purchases/NewPurchaseOrderModal.tsx(412,34): error TS2339: Property 'code' does not exist on type 'Supplier'.
+src/components/purchases/NewPurchaseRequestModal.tsx(56,32): error TS2339: Property 'cost' does not exist on type 'SupplierProduct'.
+src/components/purchases/NewPurchaseRequestModal.tsx(99,28): error TS2339: Property 'cost' does not exist on type 'SupplierProduct'.
+src/components/purchases/NewSupplierModal.tsx(31,54): error TS2339: Property 'clabe' does not exist on type 'Supplier'.
+src/components/purchases/NewSupplierModal.tsx(63,11): error TS2561: Object literal may only specify known properties, but 'bank_account' does not exist in type 'Partial<Supplier>'. Did you mean to write 'bankAccount'?
+src/components/purchases/NewSupplierModal.tsx(69,17): error TS2339: Property 'success' does not exist on type 'void'.
+src/components/purchases/NewSupplierModal.tsx(70,27): error TS2339: Property 'error' does not exist on type 'void'.
+src/components/purchases/NewSupplierReturnModal.tsx(162,9): error TS2322: Type 'SupplierReturnItem[]' is not assignable to type '{ productId: string; quantity: number; unitPrice?: number; reason: string; lotNumber?: string; }[]'.
+  Property 'productId' is missing in type 'SupplierReturnItem' but required in type '{ productId: string; quantity: number; unitPrice?: number; reason: string; lotNumber?: string; }'.
+src/components/purchases/NewSupplierReturnModal.tsx(233,34): error TS2339: Property 'code' does not exist on type 'Supplier'.
+src/components/purchases/PurchaseOrdersTab.tsx(129,7): error TS2353: Object literal may only specify known properties, and 'method' does not exist in type '{ sendMethod: "PORTAL" | "EMAIL" | "TELEFONO" | "WHATSAPP"; contactName?: string; contactEmail?: string; supplierConfirmationFolio?: string; notes?: string; }'.
+src/components/purchases/SuppliersTab.tsx(119,32): error TS2339: Property 'code' does not exist on type 'Supplier'.
+src/components/purchases/SuppliersTab.tsx(206,39): error TS2339: Property 'on_time_delivery_rate' does not exist on type 'Supplier'.
+src/components/purchases/SuppliersTab.tsx(212,39): error TS2339: Property 'quality_compliance_rate' does not exist on type 'Supplier'.
+src/components/purchases/SuppliersTab.tsx(250,52): error TS2339: Property 'clabe' does not exist on type 'Supplier'.
+src/components/purchases/SuppliersTab.tsx(272,49): error TS2339: Property 'supplier_product_code' does not exist on type 'SupplierProduct'.
+src/components/purchases/SuppliersTab.tsx(277,36): error TS2339: Property 'cost' does not exist on type 'SupplierProduct'.
+src/components/service/CustomerServiceCenter.tsx(590,72): error TS2339: Property 'assignedToName' does not exist on type 'SLAAlert'.
+src/components/service/CustomerServiceCenter.tsx(651,10): error TS2786: 'TicketsErrorBoundary' cannot be used as a JSX component.
+  Its type 'typeof TicketsErrorBoundary' is not a valid JSX element type.
+    Types of construct signatures are incompatible.
+      Type 'new (props: TicketsErrorBoundaryProps) => TicketsErrorBoundary' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+        Type 'TicketsErrorBoundary' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate
+src/components/service/CustomerServiceCenter.tsx(898,89): error TS2339: Property 'subject' does not exist on type 'ServiceTicket'.
+src/components/service/CustomerServiceCenter.tsx(977,36): error TS2339: Property 'authorName' does not exist on type 'TicketComment'.
+src/components/service/CustomerServiceCenter.tsx(1317,83): error TS2339: Property 'actionPlan' does not exist on type 'CAPAAction'.
+src/components/service/CustomerServiceCenter.tsx(1319,43): error TS2339: Property 'responsibleUserName' does not exist on type 'CAPAAction'.
+src/components/service/CustomerServiceCenter.tsx(1320,44): error TS2339: Property 'targetCompletionDate' does not exist on type 'CAPAAction'.
+src/components/service/CustomerServiceCenter.tsx(2118,6): error TS2786: 'CustomerServiceErrorBoundary' cannot be used as a JSX component.
+  Its type 'typeof CustomerServiceErrorBoundary' is not a valid JSX element type.
+    Types of construct signatures are incompatible.
+      Type 'new (props: CustomerServiceErrorBoundaryProps) => CustomerServiceErrorBoundary' is not assignable to type 'new (props: any, context: any) => Component<any, any, any>'.
+        Type 'CustomerServiceErrorBoundary' is missing the following properties from type 'Component<any, any, any>': context, setState, forceUpdate
+src/components/strategy/StrategicPlanningModule.tsx(82,24): error TS2339: Property 'user' does not exist on type 'AuthContextType'.
+src/components/strategy/StrategicPlanningModule.tsx(384,13): error TS2322: Type '{ erpState: ERPContextType; kpis: StrategicExecutiveKPIs; onApplyRecommendation: (action: any) => void; }' is not assignable to type 'IntrinsicAttributes & AIStrategyAdvisorViewProps'.
+  Property 'erpState' does not exist on type 'IntrinsicAttributes & AIStrategyAdvisorViewProps'.
+src/components/strategy/StrategicPlanningModule.tsx(394,37): error TS2322: Type '{ erpState: ERPContextType; }' is not assignable to type 'IntrinsicAttributes & Phase12CertificationViewProps'.
+  Property 'erpState' does not exist on type 'IntrinsicAttributes & Phase12CertificationViewProps'.
+src/components/warehouse/CatalogImportExportModal.tsx(35,5): error TS2339: Property 'logAudit' does not exist on type 'ERPContextType'.
+src/components/warehouse/CatalogImportExportModal.tsx(84,26): error TS2339: Property 'importedCount' does not exist on type '{ success: boolean; count: number; error?: string; }'.
+src/components/warehouse/InventoryAdjustmentsManager.tsx(95,9): error TS2353: Object literal may only specify known properties, and 'folio' does not exist in type '{ productId: string; warehouseId: string; type: "AJUSTE_POSITIVO" | "AJUSTE_NEGATIVO"; quantity: number; reason: string; location?: string; requireAuth?: boolean; }'.
+src/components/warehouse/OrderFulfillmentManager.tsx(105,90): error TS2339: Property 'summary' does not exist on type '{ success: boolean; error?: string; order?: Order; picking?: Picking; }'.
+src/components/warehouse/OrderFulfillmentManager.tsx(105,159): error TS2339: Property 'summary' does not exist on type '{ success: boolean; error?: string; order?: Order; picking?: Picking; }'.
+src/components/warehouse/PickingSheetModal.tsx(44,5): error TS2339: Property 'currentUser' does not exist on type 'ERPContextType'.
+src/components/warehouse/PickingSheetModal.tsx(588,29): error TS2339: Property 'summary' does not exist on type '{ success: boolean; error?: string; order?: Order; picking?: Picking; }'.
+src/components/warehouse/PickingSheetModal.tsx(589,25): error TS2339: Property 'isIdempotent' does not exist on type '{ success: boolean; error?: string; order?: Order; picking?: Picking; }'.
+src/components/warehouse/PickingSheetModal.tsx(591,18): error TS2339: Property 'message' does not exist on type '{ success: boolean; error?: string; order?: Order; picking?: Picking; }'.
+src/components/warehouse/ReorderAlertPanel.tsx(80,30): error TS2339: Property 'folio' does not exist on type 'PurchaseRequest'.
+src/components/warehouse/ReorderAlertPanel.tsx(124,9): error TS2322: Type '"ERROR"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+src/components/warehouse/WarehouseOperationsDashboard.tsx(48,5): error TS2339: Property 'logAudit' does not exist on type 'ERPContextType'.
+src/components/warehouse/WarehouseReplenishmentRequestModal.tsx(32,51): error TS2339: Property 'addPurchaseRequest' does not exist on type 'ERPContextType'.
+src/context/ERPContext.tsx(2525,101): error TS2339: Property 'contactName' does not exist on type 'Lead'.
+src/context/ERPContext.tsx(3056,9): error TS2322: Type 'QuoteItem[] | { productId: string; productCode: string; productName: string; quantity: number; unitPrice: number; }[]' is not assignable to type 'QuoteItem[] & any[]'.
+  Type '{ productId: string; productCode: string; productName: string; quantity: number; unitPrice: number; }[]' is not assignable to type 'QuoteItem[] & any[]'.
+    Type '{ productId: string; productCode: string; productName: string; quantity: number; unitPrice: number; }[]' is not assignable to type 'QuoteItem[]'.
+      Property 'subtotal' is missing in type '{ productId: string; productCode: string; productName: string; quantity: number; unitPrice: number; }' but required in type 'QuoteItem'.
+src/context/ERPContext.tsx(3179,9): error TS2322: Type '"SUCCESS"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+src/context/ERPContext.tsx(3215,9): error TS2322: Type '"WARNING"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+src/context/ERPContext.tsx(3244,11): error TS2322: Type '{ id: string; name: string; role?: any; }' is not assignable to type '{ id: string; name: string; role: any; }'.
+  Property 'role' is optional in type '{ id: string; name: string; role?: any; }' but required in type '{ id: string; name: string; role: any; }'.
+src/context/ERPContext.tsx(3416,11): error TS2322: Type '{ id: string; name: string; role?: any; }' is not assignable to type '{ id: string; name: string; role: any; }'.
+  Property 'role' is optional in type '{ id: string; name: string; role?: any; }' but required in type '{ id: string; name: string; role: any; }'.
+src/context/ERPContext.tsx(3450,9): error TS2322: Type '{ id: string; name: string; role?: any; }' is not assignable to type '{ id: string; name: string; role: any; }'.
+  Property 'role' is optional in type '{ id: string; name: string; role?: any; }' but required in type '{ id: string; name: string; role: any; }'.
+src/context/ERPContext.tsx(3553,41): error TS2339: Property 'quantityOrdered' does not exist on type 'QuoteItem'.
+src/context/ERPContext.tsx(3554,48): error TS2339: Property 'quantityOrdered' does not exist on type 'QuoteItem'.
+src/context/ERPContext.tsx(3555,49): error TS2339: Property 'quantityOrdered' does not exist on type 'QuoteItem'.
+src/context/ERPContext.tsx(3573,45): error TS2339: Property 'quantityOrdered' does not exist on type 'QuoteItem'.
+src/context/ERPContext.tsx(4812,11): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type '{ action: string; module: ERPModule; recordId?: string; details: string; customUser?: { id: string; name: string; role: any; }; }'.
+src/context/ERPContext.tsx(4853,9): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type '{ action: string; module: ERPModule; recordId?: string; details: string; customUser?: { id: string; name: string; role: any; }; }'.
+src/context/ERPContext.tsx(4867,9): error TS2322: Type '"success"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+src/context/ERPContext.tsx(6318,32): error TS2339: Property 'contactPerson' does not exist on type 'Customer'.
+src/context/ERPContext.tsx(6475,9): error TS2322: Type '"ALERTA"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+src/context/ERPContext.tsx(6991,17): error TS2345: Argument of type '(Order | { status: string; notes: string; pod: DeliveryEvidence; podId: string; updatedAt: string; id: string; order_number?: string; orderNumber?: string; folio?: string; ... 62 more ...; updated_at?: string; })[]' is not assignable to parameter of type 'SetStateAction<Order[]>'.
+  Type '(Order | { status: string; notes: string; pod: DeliveryEvidence; podId: string; updatedAt: string; id: string; order_number?: string; orderNumber?: string; folio?: string; ... 62 more ...; updated_at?: string; })[]' is not assignable to type 'Order[]'.
+    Type 'Order | { status: string; notes: string; pod: DeliveryEvidence; podId: string; updatedAt: string; id: string; order_number?: string; orderNumber?: string; folio?: string; ... 62 more ...; updated_at?: string; }' is not assignable to type 'Order'.
+      Type '{ status: string; notes: string; pod: DeliveryEvidence; podId: string; updatedAt: string; id: string; order_number?: string; orderNumber?: string; folio?: string; quote_id?: string; ... 61 more ...; updated_at?: string; }' is not assignable to type 'Order'.
+        Types of property 'status' are incompatible.
+          Type 'string' is not assignable to type 'OrderStatus'.
+src/context/ERPContext.tsx(7067,9): error TS2353: Object literal may only specify known properties, and 'masterTransactionId' does not exist in type '{ action: string; module: ERPModule; recordId?: string; details: string; customUser?: { id: string; name: string; role: any; }; }'.
+src/context/ERPContext.tsx(7075,9): error TS2322: Type '"EXITO" | "ALERTA"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+  Type '"ALERTA"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+src/context/ERPContext.tsx(7167,17): error TS2345: Argument of type '(Order | { status: string; notes: string; id: string; order_number?: string; orderNumber?: string; folio?: string; quote_id?: string; quoteId?: string; quote_number?: string; quoteFolio?: string; ... 61 more ...; updatedAt?: string; })[]' is not assignable to parameter of type 'SetStateAction<Order[]>'.
+  Type '(Order | { status: string; notes: string; id: string; order_number?: string; orderNumber?: string; folio?: string; quote_id?: string; quoteId?: string; quote_number?: string; quoteFolio?: string; ... 61 more ...; updatedAt?: string; })[]' is not assignable to type 'Order[]'.
+    Type 'Order | { status: string; notes: string; id: string; order_number?: string; orderNumber?: string; folio?: string; quote_id?: string; quoteId?: string; quote_number?: string; quoteFolio?: string; ... 61 more ...; updatedAt?: string; }' is not assignable to type 'Order'.
+      Type '{ status: string; notes: string; id: string; order_number?: string; orderNumber?: string; folio?: string; quote_id?: string; quoteId?: string; quote_number?: string; quoteFolio?: string; customer_id?: string; ... 60 more ...; updatedAt?: string; }' is not assignable to type 'Order'.
+        Types of property 'status' are incompatible.
+          Type 'string' is not assignable to type 'OrderStatus'.
+src/context/ERPContext.tsx(7180,9): error TS2322: Type '"ERROR"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+src/context/ERPContext.tsx(7240,9): error TS2322: Type '"ALERTA" | "ERROR"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+  Type '"ALERTA"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+src/context/ERPContext.tsx(7331,9): error TS2353: Object literal may only specify known properties, and 'masterTransactionId' does not exist in type '{ action: string; module: ERPModule; recordId?: string; details: string; customUser?: { id: string; name: string; role: any; }; }'.
+src/context/ERPContext.tsx(7337,9): error TS2322: Type '"ALERTA"' is not assignable to type '"CRITICA" | "INFO" | "EXITO" | "ADVERTENCIA"'.
+src/context/ERPContext.tsx(7374,9): error TS2353: Object literal may only specify known properties, and 'masterTransactionId' does not exist in type '{ action: string; module: ERPModule; recordId?: string; details: string; customUser?: { id: string; name: string; role: any; }; }'.
+src/context/ERPContext.tsx(7417,9): error TS2353: Object literal may only specify known properties, and 'masterTransactionId' does not exist in type '{ action: string; module: ERPModule; recordId?: string; details: string; customUser?: { id: string; name: string; role: any; }; }'.
+src/context/ERPContext.tsx(7557,13): error TS2322: Type 'string | { warehouseId: string; warehouseName: string; locationCode: string; nave: string; rack: string; pasillo: string; nivel: string; }' is not assignable to type 'string'.
+  Type '{ warehouseId: string; warehouseName: string; locationCode: string; nave: string; rack: string; pasillo: string; nivel: string; }' is not assignable to type 'string'.
+src/context/ERPContext.tsx(7602,9): error TS2353: Object literal may only specify known properties, and 'masterTransactionId' does not exist in type '{ action: string; module: ERPModule; recordId?: string; details: string; customUser?: { id: string; name: string; role: any; }; }'.
+src/context/ERPContext.tsx(7714,60): error TS2339: Property 'city' does not exist on type 'Warehouse'.
+src/context/ERPContext.tsx(8024,9): error TS2322: Type '{ productId: any; productCode: string; productName: any; quantity: number; unitPrice: any; discount: any; }[]' is not assignable to type 'QuoteItem[] & any[]'.
+  Type '{ productId: any; productCode: string; productName: any; quantity: number; unitPrice: any; discount: any; }[]' is not assignable to type 'QuoteItem[]'.
+    Property 'subtotal' is missing in type '{ productId: any; productCode: string; productName: any; quantity: number; unitPrice: any; discount: any; }' but required in type 'QuoteItem'.
+src/context/ERPContext.tsx(8078,11): error TS2322: Type '{ id: string; name: string; role?: any; }' is not assignable to type '{ id: string; name: string; role: any; }'.
+  Property 'role' is optional in type '{ id: string; name: string; role?: any; }' but required in type '{ id: string; name: string; role: any; }'.
+src/context/ERPContext.tsx(8251,11): error TS2322: Type '{ id: string; name: string; role?: any; }' is not assignable to type '{ id: string; name: string; role: any; }'.
+  Property 'role' is optional in type '{ id: string; name: string; role?: any; }' but required in type '{ id: string; name: string; role: any; }'.
+src/context/ERPContext.tsx(9076,9): error TS2322: Type '(question: string) => Promise<{ title: string; answerMarkdown: string; suggestedActions: { label: string; action: string; payload?: any; }[]; }>' is not assignable to type '(question: string) => Promise<string>'.
+  Type 'Promise<{ title: string; answerMarkdown: string; suggestedActions: { label: string; action: string; payload?: any; }[]; }>' is not assignable to type 'Promise<string>'.
+    Type '{ title: string; answerMarkdown: string; suggestedActions: { label: string; action: string; payload?: any; }[]; }' is not assignable to type 'string'.
+src/context/HRContextMethods.ts(670,21): error TS2345: Argument of type '(prev: AIHRAdvisorInsight[]) => (AIHRAdvisorInsight | { status: "APLICADO"; appliedBy: string; appliedByName: string; appliedAt: string; id: string; ... 14 more ...; createdAt: string; })[]' is not assignable to parameter of type 'SetStateAction<AIHRAdvisorInsight[]>'.
+  Type '(prev: AIHRAdvisorInsight[]) => (AIHRAdvisorInsight | { status: "APLICADO"; appliedBy: string; appliedByName: string; appliedAt: string; id: string; ... 14 more ...; createdAt: string; })[]' is not assignable to type '(prevState: AIHRAdvisorInsight[]) => AIHRAdvisorInsight[]'.
+    Type '(AIHRAdvisorInsight | { status: "APLICADO"; appliedBy: string; appliedByName: string; appliedAt: string; id: string; code?: string; type: "DESEMPENO" | "ASISTENCIA" | "CAPACITACION" | "COMISIONES" | "RETENCION_CLIMA" | "ALERTAS_DOCUMENTOS"; ... 12 more ...; createdAt: string; })[]' is not assignable to type 'AIHRAdvisorInsight[]'.
+      Type 'AIHRAdvisorInsight | { status: "APLICADO"; appliedBy: string; appliedByName: string; appliedAt: string; id: string; code?: string; type: "DESEMPENO" | "ASISTENCIA" | "CAPACITACION" | "COMISIONES" | "RETENCION_CLIMA" | "ALERTAS_DOCUMENTOS"; ... 12 more ...; createdAt: string; }' is not assignable to type 'AIHRAdvisorInsight'.
+        Type '{ status: "APLICADO"; appliedBy: string; appliedByName: string; appliedAt: string; id: string; code?: string; type: "DESEMPENO" | "ASISTENCIA" | "CAPACITACION" | "COMISIONES" | "RETENCION_CLIMA" | "ALERTAS_DOCUMENTOS"; ... 12 more ...; createdAt: string; }' is not assignable to type 'AIHRAdvisorInsight'.
+          Types of property 'status' are incompatible.
+            Type '"APLICADO"' is not assignable to type '"EN_REVISION" | "NUEVO" | "DESCARTADO" | "ATENDIDO"'.
+src/context/PurchasesContextMethods.ts(784,84): error TS2339: Property 'supplier_confirmation_number' does not exist on type 'PurchaseOrder'.
+src/context/PurchasesContextMethods.ts(1269,64): error TS2339: Property 'credit_note_folio' does not exist on type 'SupplierReturn'.

@@ -2177,6 +2177,7 @@ export interface PurchaseOrderItem {
 }
 
 export interface PurchaseOrder {
+  supplier_confirmation_number?: string;
   id: string;
   purchase_order_number: string; // e.g. "OC-2026-001"
   purchaseOrderNumber?: string;
@@ -2331,6 +2332,7 @@ export interface SupplierReturnItem {
 }
 
 export interface SupplierReturn {
+  credit_note_folio?: string;
   id: string;
   return_number: string; // e.g. "DEV-PRV-001"
   purchase_order_id?: string;
@@ -2953,6 +2955,7 @@ export interface CommissionRecord {
 }
 
 export interface PayrollPeriod {
+  items?: PayrollRecord[];
   id: string;
   folio: string; // e.g. 'NOM-2026-16'
   name: string; // '2da Quincena Agosto 2026'
@@ -3173,14 +3176,14 @@ export interface HRKPIs {
   expiringDocumentsCount: number;
   totalMonthlyLaborCost: number;
   totalCommissionsAccrued: number;
-  avgTurnoverRatePct: number;
-  avgAttendanceRatePct: number;
-  topSkillsGapArea: {
+  avgTurnoverRatePct?: number;
+  avgAttendanceRatePct?: number;
+  topSkillsGapArea?: {
     skillName: string;
     gapScore: number;
     department: string;
   };
-  topSalesCommissionLeader: {
+  topSalesCommissionLeader?: {
     name: string;
     totalCommission: number;
     salesAmount: number;

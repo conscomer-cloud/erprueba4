@@ -68,7 +68,7 @@ export const CXCManagement: React.FC = () => {
     const matchSearch =
       (inv.invoiceNumber || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (inv.customerName || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (inv.customerRfc || "").toLowerCase().includes(searchQuery.toLowerCase());
+      (inv.rfc || "").toLowerCase().includes(searchQuery.toLowerCase());
 
     if (!matchSearch) return false;
     if (statusFilter === 'PENDIENTE') return inv.status === 'PENDIENTE';
@@ -97,7 +97,7 @@ export const CXCManagement: React.FC = () => {
     setPayingInvoice(inv);
     setPaymentAmount(inv.balance);
     setPaymentBankId(bankAccounts[0]?.id || '');
-    setPaymentRef(`SPEI-${Math.floor(100000 + Math.random() * 900000)}`);
+    setPaymentRef('');
     setPaymentNotes('');
   };
 
@@ -127,6 +127,8 @@ export const CXCManagement: React.FC = () => {
       customerId: cust.id,
       customerName: cust.name,
       type: activityType,
+      date: new Date().toISOString().slice(0, 10),
+      status: 'REGISTRADO',
       outcome: activityOutcome,
       notes: activityNotes,
       promiseDate: activityPromiseDate || undefined,
@@ -259,7 +261,7 @@ export const CXCManagement: React.FC = () => {
                       </td>
                       <td className="py-2.5 px-4">
                         <span className="font-semibold text-slate-800">{inv.customerName}</span>
-                        <span className="block text-[10px] text-slate-400 font-mono">{inv.customerRfc}</span>
+                        <span className="block text-[10px] text-slate-400 font-mono">{inv.rfc}</span>
                       </td>
                       <td className="py-2.5 px-4 text-slate-600">{inv.issueDate}</td>
                       <td className="py-2.5 px-4">
@@ -487,23 +489,23 @@ export const CXCManagement: React.FC = () => {
               <div className="p-4 rounded-xl border flex items-center gap-4 bg-slate-50 border-slate-200">
                 <div
                   className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl ${
-                    creditEvalResult.semaphore === 'VERDE'
+                    creditEvalResult.riskScore === 'BAJO'
                       ? 'bg-emerald-600 ring-4 ring-emerald-100'
-                      : creditEvalResult.semaphore === 'AMARILLO'
+                      : creditEvalResult.riskScore === 'MEDIO'
                       ? 'bg-amber-500 ring-4 ring-amber-100'
                       : 'bg-rose-600 ring-4 ring-rose-100'
                   }`}
                 >
-                  {creditEvalResult.semaphore === 'VERDE' ? '✓' : creditEvalResult.semaphore === 'AMARILLO' ? '!' : '✕'}
+                  {creditEvalResult.riskScore === 'BAJO' ? '✓' : creditEvalResult.riskScore === 'MEDIO' ? '!' : '✕'}
                 </div>
                 <div>
                   <span className="text-[11px] uppercase font-bold text-slate-500">Semáforo de Crédito</span>
                   <h4 className="text-base font-bold text-slate-900">
-                    {creditEvalResult.semaphore === 'VERDE' && 'Crédito Aprobado (Riesgo Bajo)'}
-                    {creditEvalResult.semaphore === 'AMARILLO' && 'Precaución (Requiere Revisión)'}
-                    {creditEvalResult.semaphore === 'ROJO' && 'Bloqueado (Riesgo Alto / Vencido)'}
+                    {creditEvalResult.riskScore === 'BAJO' && 'Crédito Aprobado (Riesgo Bajo)'}
+                    {creditEvalResult.riskScore === 'MEDIO' && 'Precaución (Requiere Revisión)'}
+                    {(creditEvalResult.riskScore === 'ALTO' || creditEvalResult.riskScore === 'CRITICO') && 'Riesgo Alto / Crítico'}
                   </h4>
-                  <p className="text-slate-600 mt-0.5">{creditEvalResult.recommendation}</p>
+                  <p className="text-slate-600 mt-0.5">{creditEvalResult.blockingReason || 'Sin motivo de bloqueo registrado'}</p>
                 </div>
               </div>
 

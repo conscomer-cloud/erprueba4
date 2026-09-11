@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { useERP } from '../../context/ERPContext';
 import { CustomerFinancialStatement } from '../../types/erp';
 import { X, Printer, Download, AlertTriangle, CheckCircle, FileText, DollarSign, Calendar, Clock } from 'lucide-react';
 
@@ -14,9 +15,21 @@ interface Props {
 }
 
 export const CustomerStatementModal: React.FC<Props> = ({ statement, onClose }) => {
+  const { cxcInvoices, cxcPayments } = useERP();
   if (!statement) return null;
 
-  const { customer, invoices, payments, creditNotes, aging, totalDebt, overdueDebt, availableCredit } = statement;
+  const { currentBalance: totalDebt, overdueBalance: overdueDebt, availableCredit } = statement;
+  const customer = { name: statement.customerName, rfc: statement.rfc, creditLimit: statement.creditLimit, creditDays: statement.creditDays };
+  const invoices = cxcInvoices.filter(inv => inv.customerId === statement.customerId && inv.status !== 'CANCELADA' && inv.balance > 0);
+  const customerInvoiceIds = new Set(cxcInvoices.filter(inv => inv.customerId === statement.customerId).map(inv => inv.id));
+  const payments = cxcPayments.filter(payment => customerInvoiceIds.has(payment.cxcId));
+  const aging = invoices.reduce((totals, inv) => {
+    if (inv.overdueDays <= 30) totals.current += inv.balance;
+    else if (inv.overdueDays <= 60) totals.days31to60 += inv.balance;
+    else if (inv.overdueDays <= 90) totals.days61to90 += inv.balance;
+    else totals.over90Days += inv.balance;
+    return totals;
+  }, { current: 0, days31to60: 0, days61to90: 0, over90Days: 0 });
 
   const handlePrint = () => {
     window.print();
@@ -35,7 +48,7 @@ export const CustomerStatementModal: React.FC<Props> = ({ statement, onClose }) 
             <div>
               <h2 className="text-lg font-bold text-slate-900">Estado de Cuenta de Cliente</h2>
               <p className="text-xs text-slate-500">
-                {customer.name} · RFC: {customer.rfc || 'XAXX010101000'} · Emitido: {statement.generatedAt.slice(0, 10)}
+                {customer.name} · RFC: {customer.rfc || 'Sin RFC registrado'} · Emitido: {new Date().toISOString().slice(0, 10)}
               </p>
             </div>
           </div>
@@ -103,7 +116,7 @@ export const CustomerStatementModal: React.FC<Props> = ({ statement, onClose }) 
             <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Antigüedad de Saldos</h4>
             <div className="grid grid-cols-4 gap-2 text-center text-xs">
               <div className="p-2 bg-white rounded border border-slate-200">
-                <span className="text-slate-500 block text-[10px]">Al Corriente (0-30 d)</span>
+                <span className="text-slate-500 block text-[10px]">Vigente o hasta 30 días de mora</span>
                 <span className="font-bold text-slate-800">${(Number(aging.current) || 0).toLocaleString('es-MX')}</span>
               </div>
               <div className="p-2 bg-white rounded border border-amber-200">

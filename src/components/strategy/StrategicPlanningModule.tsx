@@ -79,7 +79,7 @@ interface StrategicPlanningModuleProps {
 
 export const StrategicPlanningModule: React.FC<StrategicPlanningModuleProps> = ({ onNavigate }) => {
   const erp = useERP();
-  const { currentRole, user } = useAuth();
+  const { currentRole, currentUser: user } = useAuth();
 
   const [activeTab, setActiveTab] = useState<StrategicTab>('COMMAND_CENTER');
 
@@ -381,9 +381,8 @@ export const StrategicPlanningModule: React.FC<StrategicPlanningModuleProps> = (
 
         {activeTab === 'AI_STRATEGY_ADVISOR' && (
           <AIStrategyAdvisorView
-            erpState={erp}
             kpis={masterKPIs}
-            onApplyRecommendation={(action) => {
+            onCreateExecutiveAction={(action) => {
               setActions((prev) => [action, ...prev]);
               setActiveTab('ACTION_CENTER');
             }}
@@ -391,7 +390,7 @@ export const StrategicPlanningModule: React.FC<StrategicPlanningModuleProps> = (
         )}
 
         {activeTab === 'CERTIFICATION_PHASE12' && (
-          <Phase12CertificationView erpState={erp} />
+          <Phase12CertificationView kpis={masterKPIs} />
         )}
       </div>
     </div>

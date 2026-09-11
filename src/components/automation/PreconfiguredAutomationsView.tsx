@@ -165,7 +165,7 @@ export const PreconfiguredAutomationsView: React.FC<PreconfiguredAutomationsView
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Workflow:</span>
-                  <span className="text-slate-700 font-medium">{auto.targetWorkflow}</span>
+                  <span className="text-slate-700 font-medium">{auto.workflowSummary}</span>
                 </div>
               </div>
             </div>
@@ -217,19 +217,19 @@ export const PreconfiguredAutomationsView: React.FC<PreconfiguredAutomationsView
                 </div>
                 <div>
                   <span className="font-semibold text-slate-400 uppercase text-[10px]">Workflow Destino</span>
-                  <p className="font-semibold text-slate-800">{selectedAutomation.targetWorkflow}</p>
+                  <p className="font-semibold text-slate-800">{selectedAutomation.workflowSummary}</p>
                 </div>
                 <div>
                   <span className="font-semibold text-slate-400 uppercase text-[10px]">Acción Ejecutada</span>
-                  <p className="font-semibold text-slate-800">{selectedAutomation.actionType}</p>
+                  <p className="font-semibold text-slate-800">{selectedAutomation.ruleSummary}</p>
                 </div>
                 <div>
                   <span className="font-semibold text-slate-400 uppercase text-[10px]">Rol Destino</span>
-                  <p className="font-semibold text-slate-800">{selectedAutomation.targetRole}</p>
+                  <p className="font-semibold text-slate-800">{selectedAutomation.requiredRole}</p>
                 </div>
               </div>
 
-              {selectedAutomation.requiresHumanValidation && (
+              {selectedAutomation.requiresHumanApproval && (
                 <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 flex items-center gap-2">
                   <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
                   <span><strong>Human-in-the-Loop:</strong> Requiere validación humana mandataria antes de cualquier ejecución irreversible.</span>

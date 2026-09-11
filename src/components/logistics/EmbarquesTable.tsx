@@ -294,7 +294,7 @@ export const EmbarquesTable: React.FC<EmbarquesTableProps> = ({ onPlanRouteWithO
                         ${(Number(order.total) || 0).toLocaleString('es-MX')}
                       </td>
                       <td className="py-3.5 px-3 text-center text-slate-600 font-mono text-[11px]">
-                        {order.expectedDeliveryDate || order.orderDate}
+                        {order.deliveryDate || order.orderDate}
                       </td>
                       <td className="py-3.5 px-3 text-center">
                         {isReady ? (

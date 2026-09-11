@@ -314,7 +314,7 @@ export const OpportunityModal: React.FC<OpportunityModalProps> = ({
                       Asignación automática
                     </span>
                   </div>
-                  <Lock className="h-3.5 w-3.5 text-slate-500 shrink-0" title="Asignación protegida por política comercial" />
+                  <Lock className="h-3.5 w-3.5 text-slate-500 shrink-0" aria-label="Asignación protegida por política comercial" />
                 </div>
               ) : (
                 <select
@@ -336,7 +336,7 @@ export const OpportunityModal: React.FC<OpportunityModalProps> = ({
               <label className="mb-1 block text-xs font-semibold text-slate-300">Canal de Origen</label>
               <select
                 value={formData.source}
-                onChange={(e) => setFormData({ ...formData, source: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, source: e.target.value as Opportunity['source'] })}
                 className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-white focus:border-yellow-400 focus:outline-none"
               >
                 <option value="WHATSAPP">WhatsApp</option>

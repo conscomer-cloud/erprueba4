@@ -276,7 +276,7 @@ export const UserManagementView: React.FC = () => {
         addNotification({
           title: 'Estado Actualizado',
           message: `El usuario ${user.name} ahora tiene estado ${newStatus}.`,
-          type: newStatus === 'ACTIVO' ? 'EXITO' : 'ALERTA',
+          type: newStatus === 'ACTIVO' ? 'EXITO' : 'ADVERTENCIA',
           module: 'CONFIGURACION',
         });
         await loadUsers();

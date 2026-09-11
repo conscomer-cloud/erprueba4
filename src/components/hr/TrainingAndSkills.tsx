@@ -22,12 +22,11 @@ export const TrainingAndSkills: React.FC = () => {
     employeeTrainings,
     employeeSkills,
     employees,
-    assignCourseToEmployee,
-    recordSkillEvaluation,
-    updateTrainingStatus,
+    assignTrainingCourse,
+    completeTrainingCourse,
   } = useERP();
 
-  const { can, user } = useAuth();
+  const { can, currentUser: user } = useAuth();
   const canManageHR = can('RH', 'EDITAR') || can('RH', 'CREAR') || user?.role === 'ADMINISTRADOR';
 
   const [activeTab, setActiveTab] = useState<'COURSES' | 'ASSIGNMENTS' | 'SKILLS_MATRIX'>('COURSES');
@@ -54,7 +53,7 @@ export const TrainingAndSkills: React.FC = () => {
     e.preventDefault();
     if (!selectedCourseId || !selectedEmployeeId) return;
 
-    assignCourseToEmployee(selectedEmployeeId, selectedCourseId);
+    assignTrainingCourse(selectedEmployeeId, selectedCourseId);
     setIsAssignModalOpen(false);
   };
 
@@ -207,7 +206,7 @@ export const TrainingAndSkills: React.FC = () => {
                     <td className="px-4 py-3 text-right">
                       {train.status !== 'COMPLETED' && canManageHR && (
                         <button
-                          onClick={() => updateTrainingStatus(train.id, 'COMPLETED', 95)}
+                          onClick={() => (() => { const value = window.prompt('Calificación obtenida (0–100):'); if (value !== null && value.trim() && Number.isFinite(Number(value)) && Number(value) >= 0 && Number(value) <= 100) completeTrainingCourse(train.id, Number(value)); })()}
                           className="rounded-lg bg-emerald-600 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-emerald-700 transition"
                         >
                           Acreditar (95%)

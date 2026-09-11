@@ -1,0 +1,247 @@
+Iniciando Certificación E2E de Devoluciones (Observación 15)...
+
+============================================================
+CONSCORE ERP IA
+OBSERVACIÓN 15 — VALIDACIÓN E2E DEVOLUCIONES
+============================================
+
+TEST ID:
+DEV-TEST-015
+
+PRODUCT:
+Panel Aislante Térmico Foamular 2" (Obs 15 Test SKU) (SKU-TEST-015)
+
+WAREHOUSE:
+Almacén Central Tlalnepantla (ID: WH-01)
+
+LOCATION:
+DEV-A01
+
+MASTER_TRANSACTION_ID:
+MTX-DEV-015-E2E
+
+INITIAL STOCK:
+20
+
+RETURN QTY:
+3
+
+---
+
+REQUEST CREATED:
+PASS
+
+STATUS:
+PENDIENTE_AUTORIZACION
+
+STOCK AFTER REQUEST:
+20
+
+KARDEX AFTER REQUEST:
+0
+
+---
+
+UNAUTHORIZED APPROVAL:
+BLOCKED
+
+HTTP STATUS:
+403
+
+---
+
+AUTHORIZED:
+PASS
+
+AUTHORIZED BY:
+Director de Operaciones (ADMINISTRADOR)
+
+STATUS AFTER AUTHORIZATION:
+AUTORIZADA
+
+STOCK AFTER AUTHORIZATION:
+20
+
+KARDEX AFTER AUTHORIZATION:
+0
+
+---
+
+PHYSICAL RECEIPT:
+PASS
+
+RECEIVED QTY:
+3
+
+INSPECTION:
+PASS
+
+ACCEPTED QTY:
+3
+
+REJECTED QTY:
+0
+
+STOCK BEFORE FINAL ACCEPTANCE:
+20
+
+---
+
+FINAL ACCEPTANCE:
+PASS
+
+FINAL STOCK:
+23
+
+EXPECTED:
+23
+
+KARDEX MOVEMENT:
+ENTRADA_DEVOLUCION
+
+KARDEX QTY:
+3
+
+EXPECTED:
+3
+
+KARDEX MOVEMENT COUNT:
+1
+
+EXPECTED:
+1
+
+---
+
+SECOND ACCEPTANCE ATTEMPT:
+BLOCKED / IDEMPOTENT
+
+STOCK AFTER SECOND ATTEMPT:
+23
+
+EXPECTED:
+23
+
+KARDEX COUNT AFTER SECOND ATTEMPT:
+1
+
+EXPECTED:
+1
+
+---
+
+REJECTED RETURN TEST:
+PASS
+
+REJECTED QTY:
+3
+
+SELLABLE INVENTORY INCREASE:
+0
+
+---
+
+PARTIAL RETURN TEST:
+PASS
+
+RECEIVED:
+3
+
+ACCEPTED:
+2
+
+REJECTED:
+1
+
+EXPECTED INVENTORY INCREASE:
+2
+
+ACTUAL:
+2
+
+---
+
+AUTHORIZATION REQUIRED:
+PASS
+
+RBAC:
+PASS
+
+DIRECT API BYPASS:
+BLOCKED
+
+IDEMPOTENCY:
+PASS
+
+ROLLBACK:
+PASS
+
+PERSISTENCE:
+PASS
+
+AUDIT:
+PASS
+
+MASTER_TRANSACTION_TRACEABILITY:
+PASS
+
+RUNTIME ERRORS:
+0
+
+TSC:
+PASS
+
+BUILD:
+PASS
+
+============================================================
+
+MATRIZ FINAL:
+
+Inicial:
+20 / Kardex 0
+
+Solicitud:
+20 / Kardex 0
+
+Autorización:
+20 / Kardex 0
+
+Recepción:
+20 / Kardex 0
+
+Aceptación:
+23 / Kardex 1 (+3)
+
+Segundo intento:
+23 / Kardex sigue 1
+
+============================================================
+
+CONCLUSIÓN:
+La validación E2E del proceso de Devolución de Producto se cumplió de forma íntegra e inequívoca:
+1. La creación de la solicitud DEV-TEST-015 NO incrementó el inventario (Delta = 0, Kardex = 0).
+2. La autorización formal por parte del rol ADMINISTRACIÓN habilitó el flujo sin mutar existencias (Delta = 0, Kardex = 0).
+3. La recepción física e inspección de calidad verificaron las 3 piezas sin ingresar al stock vendible antes de la aceptación (Delta = 0, Kardex = 0).
+4. Únicamente la ACEPTACIÓN FÍSICA generó el incremento atómico al inventario vendible (20 + 3 = 23) con exactamente 1 asiento de Kardex (tipo ENTRADA_DEVOLUCION, anterior 20, nuevo 23).
+5. Se certificó la idempotencia absoluta: el reintento de aceptación fue rechazado con código 409 ALREADY_PROCESSED, manteniendo el stock en 23 (NO 26) y el Kardex en 1 asiento (NO 2).
+6. Se certificó el rechazo total (DEV-TEST-015-REJECT, 3 piezas a merma/cuarentena con Delta 0 en stock vendible) y la aceptación parcial (DEV-TEST-015-PARTIAL, +2 en stock vendible y 1 a merma).
+7. Trazabilidad completa con Master Transaction ID en todas las etapas.
+
+============================================================
+
+ESTADO DE LA OBSERVACIÓN 15:
+
+COMPLETADO A ESPERA DE REVISIÓN
+
+============================================================
+PROHIBIDO ESCRIBIR:
+CORREGIDO
+FIN DE VALIDACIÓN OBSERVACIÓN 15.
+
+--- RESUMEN DE EJECUCIÓN ---
+Total pruebas: 26
+Aprobadas: 26
+Fallidas: 0
+Fallas Críticas: 0
+Resultado Global: COMPLETADO A ESPERA DE REVISIÓN

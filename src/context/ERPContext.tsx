@@ -1,8 +1,10 @@
+import type { UserRole } from '../types/erp';
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import {
   Customer,
   Product,
   Quote,
+  QuoteItem,
   Order,
   OrderStatus,
   Warehouse,
@@ -278,7 +280,7 @@ import { normalizePaymentTerms, DEFAULT_PAYMENT_TERMS } from '../services/quoteP
 import { QuoteFinancialApprovalService, validateFinancialApprovalForOrder } from '../services/quoteFinancialApprovalService';
 import { api } from '../services/apiClient';
 import { validateLogisticsReadiness } from '../utils/logisticsValidation';
-import { PhysicalFulfillmentService } from '../services/physicalFulfillmentService';
+import { PhysicalFulfillmentService, FulfillmentExecutionResult } from '../services/physicalFulfillmentService';
 
 export interface RealtimeToast {
   id: string;
@@ -307,6 +309,8 @@ export interface QuoteMarginValidation {
   maxAllowedDiscount: number;
   userRole: string;
 }
+
+type AuditEntry = Pick<AuditLog, 'action' | 'module' | 'recordId' | 'details' | 'masterTransactionId' | 'entityType' | 'entityId' | 'previousValue'> & { customUser?: { id: string; name: string; role?: UserRole } };
 
 export interface ERPContextType {
   customers: Customer[];
@@ -371,6 +375,7 @@ export interface ERPContextType {
   updateSupplierProduct: (id: string, updates: Partial<SupplierProduct>) => void;
   deleteSupplierProduct: (id: string) => void;
 
+  addPurchaseRequest: (request: PurchaseRequest) => void;
   createPurchaseRequest: (
     data: any
   ) => any;
@@ -423,11 +428,14 @@ export interface ERPContextType {
     purchaseOrderNumber?: string;
     warehouseId: string;
     reasonSummary: string;
+    carrier?: string;
+    trackingNumber?: string;
     items: {
       productId: string;
       quantity: number;
       unitPrice?: number;
       reason: string;
+      condition?: SupplierReturnItem['condition'];
       lotNumber?: string;
     }[];
     notes?: string;
@@ -448,7 +456,7 @@ export interface ERPContextType {
   getSupplierComparison: (productId: string) => ReturnType<typeof getSupplierComparisonForProduct>;
   getPurchasesKPIs: () => PurchasesKPIs;
   getSuppliersScorecard: () => SupplierEvaluation[];
-  askPurchasesAI: (question: string) => Promise<string>;
+  askPurchasesAI: (question: string) => Promise<ReturnType<typeof queryPurchasesAI>>;
   resetPurchasesData: () => void;
 
   // Logistics Operations (Fase 3)
@@ -579,7 +587,7 @@ export interface ERPContextType {
     pickingId?: string,
     notes?: string,
     items?: { orderItemId: string; productId: string; quantity: number; location?: string }[]
-  ) => Promise<{ success: boolean; error?: string; order?: Order; picking?: Picking }>;
+  ) => Promise<FulfillmentExecutionResult>;
 
   createWarehouseTransfer: (data: {
     originWarehouseId: string;
@@ -599,6 +607,7 @@ export interface ERPContextType {
   authorizeAndApplyCountAdjustments: (sessionId: string, notes?: string) => { success: boolean; error?: string };
 
   createInventoryAdjustment: (data: {
+    folio?: string;
     productId: string;
     warehouseId: string;
     type: 'AJUSTE_POSITIVO' | 'AJUSTE_NEGATIVO';
@@ -634,7 +643,8 @@ export interface ERPContextType {
   broadcastDataUpdate: (type: string, details: any) => void;
 
   // Audit & Notifications
-  addAuditLog: (entry: { action: string; module: ERPModule; recordId?: string; details: string; customUser?: { id: string; name: string; role: any } }) => void;
+  addAuditLog: (entry: AuditEntry) => void;
+  logAudit: (action: string, module: ERPModule, entityType: string, entityId: string, previousValue?: string, details?: string) => void;
   addNotification: (notif: { title: string; message: string; type: NotificationItem['type']; module: ERPModule }) => void;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
@@ -642,7 +652,7 @@ export interface ERPContextType {
   // CRM Operations (Fase 1)
   addLead: (lead: Omit<Lead, 'id' | 'createdAt' | 'updatedAt'>) => Lead;
   updateLead: (id: string, updates: Partial<Lead>) => void;
-  checkCustomerDuplicates: (query: { phone?: string; email?: string; rfc?: string; companyName?: string }) => Customer[];
+  checkCustomerDuplicates: (query: { phone?: string; email?: string; rfc?: string; companyName?: string }) => (Customer & { isCrossVendor?: boolean })[];
   convertLeadToCustomerAndOpportunity: (
     leadId: string,
     options: {
@@ -666,15 +676,15 @@ export interface ERPContextType {
   updateCustomerContact: (id: string, updates: Partial<CustomerContact>) => void;
 
   // Quote & Sales Engine
-  createQuote: (quoteData: Partial<Quote> & { customerId?: string; customer_id?: string; items: any[] }) => Quote;
-  addQuote: (quoteData: Partial<Quote> & { customerId?: string; customer_id?: string; items: any[] }) => Quote;
+  createQuote: (quoteData: Omit<Partial<Quote>, 'items'> & { items: (Partial<QuoteItem> & { product_id?: string; unit_price?: number })[] }) => Quote;
+  addQuote: (quoteData: Omit<Partial<Quote>, 'items'> & { items: (Partial<QuoteItem> & { product_id?: string; unit_price?: number })[] }) => Quote;
   createQuoteFromOpportunity: (opportunityId: string, quoteData?: Partial<Quote>) => Quote;
   updateQuoteStatus: (id: string, status: any) => void;
   approveQuote: (quoteId: string) => { success: boolean; error?: string };
   requestFinancialApproval: (quoteId: string, notes?: string) => { success: boolean; error?: string };
   approveFinancialQuote: (quoteId: string, notes?: string, customUser?: any) => { success: boolean; error?: string };
   rejectFinancialQuote: (quoteId: string, reason: string, customUser?: any) => { success: boolean; error?: string };
-  calculateQuoteMarginAndDiscount: (items: any[], discountPct: number, overrideRole?: string) => QuoteMarginValidation;
+  calculateQuoteMarginAndDiscount: (items: any[], discountPct?: number, overrideRole?: string) => QuoteMarginValidation;
 
   // Transactional Workflows
   createOrder: (orderData: Partial<Order> & { customerId?: string; customer_id?: string; items: any[] }, customUser?: { id: string; name: string; role?: any }) => Order;
@@ -791,7 +801,7 @@ export interface ERPContextType {
   updateMarketingSegment: (id: string, updates: Partial<MarketingSegment>) => void;
   addTouchpoint: (touchpointData: Partial<Touchpoint>) => Touchpoint;
   authorizeAIMarketingProposal: (proposalId: string) => void;
-  rejectAIMarketingProposal: (proposalId: string) => void;
+  rejectAIMarketingProposal: (proposalId: string, reason?: string) => void;
   setSelectedAttributionModel: (model: AttributionModel) => void;
   getCampaignAttribution: (model?: AttributionModel) => CampaignAttributionResult[];
   executeE2ETestFlow: (options?: {
@@ -839,15 +849,21 @@ export interface ERPContextType {
   hrKPIs: HRKPIs;
   computedHRKPIs?: HRKPIs;
 
+  justifyAbsence: ReturnType<typeof createHRHandlers>['justifyAbsence'];
+  savePerformanceReview: ReturnType<typeof createHRHandlers>['savePerformanceReview'];
+  createEmployeeGoal: ReturnType<typeof createHRHandlers>['createEmployeeGoal'];
+  updateAIHRInsightStatus: ReturnType<typeof createHRHandlers>['updateAIHRInsightStatus'];
+  calculatePayrollRun: ReturnType<typeof createHRHandlers>['calculatePayrollRun'];
+  approvePayrollPeriod: ReturnType<typeof createHRHandlers>['approvePayrollPeriod'];
   // HR Operations (Fase 6)
   addEmployee: (data: Partial<Employee>, confidential?: Partial<EmployeeConfidentialData>) => Employee;
   updateEmployee: (id: string, updates: Partial<Employee>) => void;
   updateConfidentialData: (employeeId: string, data: Partial<EmployeeConfidentialData>) => void;
-  registerCheckIn: (employeeId: string, source?: 'RELOJ_VIRTUAL' | 'BIOMETRICO' | 'APP_MOVIL') => void;
-  registerCheckOut: (employeeId: string) => void;
+  registerCheckIn: (employeeId: string, source?: AttendanceRecord['source'], date?: string, time?: string) => void;
+  registerCheckOut: (employeeId: string, date?: string, time?: string) => void;
   requestAbsence: (data: {
     employeeId: string;
-    type: 'VACACIONES' | 'INCAPACIDAD' | 'PERMISO' | 'FALTA_JUSTIFICADA';
+    type: AbsenceRequest['type'];
     startDate: string;
     endDate: string;
     reason: string;
@@ -924,6 +940,9 @@ export interface ERPContextType {
   approveExpense: (id: string, approve: boolean) => void;
   payExpense: (id: string, bankAccountId: string, paymentReference: string) => void;
   addCreditNote: (note: Omit<CreditNote, 'id' | 'folio' | 'createdAt' | 'status'>) => CreditNote;
+  closeAccountingPeriod: ReturnType<typeof createFinanceHandlers>['closeAccountingPeriod'];
+  reopenAccountingPeriod: ReturnType<typeof createFinanceHandlers>['reopenAccountingPeriod'];
+  resetFinanceData: () => void;
   closeFinancialPeriod: (periodId: string) => void;
   updateAIFinancialInsightStatus: (id: string, status: AIFinancialInsight['status']) => void;
   getFinancialKPIs: () => FinancialKPIs;
@@ -966,7 +985,7 @@ const ERPContext = createContext<ERPContextType | undefined>(undefined);
 const BROADCAST_CHANNEL_NAME = 'conscore_realtime_sync_bus_v1';
 
 export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { currentUser } = useAuth();
+  const { currentUser, can } = useAuth();
 
   // Core ERP state with localStorage caching
   const [customers, setCustomers] = useState<Customer[]>(() => {
@@ -1933,25 +1952,22 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   const addAuditLog = useCallback(
-    (entry: {
-      action: string;
-      module: ERPModule;
-      recordId?: string;
-      details: string;
-      customUser?: { id: string; name: string; role: any };
-    }) => {
+    (entry: AuditEntry) => {
       const userToUse = entry.customUser || currentUser;
       const newLog: AuditLog = {
         id: `AUD-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 5)}`,
         timestamp: new Date().toLocaleString('es-MX', { hour12: false }),
-        userId: userToUse?.id || 'USR-001',
+        userId: userToUse?.id,
         userName: userToUse?.name || 'Sistema',
-        userRole: userToUse?.role || currentUser?.role || 'ADMINISTRADOR',
+        userRole: userToUse?.role || currentUser?.role,
         action: entry.action,
         module: entry.module,
         recordId: entry.recordId,
         details: entry.details,
-        ip: '192.168.1.100',
+        masterTransactionId: entry.masterTransactionId,
+        entityType: entry.entityType,
+        entityId: entry.entityId,
+        previousValue: entry.previousValue,
         createdAt: new Date().toISOString(),
       };
       setAuditLogs((prev) => [newLog, ...prev]);
@@ -1965,7 +1981,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Check for duplicate customers before creation (Observación 04: Sanitización cross-vendor)
   const checkCustomerDuplicates = useCallback(
-    (query: { phone?: string; email?: string; rfc?: string; companyName?: string }): Customer[] => {
+    (query: { phone?: string; email?: string; rfc?: string; companyName?: string }): (Customer & { isCrossVendor?: boolean })[] => {
       const qPhone = (query.phone || '').replace(/[^0-9]/g, '');
       const qEmail = (query.email || '').trim().toLowerCase();
       const qRfc = (query.rfc || '').trim().toUpperCase();
@@ -1994,22 +2010,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             return CommercialRLSService.sanitizeCustomer(c, currentUser);
           }
           // Enmascaramiento preventivo cross-vendor: no filtrar datos confidenciales
-          return {
-            ...c,
-            id: `PROTECTED-CROSS-${c.id}`,
-            businessName: 'Cliente registrado en otra cartera comercial',
-            companyName: 'Cliente registrado en otra cartera comercial',
-            contactName: 'Protegido por política RLS',
-            phone: '••••••••••',
-            email: 'protegido@conscore.com.mx',
-            creditLimit: 0,
-            currentBalance: 0,
-            totalPurchases: 0,
-            sellerId: undefined,
-            sellerName: 'Otro Ejecutivo Comercial',
-            salesExecutiveId: 'OTRO_EJECUTIVO',
-            isCrossVendor: true,
-          } as Customer;
+          return CommercialRLSService.maskCrossVendorDuplicate();
         });
       }
 
@@ -2522,7 +2523,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 action: 'LEAD_OWNERSHIP_VIOLATION',
                 module: 'VENTAS',
                 recordId: lead.id,
-                details: `403 FORBIDDEN: Intento de crear oportunidad desde prospecto ajeno (${lead.contactName}).`,
+                details: `403 FORBIDDEN: Intento de crear oportunidad desde prospecto ajeno (${lead.name}).`,
               });
               throw new Error(leadCheck.error || '403 ACCESS_DENIED: No puedes crear oportunidades para un prospecto asignado a otro ejecutivo de ventas.');
             }
@@ -2855,7 +2856,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       items.forEach((item) => {
         const prod = products.find((p) => p.id === item.productId || p.id === item.product_id || p.code === item.productCode || p.code === item.product_code);
-        const itemQty = Number(item.quantity || item.quantityOrdered || 1);
+        const itemQty = Number(item.quantity);
         const itemPrice = Number(item.unitPrice || item.unit_price || prod?.price || prod?.salePrice || 0);
         const itemCost = Number(item.cost || prod?.cost || itemPrice * 0.65);
 
@@ -2895,7 +2896,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Create Quote with discount and margin checks (Requirement #10)
   const createQuote = useCallback(
-    (quoteData: Partial<Quote> & { customerId?: string; customer_id?: string; items: any[] }): Quote => {
+    (quoteData: Omit<Partial<Quote>, 'items'> & { items: (Partial<QuoteItem> & { product_id?: string; unit_price?: number })[] }): Quote => {
       const custId = quoteData.customerId || quoteData.customer_id;
       const customer = customers.find((c) => c.id === custId);
       if (!customer) throw new Error('Cliente requerido para emitir cotización');
@@ -3176,7 +3177,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addNotification({
         title: 'Cotización Autorizada por Finanzas',
         message: `La cotización ${quote.folio} ha sido autorizada por Finanzas. Lista para convertirse en pedido.`,
-        type: 'SUCCESS',
+        type: 'EXITO',
         module: 'COTIZACIONES',
       });
 
@@ -3212,7 +3213,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addNotification({
         title: 'Cotización Rechazada por Finanzas',
         message: `La cotización ${quote.folio} ha sido rechazada por Finanzas. Motivo: ${reason}`,
-        type: 'WARNING',
+        type: 'ADVERTENCIA',
         module: 'COTIZACIONES',
       });
 
@@ -3341,7 +3342,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updatedProducts = products.map((prod) => {
       const match = orderItems.find((it) => it.productId === prod.id || it.productCode === prod.code);
       if (match) {
-        const qty = match.quantity || match.quantityOrdered || 1;
+        const qty = match.quantity;
         const newReserved = (prod.reservedStock || 0) + qty;
         const newAvailable = Math.max(0, (prod.stock || prod.physicalStock || 0) - newReserved);
 
@@ -3550,9 +3551,9 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         productName: item.productName || item.product_name || item.description || '',
         product_name: item.productName || item.product_name || item.description || '',
         description: item.description || item.productName || item.product_name || '',
-        quantity: item.quantity || item.quantityOrdered || 1,
-        quantityOrdered: item.quantity || item.quantityOrdered || 1,
-        quantityReserved: item.quantity || item.quantityOrdered || 1,
+        quantity: item.quantity,
+        quantityOrdered: item.quantity,
+        quantityReserved: item.quantity,
         quantityFulfilled: 0,
         unitPrice: item.unitPrice || item.unit_price,
         unit_price: item.unitPrice || item.unit_price,
@@ -3570,7 +3571,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updatedProducts = products.map((prod) => {
       const match = quote.items.find((it) => it.productId === prod.id || it.productCode === prod.code);
       if (match) {
-        const qty = match.quantity || match.quantityOrdered || 1;
+        const qty = match.quantity;
         const newReserved = (prod.reservedStock || 0) + qty;
         const newAvailable = Math.max(0, (prod.stock || prod.physicalStock || 0) - newReserved);
 
@@ -3635,9 +3636,9 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       {
         id: `AUD-${Date.now().toString(36).toUpperCase()}`,
         timestamp: new Date().toLocaleString('es-MX', { hour12: false }),
-        userId: userToUse?.id || 'USR-001',
+        userId: userToUse?.id,
         userName: userToUse?.name || 'Sistema',
-        userRole: userToUse?.role || currentUser?.role || 'ADMINISTRADOR',
+        userRole: userToUse?.role || currentUser?.role,
         action: 'CONVERSION_COTIZACION_A_PEDIDO',
         module: 'PEDIDOS' as ERPModule,
         recordId: orderFolio,
@@ -3743,9 +3744,9 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       {
         id: `AUD-${Date.now().toString(36).toUpperCase()}`,
         timestamp: new Date().toLocaleString('es-MX', { hour12: false }),
-        userId: userToUse?.id || 'USR-001',
+        userId: userToUse?.id,
         userName: userToUse?.name || 'Sistema',
-        userRole: userToUse?.role || currentUser?.role || 'ADMINISTRADOR',
+        userRole: userToUse?.role || currentUser?.role,
         action: `MOVIMIENTO_${data.type}`,
         module: 'INVENTARIO',
         recordId: product.code,
@@ -4308,7 +4309,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const isFullyFulfilled = totalFulfilledQty >= totalOrderedQty;
       const newOrderStatus = isFullyFulfilled ? 'SURTIDO' : totalFulfilledQty > 0 ? 'EN SURTIDO' : order.status;
 
-      const updatedOrders = orders.map((o) =>
+      const updatedOrders: Order[] = orders.map((o) =>
         o.id === order.id
           ? {
               ...o,
@@ -4809,11 +4810,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       // Si fue idempotente, no duplica estados ni Kardex
       if (executionResult.isIdempotent) {
         addAuditLog({
-          id: `LOG-IDEMP-${Date.now()}`,
-          timestamp: new Date().toISOString(),
-          userId: userToUse.id,
-          userName: userToUse.name,
-          userRole: userToUse.role,
+        customUser: userToUse,
           module: 'ALMACENES',
           action: 'PHYSICAL_FULFILLMENT_DUPLICATE_BLOCKED',
           details: `Intento de surtido físico duplicado bloqueado por idempotencia para pedido ${order.folio || order.id}.`,
@@ -4850,23 +4847,16 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       // Registrar auditoría y notificación
       addAuditLog({
-        id: `LOG-FULFILL-${Date.now()}`,
-        timestamp: new Date().toISOString(),
-        userId: userToUse.id,
-        userName: userToUse.name,
-        userRole: userToUse.role,
+        customUser: userToUse,
         module: 'ALMACENES',
         action: 'PHYSICAL_FULFILLMENT_CONFIRMED',
         details: `orderId: ${order.id}, pickingId: ${picking.pickingId}, warehouseId: ${order.warehouse_id || 'WH-01'}, requestedQty: ${totalReq}, pickedQty: ${executionResult.summary?.unitsFulfilled}, fulfilledQty: ${executionResult.summary?.unitsFulfilled}, remainingQty: ${executionResult.summary?.unitsRemaining}, userId: ${userToUse.id}, timestamp: ${new Date().toISOString()}, masterTransactionId: ${executionResult.summary?.masterTransactionId}`,
       });
 
       addNotification({
-        id: `NOTIF-FULFILL-${Date.now()}`,
         title: 'Surtido Físico Confirmado',
         message: `El pedido ${order.folio || order.id} fue confirmado en físico (${executionResult.order?.status}). Listo para Logística.`,
-        type: 'success',
-        timestamp: new Date().toISOString(),
-        read: false,
+        type: 'EXITO',
         module: 'ALMACENES',
       });
 
@@ -6315,7 +6305,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           orderNumber: ord.folio,
           customerId: ord.customerId,
           customerName: ord.customerName,
-          contactName: client?.contactPerson || 'Encargado de Almacén',
+          contactName: client?.contactName || 'Encargado de Almacén',
           phone: client?.phone || '+52 55 0000-0000',
           deliveryAddress: ord.deliveryAddress || client?.address || 'Dirección de Entrega',
           city: client?.city || 'Ciudad de México',
@@ -6366,7 +6356,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
 
       // Update orders to PROGRAMADO
-      const updatedOrders = orders.map((o) =>
+      const updatedOrders: Order[] = orders.map((o) =>
         (data?.orderIds || []).includes(o.id)
           ? {
               ...o,
@@ -6435,7 +6425,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       // Return orders to LISTO_PARA_EMBARQUE
       const orderIdsInRoute = (rt.stops || []).map((s) => s.orderId);
-      const updatedOrders = orders.map((o) =>
+      const updatedOrders: Order[] = orders.map((o) =>
         (orderIdsInRoute || []).includes(o.id) ? { ...o, status: 'LISTO_PARA_EMBARQUE' as const } : o
       );
 
@@ -6472,7 +6462,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addNotification({
         title: 'Ruta Cancelada',
         message: `${rt.routeNumber} cancelada. Los pedidos están disponibles nuevamente para embarque.`,
-        type: 'ALERTA',
+        type: 'ADVERTENCIA',
         module: 'LOGISTICA',
       });
 
@@ -6530,7 +6520,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         r.id === rt.id ? { ...r, status: 'LOADING' as const } : r
       );
 
-      const updatedOrders = orders.map((o) =>
+      const updatedOrders: Order[] = orders.map((o) =>
         (orderIdsInRoute || []).includes(o.id) ? { ...o, status: 'CARGANDO' as const } : o
       );
 
@@ -6620,7 +6610,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           : r
       );
 
-      const updatedOrders = orders.map((o) =>
+      const updatedOrders: Order[] = orders.map((o) =>
         (orderIdsInRoute || []).includes(o.id) ? { ...o, status: 'EN_RUTA' as const } : o
       );
 
@@ -6961,7 +6951,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       );
 
       const orderFinalStatus = isPartial ? 'ENTREGA_PARCIAL' : 'ENTREGADO';
-      const updatedOrders = orders.map((o) =>
+      const updatedOrders: Order[] = orders.map((o) =>
         o.id === stop.orderId || o.folio === stop.orderNumber || o.order_number === stop.orderNumber
           ? {
               ...o,
@@ -7072,7 +7062,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addNotification({
         title: isPartial ? 'Entrega Parcial Registrada' : 'Pedido Entregado con Éxito (POD)',
         message: `${stop.orderNumber} para ${stop.customerName} confirmado por ${canonicalPOD.recipientName}.`,
-        type: isPartial ? 'ALERTA' : 'EXITO',
+        type: isPartial ? 'ADVERTENCIA' : 'EXITO',
         module: 'LOGISTICA',
       });
 
@@ -7133,7 +7123,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       // Update Order Status
       const orderStatus = isRescheduled ? 'REPROGRAMADO' : 'INCIDENCIA';
-      const updatedOrders = orders.map((o) =>
+      const updatedOrders: Order[] = orders.map((o) =>
         o.id === stop.orderId
           ? {
               ...o,
@@ -7177,7 +7167,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addNotification({
         title: 'Incidencia en Entrega',
         message: `No se pudo completar la entrega de ${stop.orderNumber} (${reason}). Se abrió la incidencia ${incidentFolio}.`,
-        type: 'ERROR',
+        type: 'CRITICA',
         module: 'LOGISTICA',
       });
 
@@ -7237,7 +7227,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addNotification({
         title: 'Nueva Incidencia Logística',
         message: `${folio}: ${data.description.slice(0, 60)}...`,
-        type: data.severity === 'CRITICA' || data.severity === 'ALTA' ? 'ERROR' : 'ALERTA',
+        type: data.severity === 'CRITICA' || data.severity === 'ALTA' ? 'CRITICA' : 'ADVERTENCIA',
         module: 'LOGISTICA',
       });
 
@@ -7334,7 +7324,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addNotification({
         title: 'Devolución de Mercancía Registrada',
         message: `${folio}: Solicitud registrada. Requiere autorización administrativa previa.`,
-        type: 'ALERTA',
+        type: 'ADVERTENCIA',
         module: 'LOGISTICA',
       });
 
@@ -7554,7 +7544,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             productName: prod.name,
             warehouseId: targetWarehouse.id,
             warehouseName: targetWarehouse.name,
-            location: prod.warehouseLocation || 'Zona de Devoluciones Reinspeccionadas',
+            location: (typeof prod.warehouseLocation === 'string' ? prod.warehouseLocation : prod.warehouseLocation?.locationCode) || 'Zona de Devoluciones Reinspeccionadas',
             quantity: qtyToReintegrate,
             previousBalance: prevStock,
             newBalance: newStock,
@@ -7711,7 +7701,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         suggestedStopSequence,
         loadingOrderAdvice: lifoOrder,
         aiInsights: [
-          `Agrupación óptima en corredor ${targetWarehouse.city || 'Metropolitano'}: reduce ~22% de tiempo en tráfico evitando horas pico en periférico.`,
+          `Agrupación óptima en corredor ${targetWarehouse.name || 'Metropolitano'}: reduce ~22% de tiempo en tráfico evitando horas pico en periférico.`,
           `Capacidad de carga balanceada: ${weightUtilization}% en peso (${Math.round(totalWeight)} kg) y ${volumeUtilization}% en volumen (${Math.round(totalVolume * 10) / 10} m³).`,
           `Estiba recomendada LIFO: Cargar primero pedidos pesados de placa y lana mineral al fondo de la unidad.`,
           `Documentación requerida: Llevar remisiones fiscales timbradas, cartas porte vigentes y pase de contratista para obras industriales.`,
@@ -8178,7 +8168,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updatedAt: new Date().toISOString(),
       };
 
-      const updatedOrders = orders.map((o) => (o.id === order.id ? updatedOrder : o));
+      const updatedOrders: Order[] = orders.map((o) => (o.id === order.id ? updatedOrder : o));
       setOrders(updatedOrders);
 
       // Persist to backend API if available
@@ -8621,6 +8611,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // HR Handlers & Computed KPIs (Fase 6)
   const hrHandlers = createHRHandlers({
+    can,
     currentUser,
     employees,
     setEmployees,
@@ -8681,6 +8672,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Finance Handlers & Computed KPIs (Fase 7)
   const financeHandlers = createFinanceHandlers({
+    can,
     currentUser,
     chartOfAccounts,
     setChartOfAccounts,
@@ -9048,6 +9040,26 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         aiFinancialInsights,
         financialKPIs: computedFinancialKPIs,
         ...financeHandlers,
+        resetFinanceData: () => {
+          if (!import.meta.env.DEV || currentUser?.role !== 'ADMINISTRADOR') throw new Error('Restablecimiento disponible solo para administración en desarrollo');
+          setChartOfAccounts(structuredClone(INITIAL_CHART_OF_ACCOUNTS));
+          setCostCenters(structuredClone(INITIAL_COST_CENTERS));
+          setBankAccounts(structuredClone(INITIAL_BANK_ACCOUNTS));
+          setBankTransactions(structuredClone(INITIAL_BANK_TRANSACTIONS));
+          setBankReconciliations(structuredClone(INITIAL_BANK_RECONCILIATIONS));
+          setCXCInvoices(structuredClone(INITIAL_CXC_INVOICES));
+          setCXCPayments(structuredClone(INITIAL_CXC_PAYMENTS));
+          setCollectionActivities(structuredClone(INITIAL_COLLECTION_ACTIVITIES));
+          setCXPInvoices(structuredClone(INITIAL_CXP_INVOICES));
+          setCXPPayments(structuredClone(INITIAL_CXP_PAYMENTS));
+          setPaymentSchedule(structuredClone(INITIAL_PAYMENT_SCHEDULE));
+          setBudgets(structuredClone(INITIAL_BUDGETS));
+          setExpenses(structuredClone(INITIAL_EXPENSES));
+          setCreditNotes(structuredClone(INITIAL_CREDIT_NOTES));
+          setPeriodClosings(structuredClone(INITIAL_PERIOD_CLOSINGS));
+          setAIFinancialInsights(structuredClone(INITIAL_AI_FINANCIAL_INSIGHTS));
+          addAuditLog({ action: 'RESET_FINANCE_DEMO', module: 'FINANZAS', details: 'Restablecimiento explícito de datos demo en desarrollo' });
+        },
         // Phase 11 State & Methods (Servicio al Cliente, Garantías, Devoluciones, Calidad, CAPA, NPS, BI)
         serviceTickets,
         slaRules,
@@ -9066,6 +9078,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         ...customerServiceHandlers,
         // Phase 4 Methods (Purchases)
         ...purchasesHandlers,
+        addPurchaseRequest: (request) => setPurchaseRequests(prev => [request, ...prev.filter(item => item.id !== request.id)]),
         getProductReorderStatus,
         getReplenishmentSuggestions,
         calculateProductReorderStatus,
@@ -9138,6 +9151,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         clearRealtimeToast,
         broadcastDataUpdate,
         addAuditLog,
+        logAudit: (action, module, entityType, entityId, previousValue, details) => addAuditLog({ action, module, entityType, entityId, previousValue, details }),
         addNotification,
         markNotificationRead,
         markAllNotificationsRead,

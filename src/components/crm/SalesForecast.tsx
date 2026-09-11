@@ -43,7 +43,7 @@ export const SalesForecast: React.FC = () => {
   );
 
   // Target comparison
-  const totalTarget = salesGoals.filter((g) => g.month === '2026-08').reduce((acc, g) => acc + g.targetAmount, 0);
+  const totalTarget = salesGoals.filter((g) => g.period === 'Agosto 2026').reduce((acc, g) => acc + (g.targetAmount ?? g.goalAmount), 0);
   const quotaGap = totalTarget - weightedPipeline;
 
   // Breakdown by stage

@@ -43,6 +43,7 @@ import {
 } from '../services/financeService';
 
 export interface FinanceHandlersParams {
+  can: (module: 'FINANZAS', action: 'AUTORIZAR') => boolean;
   currentUser: { id: string; name: string; role: UserRole } | null;
   chartOfAccounts: ChartAccount[];
   setChartOfAccounts: React.Dispatch<React.SetStateAction<ChartAccount[]>>;
@@ -727,6 +728,12 @@ export function createFinanceHandlers(params: FinanceHandlersParams) {
   // 11. CIERRE DE PERIODO CONTABLE
   // ==========================================
   const closeFinancialPeriod = (periodId: string) => {
+    if (!currentUser || !params.can('FINANZAS', 'AUTORIZAR')) throw new Error('Sin autorización para cerrar periodos');
+    const period = periodClosings.find(p => p.id === periodId);
+    if (!period) throw new Error('Periodo no encontrado');
+    if (period.status === 'CERRADO') return;
+    const requiredChecks: (keyof FinancialPeriodClosing['checklist'])[] = ['cxcReconciled', 'cxpReconciled', 'bankReconciled', 'inventoryValued', 'expensesApproved', 'payrollAccounted', 'invoicingCompleted', 'hasNoPendingDrafts'];
+    if (!requiredChecks.every(key => period.checklist?.[key] === true)) throw new Error('Complete la lista de validación del periodo antes del cierre');
     setPeriodClosings((prev) =>
       prev.map((p) =>
         p.id === periodId
@@ -825,7 +832,23 @@ export function createFinanceHandlers(params: FinanceHandlersParams) {
     return executeSimulation(params, kpis);
   };
 
+  const closeAccountingPeriod = (data: { year: number; month: number; notes?: string }) => {
+    const key = String(data.year) + '-' + String(data.month).padStart(2, '0');
+    const period = periodClosings.find(p => p.period === key && p.closingType === 'MENSUAL');
+    if (!period) throw new Error('El periodo no existe. Debe prepararse con su resumen y lista de validación antes de cerrarlo.');
+    closeFinancialPeriod(period.id);
+    if (data.notes) setPeriodClosings(prev => prev.map(p => p.id === period.id ? { ...p, notes: data.notes } : p));
+  };
+  const reopenAccountingPeriod = (id: string, reason: string) => {
+    if (!currentUser || !['ADMINISTRADOR', 'DIRECTOR'].includes(currentUser.role) || !params.can('FINANZAS', 'AUTORIZAR')) throw new Error('Solo Dirección o Administración autorizada puede reabrir un periodo');
+    if (!reason.trim()) throw new Error('Indique el motivo de reapertura');
+    const period = periodClosings.find(p => p.id === id);
+    if (!period || period.status !== 'CERRADO') throw new Error('El periodo no está cerrado');
+    setPeriodClosings(prev => prev.map(p => p.id === id ? { ...p, status: 'REABIERTO', reopenedBy: currentUser.id, reopenedAt: new Date().toISOString(), reopeningReason: reason.trim() } : p));
+    addAuditLog({ action: 'REABRIR_PERIODO', module: 'FINANZAS', entityId: id, details: reason.trim(), userId: currentUser.id, userName: currentUser.name });
+  };
   return {
+    closeAccountingPeriod, reopenAccountingPeriod,
     addChartAccount,
     updateChartAccount,
     addCostCenter,

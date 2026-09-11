@@ -92,11 +92,11 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
     addAuditLog,
     addNotification,
     broadcastDataUpdate,
-    arInvoices,
-    apBills,
-    operatingExpenses,
-    payrollRecords,
-    companyBudget,
+    cxcInvoices: arInvoices,
+    cxpInvoices: apBills,
+    expenses: operatingExpenses,
+    payrollPeriods: payrollRecords,
+    budgets: companyBudget,
   } = useERP();
 
   const { currentUser } = useAuth();
@@ -380,7 +380,7 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
       department: 'Finanzas & Facturación',
       role: 'Contador / Auxiliar de Facturación',
       status: currentStepIndex > 6 ? 'COMPLETED' : currentStepIndex === 6 ? 'RUNNING' : 'PENDING',
-      description: 'Emisión de Factura Fiscal CFDI 4.0 timbrada con PAC, generación de UUID fiscal SAT, desglose de IVA y creación formal de la Cuenta por Cobrar.',
+      description: 'Demostración de registro de CXC; no realiza timbrado con PAC ni emite un UUID fiscal.',
       documentFolio: 'FAC-2026-9080',
       accountingImpact: 'Cargo a Clientes (CXC) $148,248 / Abono a Ventas $127,800 + IVA Trasladado $20,448',
       financialImpact: {
@@ -390,7 +390,7 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
       },
       details: {
         entity: 'Servicio de Administración Tributaria (SAT CFDI 4.0)',
-        action: 'Timbrado Digital Fiscal y Registro de Cartera',
+        action: 'Registro interno de cartera (sin timbrado)',
         inputs: {
           'Receptor': 'Ingeniería y Construcciones Titanio S.A. de C.V. (ICT210815KL9)',
           'Uso CFDI': 'G03 - Gastos en general',
@@ -398,7 +398,7 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
           'Forma de Pago': '99 - Por definir',
         },
         outputs: {
-          'Folio Fiscal (UUID)': '9F4B3C2A-88D1-4A56-B102-39E4C9F101A2',
+          'Folio Fiscal (UUID)': 'SIN TIMBRADO — DEMOSTRACIÓN',
           'Subtotal Facturado': '$127,800.00 MXN',
           'IVA 16%': '$20,448.00 MXN',
           'Total Factura (Saldo CXC)': '$148,248.00 MXN',
@@ -525,11 +525,15 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
     switch (step.key) {
       case 'LEAD': {
         const lead = addLead({
-          companyName: 'Ingeniería y Construcciones Titanio S.A. de C.V.',
-          contactName: 'Ing. Roberto Sada',
+          company: 'Ingeniería y Construcciones Titanio S.A. de C.V.',
+          name: 'Ing. Roberto Sada',
+          city: '',
+          salespersonId: currentUser?.id || '',
+          salespersonName: currentUser?.name || '',
+          creationDate: new Date().toISOString(),
           email: 'rsada@constructoratitanio.com.mx',
           phone: '+52 81 8390 4422',
-          source: 'GOOGLE_ADS',
+          source: 'GOOGLE',
           status: 'CALIFICADO',
           estimatedValue: 148248,
           notes: 'Proyecto Torre Titanium: Aislamiento preformado lana mineral y elastómero.',
@@ -569,7 +573,7 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
               productId: prodPre?.id || 'P-01',
               productCode: (prodPre as any)?.sku || prodPre?.code || 'PRE-1080',
               productName: prodPre?.name || 'Preformado Lana Mineral 2"',
-              quantityOrdered: 300,
+              quantity: 300,
               unitPrice: 290,
               subtotal: 87000,
             },
@@ -577,7 +581,7 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
               productId: prodEla?.id || 'P-03',
               productCode: (prodEla as any)?.sku || prodEla?.code || 'ELA-3010',
               productName: prodEla?.name || 'Aislamiento Elastómero 1"',
-              quantityOrdered: 60,
+              quantity: 60,
               unitPrice: 680,
               subtotal: 40800,
             },
@@ -639,7 +643,8 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
           ...prev,
           movementPreId: mov1?.movement?.id || 'MOV-PRE-9080',
           movementElaId: mov2?.movement?.id || 'MOV-ELA-9080',
-          remissionFolio: 'REM-2026-9080',
+          invoiceNumber: 'FAC-TEST-9080',
+          creditDays: 30,
         }));
         addLogMessage(`Kardex Valuado rebajado: 360 unidades despachadas. Costo de Ventas (COGS): $78,600 MXN.`, 'success');
         break;
@@ -654,20 +659,19 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
         const inv = createCXCInvoice({
           customerId: generatedEntities.customerId || 'CUST-TITANIO',
           customerName: 'Ingeniería y Construcciones Titanio S.A. de C.V.',
-          customerRfc: 'ICT210815KL9',
+          rfc: 'ICT210815KL9',
           orderId: generatedEntities.orderId || 'ORDER-9080',
           orderFolio: generatedEntities.orderFolio || 'PED-2026-9080',
-          remissionFolio: 'REM-2026-9080',
+          invoiceNumber: 'FAC-TEST-9080',
+          creditDays: 30,
           issueDate: new Date().toISOString().slice(0, 10),
           dueDate: new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString().slice(0, 10),
           subtotal: 127800,
-          ivaAmount: 20448,
-          totalAmount: 148248,
-          currency: 'MXN',
-          cfdiUuid: '9F4B3C2A-88D1-4A56-B102-39E4C9F101A2',
-          satPaymentMethod: 'PPD',
-          satPaymentForm: '99',
-          satCfdiUsage: 'G03',
+          tax: 20448,
+          total: 148248,
+          paymentMethod: 'PPD',
+          paymentFormSat: '99',
+          cfdiUsage: 'G03',
           notes: 'Factura correspondiente a suministro de aislamiento térmico Torre Titanium.',
         });
 
@@ -675,9 +679,9 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
           ...prev,
           cxcInvoiceId: inv?.id || 'CXC-9080',
           invoiceFolio: inv?.folio || 'FAC-2026-9080',
-          invoiceUuid: '9F4B3C2A-88D1-4A56-B102-39E4C9F101A2',
+          invoiceUuid: undefined,
         }));
-        addLogMessage(`Factura FAC-2026-9080 timbrada con SAT CFDI 4.0 (UUID: 9F4B3C2A-88D1-4A56...). CXC registrada.`, 'success');
+        addLogMessage('Registro interno de CXC creado. La demostración no realiza timbrado SAT.', 'success');
         break;
       }
 
@@ -1337,7 +1341,7 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
 
                       <div className="space-y-3 text-xs font-mono">
                         <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 text-[11px]">
-                          <div><span className="text-slate-500">UUID Fiscal:</span> <span className="text-emerald-400 font-bold">9F4B3C2A-88D1-4A56-B102-39E4C9F101A2</span></div>
+                          <div><span className="text-slate-500">UUID Fiscal:</span> <span className="text-emerald-400 font-bold">SIN TIMBRADO — DEMOSTRACIÓN</span></div>
                           <div><span className="text-slate-500">Emisor RFC:</span> <span className="text-slate-300 font-bold">CTA180412XYZ · CONSCORE AISLAMIENTOS TÉRMICOS S.A. DE C.V.</span></div>
                           <div><span className="text-slate-500">Receptor RFC:</span> <span className="text-slate-300 font-bold">ICT210815KL9 · INGENIERÍA Y CONSTRUCCIONES TITANIO S.A. DE C.V.</span></div>
                           <div><span className="text-slate-500">Régimen Fiscal:</span> <span className="text-slate-300">601 - General de Ley Personas Morales</span></div>
@@ -1345,7 +1349,7 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
                         </div>
 
                         <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-[11px]">
-                          <div className="font-bold text-slate-400 uppercase text-[10px]">Conceptos / Partidas Timbradas</div>
+                          <div className="font-bold text-slate-400 uppercase text-[10px]">Conceptos de demostración sin timbrado</div>
                           <div className="flex justify-between border-b border-slate-900 pb-1">
                             <span>300 pzas - PRE-1080 Preformado Lana Mineral 2" (SAT: 30141500)</span>
                             <span className="text-white font-bold">$87,000.00 MXN</span>
@@ -1362,7 +1366,7 @@ export const MasterE2ETestModal: React.FC<MasterE2ETestModalProps> = ({
                         </div>
 
                         <div className="text-[10px] text-slate-500 break-all bg-slate-950 p-2.5 rounded-lg border border-slate-800/60">
-                          <span className="font-bold text-slate-400">Cadena Original SAT:</span> ||1.1|9F4B3C2A-88D1-4A56-B102-39E4C9F101A2|2026-08-26T17:30:00|SAT970701NN3|127800.00|MXN|148248.00|I|PPD|64000|CTA180412XYZ|CONSCORE AISLAMIENTOS|601|ICT210815KL9|INGENIERIA TITANIO|G03||
+                          <span className="font-bold text-slate-400">Cadena Original SAT:</span> ||1.1|SIN TIMBRADO — DEMOSTRACIÓN|2026-08-26T17:30:00|SAT970701NN3|127800.00|MXN|148248.00|I|PPD|64000|CTA180412XYZ|CONSCORE AISLAMIENTOS|601|ICT210815KL9|INGENIERIA TITANIO|G03||
                         </div>
                       </div>
                     </div>

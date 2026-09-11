@@ -1,0 +1,90 @@
+Loaded dataset:
+    - Customers: 13
+    - Leads: 7
+    - Opportunities: 6
+    - Quotes: 2
+    - Orders: 3
+    - Products: 10
+
+================ CERTIFICATION SUMMARY ================
+Total tests executed: 31
+Passed: 31
+Failed: 0
+Compliance Rate: 100%
+Overall Success: PASS
+
+================ 31 MANDATORY TESTS ================
+[PASS] Test #01 [RLS_COLLECTION] Vendedor A no ve clientes de Vendedor B en colección (GET /api/customers)
+      Filtrado estricto por salesExecutiveId exitoso. 0 clientes ajenos visibles.
+[PASS] Test #02 [RLS_COLLECTION] Vendedor A no ve cotizaciones de Vendedor B en colección (GET /api/quotes)
+      Filtrado estricto por salesExecutiveId exitoso. 0 cotizaciones ajenas visibles.
+[PASS] Test #03 [RLS_COLLECTION] Vendedor A no ve pedidos de Vendedor B en colección (GET /api/orders)
+      Filtrado estricto por salesExecutiveId exitoso. 0 pedidos ajenos visibles.
+[PASS] Test #04 [RLS_COLLECTION] Vendedor A no ve leads/prospectos de Vendedor B en colección (GET /api/leads)
+      Filtrado estricto por salesExecutiveId exitoso. 0 prospectos ajenos visibles.
+[PASS] Test #05 [RLS_COLLECTION] Vendedor A no ve oportunidades de Vendedor B en colección (GET /api/opportunities)
+      Filtrado estricto por salesExecutiveId exitoso. 0 oportunidades ajenas visibles.
+[PASS] Test #06 [RLS_RECORD_ACCESS] Vendedor A recibe 403 al consultar cliente individual ajeno (GET /api/customers/:id)
+      Acceso denegado correctamente con error RLS y código 403.
+[PASS] Test #07 [RLS_RECORD_ACCESS] Vendedor A recibe 403 al consultar cotización individual ajena (GET /api/quotes/:id)
+      Acceso denegado correctamente con error RLS y código 403.
+[PASS] Test #08 [RLS_RECORD_ACCESS] Vendedor A recibe 403 al consultar pedido individual ajeno (GET /api/orders/:id)
+      Acceso denegado correctamente con error RLS y código 403.
+[PASS] Test #09 [RLS_RECORD_ACCESS] Vendedor A recibe 403 al consultar lead individual ajeno (GET /api/leads/:id)
+      Acceso denegado correctamente con error RLS y código 403.
+[PASS] Test #10 [RLS_RECORD_ACCESS] Vendedor A recibe 403 al consultar oportunidad individual ajena (GET /api/opportunities/:id)
+      Acceso denegado correctamente con error RLS y código 403.
+[PASS] Test #11 [RLS_CLIENT_360] Vendedor A recibe 403 al consultar expediente 360° de cliente ajeno (GET /api/customers/:id/360)
+      Expediente Client 360° ajeno protegido con 403 ACCESS_DENIED.
+[PASS] Test #12 [RLS_CLIENT_360] Vendedor A accede a expediente 360° de cliente propio con documentos hijos filtrados a su titularidad
+      Expediente propio autorizado. Sub-entidades subordinadas a salesExecutiveId.
+[PASS] Test #13 [RLS_WRITE_SECURITY] Vendedor A recibe 403 al intentar editar cotización de Vendedor B (PUT /api/quotes/:id)
+      Modificación de cotización ajena bloqueada con 403.
+[PASS] Test #14 [RLS_WRITE_SECURITY] Vendedor A recibe 403 al intentar editar pedido de Vendedor B (PATCH /api/orders/:id)
+      Modificación de pedido ajeno bloqueada con 403.
+[PASS] Test #15 [RLS_WRITE_SECURITY] Vendedor A recibe 403 al intentar editar lead de Vendedor B (PUT /api/leads/:id)
+      Modificación de lead ajeno bloqueada con 403.
+[PASS] Test #16 [RLS_WRITE_SECURITY] Vendedor A recibe 403 al intentar editar oportunidad de Vendedor B (PUT /api/opportunities/:id)
+      Modificación de oportunidad ajena bloqueada con 403.
+[PASS] Test #17 [RLS_INTEGRITY] Vendedor A no puede registrar cotización asignada a otro vendedor (Anti-Spoofing forzado)
+      Backend ignora parámetro fraudulento y asigna estrictamente VENDEDOR_01.
+[PASS] Test #18 [RLS_INTEGRITY] Vendedor A no puede registrar pedido asignado a otro vendedor (Anti-Spoofing forzado)
+      Backend ignora parámetro fraudulento y asigna estrictamente VENDEDOR_01.
+[PASS] Test #19 [RLS_INTEGRITY] Vendedor A no puede registrar lead asignado a otro vendedor (Anti-Spoofing forzado)
+      Backend ignora parámetro fraudulento y asigna estrictamente VENDEDOR_01.
+[PASS] Test #20 [RLS_INTEGRITY] Vendedor A no puede registrar oportunidad asignada a otro vendedor (Anti-Spoofing forzado)
+      Backend ignora parámetro fraudulento y asigna estrictamente VENDEDOR_01.
+[PASS] Test #21 [RLS_REASSIGNMENT] Vendedor A bloqueado de reasignar cartera comercial (POST /api/commercial/reassign)
+      Reasignación no autorizada rechazada con 403 FORBIDDEN.
+[PASS] Test #22 [RBAC_SEGREGATION] Vendedor A bloqueado de avanzar estatus operativo de almacén (EN_SURTIDO, SURTIDO, ENTREGADO)
+      El backend rechaza operaciones físicas de surtido y entrega para rol VENDEDOR (403).
+[PASS] Test #23 [RBAC_SEGREGATION] Vendedor A bloqueado de bitácora física de inventario (GET/POST /api/inventory/movements)
+      Rutas /api/inventory/movements devuelven 403 FORBIDDEN para rol VENDEDOR.
+[PASS] Test #24 [RBAC_SEGREGATION] Vendedor A bloqueado de solicitudes de compra y reabastecimiento (GET/POST /api/purchase-requests)
+      Rutas /api/purchase-requests devuelven 403 FORBIDDEN para rol VENDEDOR.
+[PASS] Test #25 [DATA_MASKING] Catálogo de productos: costo de adquisición (cost) removido para rol VENDEDOR
+      Campo cost completamente sanitizado y ausente del payload.
+[PASS] Test #26 [DATA_MASKING] Catálogo de productos: costo unitario de compra (cost_price) removido para rol VENDEDOR
+      Campo cost_price completamente sanitizado y ausente del payload.
+[PASS] Test #27 [DATA_MASKING] Catálogo de productos: márgenes internos y utilidades removidos para rol VENDEDOR
+      Campos margin e internal_margin completamente protegidos.
+[PASS] Test #28 [DATA_MASKING] Catálogo de productos: proveedor y condiciones de compra removidos para rol VENDEDOR
+      Campos supplier y supplier_name completamente protegidos.
+[PASS] Test #29 [RBAC_HIERARCHY] Rol ADMINISTRADOR mantiene visibilidad global irrestricta sobre el 100% de carteras
+      ADMINISTRADOR consulta los 13 clientes del sistema global.
+[PASS] Test #30 [RBAC_HIERARCHY] Rol GERENTE_VENTAS mantiene supervisión comercial autorizada sobre todo el equipo
+      isPrivilegedRole(GERENTE_VENTAS) verificado afirmativo para gobierno de equipo.
+[PASS] Test #31 [SECURITY_AUDIT] Intentos de violación RLS generan registro estricto en bitácora de auditoría (AUDIT LOG)
+      Audit logging activado con registro de usuario infractor, entidad y folio en base de datos.
+
+================ 10 VENDORS AUDIT MATRIX ================
+[PASS] VENDEDOR_01 (Arq. Mariana Ruiz Peña): Custs=2, Quotes=1, Orders=1 | CrossReadBlock=true, CrossWriteBlock=true, CostsStripped=true
+[PASS] VENDEDOR_02 (Lic. Fernando Trejo Valdés): Custs=2, Quotes=1, Orders=1 | CrossReadBlock=true, CrossWriteBlock=true, CostsStripped=true
+[PASS] VENDEDOR_03 (Ing. Sofía Villalobos Cruz): Custs=2, Quotes=0, Orders=0 | CrossReadBlock=true, CrossWriteBlock=true, CostsStripped=true
+[PASS] VENDEDOR_04 (Lic. Gabriel Espinosa Ochoa): Custs=1, Quotes=0, Orders=0 | CrossReadBlock=true, CrossWriteBlock=true, CostsStripped=true
+[PASS] VENDEDOR_05 (Arq. Daniela Sotomayor): Custs=1, Quotes=0, Orders=0 | CrossReadBlock=true, CrossWriteBlock=true, CostsStripped=true
+[PASS] VENDEDOR_06 (Ing. Héctor Ponce Del Rincón): Custs=1, Quotes=0, Orders=0 | CrossReadBlock=true, CrossWriteBlock=true, CostsStripped=true
+[PASS] VENDEDOR_07 (Lic. Valeria Castillejos): Custs=1, Quotes=0, Orders=0 | CrossReadBlock=true, CrossWriteBlock=true, CostsStripped=true
+[PASS] VENDEDOR_08 (Ing. Rodrigo Alarcón Ramos): Custs=1, Quotes=0, Orders=0 | CrossReadBlock=true, CrossWriteBlock=true, CostsStripped=true
+[PASS] VENDEDOR_09 (Lic. Paulina De La Vega): Custs=1, Quotes=0, Orders=0 | CrossReadBlock=true, CrossWriteBlock=true, CostsStripped=true
+[PASS] VENDEDOR_10 (Ing. Mateo Carranza Solórzano): Custs=1, Quotes=0, Orders=0 | CrossReadBlock=true, CrossWriteBlock=true, CostsStripped=true

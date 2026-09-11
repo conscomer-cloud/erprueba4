@@ -32,15 +32,15 @@ import { ErrorBoundaryProps, ErrorBoundaryState } from '../../types/errorBoundar
 // Safe Error Boundary for Employee Directory
 
 
-export class EmployeeDirectoryErrorBoundary extends (React.Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+export class EmployeeDirectoryErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   props!: ErrorBoundaryProps;
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false, errorMsg: '' };
+    this.state = { hasError: false, errorMessage: '' };
   }
 
   static getDerivedStateFromError(error: any) {
-    return { hasError: true, errorMsg: error?.message || 'Error inesperado renderizando colaboradores.' };
+    return { hasError: true, errorMessage: error?.message || 'Error inesperado renderizando colaboradores.' };
   }
 
   componentDidCatch(error: any, errorInfo: any) {
@@ -53,9 +53,9 @@ export class EmployeeDirectoryErrorBoundary extends (React.Component as any)<Err
         <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center shadow-xs">
           <AlertCircle className="mx-auto h-8 w-8 text-red-600 mb-2" />
           <h3 className="text-sm font-black text-red-900">Error al desplegar colaboradores</h3>
-          <p className="text-xs text-red-700 mt-1 max-w-md mx-auto">{this.state.errorMsg}</p>
+          <p className="text-xs text-red-700 mt-1 max-w-md mx-auto">{this.state.errorMessage}</p>
           <button
-            onClick={() => this.setState({ hasError: false, errorMsg: '' })}
+            onClick={() => this.setState({ hasError: false, errorMessage: '' })}
             className="mt-4 inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-xs font-bold text-white hover:bg-red-700 transition"
           >
             <RefreshCw className="h-3.5 w-3.5" />
@@ -75,13 +75,12 @@ const EmployeeDirectoryInner: React.FC = () => {
     positions = [],
     shifts = [],
     confidentialData = {},
-    createEmployee,
+    addEmployee,
     updateEmployee,
     updateConfidentialData,
-    users = [],
   } = useERP();
 
-  const { can, user } = useAuth();
+  const { can, currentUser: user, users } = useAuth();
   const isHRUser = user?.role === 'RH';
   const isAdminOrDirector = user?.role === 'ADMINISTRADOR' || user?.role === 'DIRECTOR';
   const canManageHR = isHRUser || isAdminOrDirector || can('RH', 'EDITAR') || can('RH', 'CREAR');
@@ -207,7 +206,7 @@ const EmployeeDirectoryInner: React.FC = () => {
           salesExecutiveId: (formData as any).salesExecutiveId || undefined,
         };
 
-        createEmployee(newEmp);
+        addEmployee(newEmp);
 
         if (confidentialFormData.baseSalary) {
           updateConfidentialData(newEmp.id, {
@@ -790,7 +789,6 @@ const EmployeeDirectoryInner: React.FC = () => {
                           setConfidentialFormData({
                             ...confidentialFormData,
                             clabe: e.target.value,
-                            bankAccountClabe: e.target.value,
                           })
                         }
                         className="w-full rounded-xl border border-slate-200 bg-white p-2.5 focus:border-blue-500 focus:outline-none font-mono"

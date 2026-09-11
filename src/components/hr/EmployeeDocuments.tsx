@@ -17,8 +17,8 @@ import { useAuth } from '../../context/AuthContext';
 import { EmployeeDocument, DocumentType } from '../../types/erp';
 
 export const EmployeeDocuments: React.FC = () => {
-  const { employeeDocuments, employees, uploadEmployeeDocument } = useERP();
-  const { can, user } = useAuth();
+  const { employeeDocuments, employees, addEmployeeDocument } = useERP();
+  const { can, currentUser: user } = useAuth();
   const canManageHR = can('RH', 'EDITAR') || can('RH', 'CREAR') || user?.role === 'ADMINISTRADOR';
 
   const [selectedStatus, setSelectedStatus] = useState('ALL');
@@ -28,14 +28,15 @@ export const EmployeeDocuments: React.FC = () => {
   // Upload modal state
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(employees[0]?.id || '');
-  const [docType, setDocType] = useState<DocumentType>('CONTRATO_LABORAL');
+  const [docType, setDocType] = useState<DocumentType>('CONTRATO');
   const [docTitle, setDocTitle] = useState('');
   const [expirationDate, setExpirationDate] = useState('');
+  const [issueDate, setIssueDate] = useState('');
   const [notes, setNotes] = useState('');
 
   const filteredDocuments = employeeDocuments.filter((doc) => {
     const matchesStatus = selectedStatus === 'ALL' || doc.status === selectedStatus;
-    const matchesCategory = selectedCategory === 'ALL' || doc.type === selectedCategory;
+    const matchesCategory = selectedCategory === 'ALL' || doc.documentType === selectedCategory;
     const matchesSearch =
       (doc.employeeName || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (doc.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -46,16 +47,15 @@ export const EmployeeDocuments: React.FC = () => {
 
   const handleUploadSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedEmployeeId || !docTitle) return;
+    if (!selectedEmployeeId || !docTitle || !notes.trim()) return;
 
-    uploadEmployeeDocument({
+    addEmployeeDocument({
       employeeId: selectedEmployeeId,
-      type: docType,
+      documentType: docType,
       title: docTitle,
-      fileUrl: `/documents/expedientes/${selectedEmployeeId}-${docType.toLowerCase()}.pdf`,
-      fileName: `${docTitle.replace(/\s+/g, '_')}.pdf`,
+      fileReference: notes.trim(),
+      issueDate,
       expirationDate: expirationDate || undefined,
-      notes,
     });
 
     setIsUploadModalOpen(false);
@@ -148,12 +148,12 @@ export const EmployeeDocuments: React.FC = () => {
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900 focus:bg-white focus:border-blue-500 focus:outline-none"
             >
               <option value="ALL">Todos los Tipos de Documento</option>
-              <option value="CONTRATO_LABORAL">Contratos Laborales</option>
-              <option value="LICENCIA_CONDUCIR">Licencias de Chofer</option>
-              <option value="EXAMEN_MEDICO">Exámenes Médicos</option>
-              <option value="CURP_RFC_NSS">Constancias Fiscales / IMSS</option>
-              <option value="CERTIFICACION_DC3">Constancias DC-3 STPS</option>
-              <option value="IDENTIFICACION_OFICIAL">Identificaciones INE / Pasaporte</option>
+              <option value="CONTRATO">Contratos Laborales</option>
+              <option value="LICENCIA_MANEJO">Licencias de Chofer</option>
+              <option value="OTRO">Exámenes Médicos</option>
+              <option value="CONSTANCIA_FISCAL">Constancias Fiscales / IMSS</option>
+              <option value="CERTIFICACION">Constancias DC-3 STPS</option>
+              <option value="IDENTIFICACION">Identificaciones INE / Pasaporte</option>
             </select>
           </div>
 
@@ -202,7 +202,7 @@ export const EmployeeDocuments: React.FC = () => {
 
                   <td className="px-4 py-3">
                     <span className="rounded-md bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-700 border border-slate-200">
-                      {doc.type}
+                      {doc.documentType}
                     </span>
                   </td>
 
@@ -244,7 +244,7 @@ export const EmployeeDocuments: React.FC = () => {
 
                   <td className="px-4 py-3 text-right">
                     <button
-                      onClick={() => alert(`Visualizando expediente digital: ${doc.title} (${doc.fileName || 'documento.pdf'})`)}
+                      onClick={() => alert(`Visualizando expediente digital: ${doc.title} (${doc.fileReference || 'documento.pdf'})`)}
                       className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:bg-slate-100 hover:text-blue-600 transition"
                     >
                       <Eye className="h-3.5 w-3.5" />
@@ -296,12 +296,12 @@ export const EmployeeDocuments: React.FC = () => {
                   onChange={(e) => setDocType(e.target.value as any)}
                   className="w-full rounded-xl border border-slate-200 p-2.5 focus:border-blue-500 focus:outline-none"
                 >
-                  <option value="CONTRATO_LABORAL">Contrato Laboral por Tiempo Indeterminado</option>
-                  <option value="LICENCIA_CONDUCIR">Licencia de Chofer Tipo Federal/Estatal</option>
-                  <option value="EXAMEN_MEDICO">Examen Médico de Aptitud Laboral</option>
-                  <option value="CURP_RFC_NSS">Constancia de Situación Fiscal / IMSS</option>
-                  <option value="CERTIFICACION_DC3">Constancia de Competencias Laborales DC-3</option>
-                  <option value="IDENTIFICACION_OFICIAL">Credencial para Votar (INE) / Pasaporte</option>
+                  <option value="CONTRATO">Contrato Laboral por Tiempo Indeterminado</option>
+                  <option value="LICENCIA_MANEJO">Licencia de Chofer Tipo Federal/Estatal</option>
+                  <option value="OTRO">Examen Médico de Aptitud Laboral</option>
+                  <option value="CONSTANCIA_FISCAL">Constancia de Situación Fiscal / IMSS</option>
+                  <option value="CERTIFICACION">Constancia de Competencias Laborales DC-3</option>
+                  <option value="IDENTIFICACION">Credencial para Votar (INE) / Pasaporte</option>
                   <option value="COMPROBANTE_DOMICILIO">Comprobante de Domicilio Vigente</option>
                 </select>
               </div>
@@ -319,6 +319,8 @@ export const EmployeeDocuments: React.FC = () => {
               </div>
 
               <div>
+                <label className="block font-bold text-slate-700 mb-1">Fecha de emisión *</label>
+                <input required type="date" value={issueDate} onChange={e => setIssueDate(e.target.value)} className="w-full border rounded p-2 mb-2" />
                 <label className="block font-bold text-slate-700 mb-1">Fecha de Expiración / Vigencia (Opcional)</label>
                 <input
                   type="date"
@@ -329,12 +331,12 @@ export const EmployeeDocuments: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Notas / Folio</label>
+                <label className="block font-bold text-slate-700 mb-1">Referencia del documento existente</label>
                 <textarea
                   rows={2}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Folio de documento o comentarios de RH..."
+                  placeholder="Ruta o referencia verificable del documento..."
                   className="w-full rounded-xl border border-slate-200 p-2.5 focus:border-blue-500 focus:outline-none"
                 />
               </div>

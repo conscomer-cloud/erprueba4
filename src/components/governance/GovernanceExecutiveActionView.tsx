@@ -53,7 +53,7 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-class GovernanceActionsErrorBoundary extends (Component as any)<ErrorBoundaryProps, ErrorBoundaryState> {
+class GovernanceActionsErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   props!: any;
   state: ErrorBoundaryState = { hasError: false, error: null };
 

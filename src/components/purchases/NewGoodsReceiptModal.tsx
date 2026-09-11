@@ -63,7 +63,7 @@ export const NewGoodsReceiptModal: React.FC<NewGoodsReceiptModalProps> = ({
         const prod = products.find((p) => p.id === it.product_id);
         const previouslyReceived = it.quantity_received || 0;
         const pending = Math.max(0, it.quantity_ordered - previouslyReceived);
-        const defaultLoc = prod?.location || 'N1 / R-01 / P-01 / Niv-1';
+        const defaultLoc = (typeof prod?.warehouseLocation === 'string' ? prod.warehouseLocation : prod?.warehouseLocation?.locationCode) || '';
 
         return {
           purchase_order_item_id: it.id,

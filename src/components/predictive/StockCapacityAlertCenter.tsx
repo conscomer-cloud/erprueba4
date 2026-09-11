@@ -71,7 +71,7 @@ export const StockCapacityAlertCenter: React.FC = () => {
             addNotification?.({
               title: a.severity === 'CRITICA' ? 'Capacidad de almacén rebasada' : 'Capacidad de almacén al límite',
               message: `${a.productCode} en ${a.warehouseName}: la demanda proyectada ocupa el ${a.utilizationPct}% de la capacidad.`,
-              type: a.severity === 'CRITICA' ? 'ERROR' : 'ADVERTENCIA',
+              type: a.severity === 'CRITICA' ? 'CRITICA' : 'ADVERTENCIA',
               module: 'INVENTARIO',
             });
           });

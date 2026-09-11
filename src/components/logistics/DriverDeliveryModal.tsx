@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { RouteStop, FailureReason, DeliveryEvidence } from '../../types/erp';
 import { useERP } from '../../context/ERPContext';
+import { useAuth } from '../../context/AuthContext';
 import {
   X,
   CheckCircle,
@@ -153,7 +154,8 @@ export const DriverDeliveryModal: React.FC<DriverDeliveryModalProps> = ({
   onConfirmFailure,
   onClose,
 }) => {
-  const { currentUser, orders } = useERP();
+  const { orders } = useERP();
+  const { currentUser } = useAuth();
   const isVendedor = currentUser?.role === 'VENDEDOR';
 
   // Existing evidence check: if stop is already delivered, open directly in VIEW POD mode!

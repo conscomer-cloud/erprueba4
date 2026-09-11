@@ -70,7 +70,7 @@ export const Phase13CertificationView: React.FC<Phase13CertificationViewProps> =
       {certResult && (
         <div
           className={`rounded-xl border p-6 text-white shadow-lg transition-all ${
-            certResult.isCertified
+            certResult.failedTests === 0 && certResult.passedTests === certResult.totalTests && certResult.totalTests > 0
               ? 'bg-linear-to-r from-emerald-950 via-slate-900 to-emerald-900 border-emerald-500/40'
               : 'bg-linear-to-r from-red-950 via-slate-900 to-red-900 border-red-500/40'
           }`}
@@ -78,10 +78,10 @@ export const Phase13CertificationView: React.FC<Phase13CertificationViewProps> =
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="space-y-1.5">
               <div className="inline-flex items-center gap-2 rounded bg-white/10 px-2.5 py-0.5 text-xs font-bold font-mono">
-                {certResult.certificationId}
+                {certResult.suiteName}
               </div>
               <h3 className="text-2xl font-black tracking-tight flex items-center gap-2">
-                {certResult.isCertified ? (
+                {certResult.failedTests === 0 && certResult.passedTests === certResult.totalTests && certResult.totalTests > 0 ? (
                   <>
                     <CheckCircle2 className="h-7 w-7 text-emerald-400" />
                     CERTIFICACIÓN FASE 13: APROBADA AL 100%
@@ -94,14 +94,14 @@ export const Phase13CertificationView: React.FC<Phase13CertificationViewProps> =
                 )}
               </h3>
               <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-                {certResult.summary}
+                {certResult.overallStatus}
               </p>
             </div>
 
             <div className="flex items-center gap-4 bg-white/10 p-4 rounded-xl border border-white/15 shrink-0">
               <div className="text-center">
                 <span className="text-3xl font-black text-emerald-300">
-                  {certResult.passedCount} / {certResult.totalTests}
+                  {certResult.passedTests} / {certResult.totalTests}
                 </span>
                 <span className="text-[10px] font-bold text-slate-300 block uppercase tracking-wider mt-0.5">
                   Pruebas Exitosas
@@ -110,7 +110,7 @@ export const Phase13CertificationView: React.FC<Phase13CertificationViewProps> =
               <div className="h-10 w-px bg-white/20" />
               <div className="text-center">
                 <span className="text-3xl font-black text-emerald-300 font-mono">
-                  {certResult.percentage}%
+                  {(certResult.totalTests ? 100 * certResult.passedTests / certResult.totalTests : 0).toFixed(1)}%
                 </span>
                 <span className="text-[10px] font-bold text-slate-300 block uppercase tracking-wider mt-0.5">
                   Conformidad
@@ -142,11 +142,11 @@ export const Phase13CertificationView: React.FC<Phase13CertificationViewProps> =
 
         {certResult && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {certResult.checklist.map((chk) => (
+            {certResult.items.map((chk) => (
               <div
                 key={chk.testNumber}
                 className={`rounded-lg border p-3.5 space-y-1.5 transition-all ${
-                  chk.status === 'PASSED'
+                  chk.status === 'PASS'
                     ? 'border-emerald-200 bg-emerald-50/40'
                     : 'border-red-200 bg-red-50/40'
                 }`}
@@ -157,7 +157,7 @@ export const Phase13CertificationView: React.FC<Phase13CertificationViewProps> =
                   </span>
                   <span
                     className={`text-[10px] font-black px-2 py-0.5 rounded ${
-                      chk.status === 'PASSED'
+                      chk.status === 'PASS'
                         ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                         : 'bg-red-100 text-red-800 border border-red-300'
                     }`}
@@ -166,8 +166,8 @@ export const Phase13CertificationView: React.FC<Phase13CertificationViewProps> =
                   </span>
                 </div>
 
-                <h4 className="text-xs font-bold text-slate-900">{chk.name}</h4>
-                <p className="text-[11px] text-slate-600 leading-snug">{chk.assertion}</p>
+                <h4 className="text-xs font-bold text-slate-900">{chk.testName}</h4>
+                <p className="text-[11px] text-slate-600 leading-snug">{chk.details}</p>
               </div>
             ))}
           </div>

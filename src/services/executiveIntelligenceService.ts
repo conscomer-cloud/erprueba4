@@ -12,6 +12,7 @@ import {
   InventoryMovement,
   Supplier,
   DeliveryItem,
+  DeliveryEvidence,
   Employee,
   PayrollPeriod,
   MarketingCampaign,
@@ -56,7 +57,7 @@ export interface RawErpContextData {
   orders?: Order[];
   movements?: InventoryMovement[];
   suppliers?: Supplier[];
-  deliveries?: DeliveryItem[];
+  deliveries?: DeliveryEvidence[];
   employees?: Employee[];
   payrolls?: PayrollPeriod[];
   campaigns?: MarketingCampaign[];

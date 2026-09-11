@@ -28,7 +28,9 @@ export const ChaosTestingSuiteView: React.FC = () => {
   const handleRunChaosTest = (id: string) => {
     setRunningId(id);
     setTimeout(() => {
-      const updated = scenarios.map((s) => (s.id === id ? { ...s, status: 'PASSED' as const } : s));
+      const result = AutomationBpmEngine.runChaosTestSuite().find(s => s.id === id);
+      const updated = scenarios.map(s => s.id === id && result ? result : s);
+      setSelectedScenario(prev => prev?.id === id ? result || prev : prev);
       setScenarios(updated);
       setRunningId(null);
     }, 700);
@@ -37,13 +39,14 @@ export const ChaosTestingSuiteView: React.FC = () => {
   const handleRunAll = () => {
     setRunningId('ALL');
     setTimeout(() => {
-      const updated = scenarios.map((s) => ({ ...s, status: 'PASSED' as const }));
+      const updated = AutomationBpmEngine.runChaosTestSuite();
+      setSelectedScenario(prev => updated.find(s => s.id === prev?.id) || null);
       setScenarios(updated);
       setRunningId(null);
     }, 1200);
   };
 
-  const passedCount = scenarios.filter((s) => s.status === 'PASSED').length;
+  const passedCount = scenarios.filter((s) => s.observedResult === 'PASS').length;
 
   return (
     <div className="space-y-6">
@@ -53,14 +56,14 @@ export const ChaosTestingSuiteView: React.FC = () => {
           <div className="flex items-center gap-2">
             <span className="px-2 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 flex items-center gap-1">
               <AlertTriangle className="w-3 h-3" />
-              Chaos Engineering Lab
+              Escenarios de demostración
             </span>
             <span className="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800">
               Resiliencia: {passedCount} / {scenarios.length} Escenarios
             </span>
           </div>
           <h2 className="text-xl font-bold text-slate-900 mt-1">
-            Laboratorio de Caos & Pruebas de Resiliencia
+            Laboratorio de Caos — catálogo de demostración
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Simula caídas de red, timeouts de base de datos, eventos duplicados concurrentes, bloqueos de concurrencia y tentativas de dispersión no autorizadas.
@@ -103,21 +106,21 @@ export const ChaosTestingSuiteView: React.FC = () => {
                       {sc.id}
                     </span>
                     <span className="font-bold text-slate-900 text-sm">
-                      {sc.name}
+                      {sc.title}
                     </span>
                   </div>
                   <p className="text-slate-600">
-                    {sc.description}
+                    {sc.failureInjected}
                   </p>
                   <p className="text-[11px] text-indigo-700 font-semibold pt-1">
-                    Defensa: {sc.resilienceMechanism}
+                    Defensa: {sc.recoveryStrategy}
                   </p>
                 </div>
 
                 <div className="flex sm:flex-col items-center sm:items-end justify-between gap-2 shrink-0">
                   <span className="px-2.5 py-1 rounded text-xs font-bold bg-emerald-100 text-emerald-800 flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                    {sc.status}
+                    {sc.observedResult}
                   </span>
 
                   <button
@@ -154,17 +157,17 @@ export const ChaosTestingSuiteView: React.FC = () => {
 
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
                 <span className="text-[10px] text-slate-400 font-semibold uppercase">Hipótesis de Falla</span>
-                <p className="text-slate-800 font-medium">{selectedScenario.description}</p>
+                <p className="text-slate-800 font-medium">{selectedScenario.failureInjected}</p>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-lg border border-indigo-200 space-y-1">
                 <span className="text-[10px] text-indigo-700 font-semibold uppercase">Mecanismo de Defensa Implementado</span>
-                <p className="text-indigo-950 font-bold">{selectedScenario.resilienceMechanism}</p>
+                <p className="text-indigo-950 font-bold">{selectedScenario.recoveryStrategy}</p>
               </div>
 
               <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-200 space-y-1">
                 <span className="text-[10px] text-emerald-700 font-semibold uppercase">Evidencia de Aprobación</span>
-                <p className="text-emerald-900 font-medium leading-relaxed">{selectedScenario.evidence}</p>
+                <p className="text-emerald-900 font-medium leading-relaxed">{selectedScenario.auditProof}</p>
               </div>
             </div>
           ) : (

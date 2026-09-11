@@ -29,7 +29,7 @@ export const CommercialRLSCertificationModal: React.FC<CommercialRLSCertificatio
   onClose,
 }) => {
   const { customers, leads, opportunities, quotes, orders, products } = useERP();
-  const { user } = useAuth();
+  const { currentUser: user } = useAuth();
 
   const [activeSubTab, setActiveSubTab] = useState<'CERTIFICATION' | 'EXECUTIVES' | 'VIOLATIONS' | 'REASSIGNMENT'>('CERTIFICATION');
   const [certReport, setCertReport] = useState<any>(null);

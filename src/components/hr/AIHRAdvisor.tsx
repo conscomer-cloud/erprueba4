@@ -20,8 +20,8 @@ import { useAuth } from '../../context/AuthContext';
 import { AIHRAdvisorInsight } from '../../types/erp';
 
 export const AIHRAdvisor: React.FC = () => {
-  const { aiHRInsights, generateAIHRAnalysis, updateAIHRInsightStatus } = useERP();
-  const { can, user } = useAuth();
+  const { aiHRInsights, refreshAIHRInsights, updateAIHRInsightStatus } = useERP();
+  const { can, currentUser: user } = useAuth();
   const canManageHR = can('RH', 'EDITAR') || user?.role === 'ADMINISTRADOR' || user?.role === 'DIRECTOR';
 
   const [selectedTopic, setSelectedTopic] = useState<'ALL' | 'PERFORMANCE' | 'ATTENDANCE' | 'TRAINING' | 'COMMISSIONS' | 'DOCUMENTS'>('ALL');
@@ -45,7 +45,7 @@ export const AIHRAdvisor: React.FC = () => {
   const handleRunAnalysis = () => {
     setIsAnalyzing(true);
     setTimeout(() => {
-      generateAIHRAnalysis({ topic: selectedTopic });
+      refreshAIHRInsights();
       setIsAnalyzing(false);
     }, 600);
   };

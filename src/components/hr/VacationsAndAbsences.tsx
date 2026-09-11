@@ -21,12 +21,11 @@ export const VacationsAndAbsences: React.FC = () => {
     vacationBalances,
     employees,
     requestAbsence,
-    approveAbsence,
-    rejectAbsence,
+    reviewAbsenceRequest,
   } = useERP();
 
-  const { can, user } = useAuth();
-  const canApprove = can('RH', 'AUTORIZAR') || can('RH', 'EDITAR') || user?.role === 'ADMINISTRADOR' || user?.role === 'DIRECTOR';
+  const { can, currentUser: user } = useAuth();
+  const canApprove = can('RH', 'AUTORIZAR');
 
   const [activeSubTab, setActiveSubTab] = useState<'REQUESTS' | 'BALANCES'>('REQUESTS');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
@@ -58,9 +57,7 @@ export const VacationsAndAbsences: React.FC = () => {
       type: absenceType,
       startDate,
       endDate,
-      daysRequested: Number(daysRequested) || 1,
       reason,
-      status: 'PENDING',
     });
 
     setIsModalOpen(false);
@@ -181,7 +178,7 @@ export const VacationsAndAbsences: React.FC = () => {
                     </td>
 
                     <td className="px-4 py-3 text-center font-bold text-slate-900">
-                      {req.daysRequested}
+                      {req.totalDays}
                     </td>
 
                     <td className="px-4 py-3 text-slate-600 max-w-xs truncate" title={req.reason}>
@@ -206,13 +203,13 @@ export const VacationsAndAbsences: React.FC = () => {
                       {(req.status === 'PENDING' || req.status === 'PENDIENTE') && canApprove && (
                         <div className="flex items-center justify-end gap-1.5">
                           <button
-                            onClick={() => approveAbsence(req.id)}
+                            onClick={() => reviewAbsenceRequest(req.id, 'APPROVED')}
                             className="rounded-lg bg-emerald-600 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-emerald-700 transition"
                           >
                             Aprobar
                           </button>
                           <button
-                            onClick={() => rejectAbsence(req.id, 'No coincide con cobertura operativa.')}
+                            onClick={() => { const reason = window.prompt('Motivo del rechazo:'); if (reason?.trim()) reviewAbsenceRequest(req.id, 'REJECTED', reason.trim()); }}
                             className="rounded-lg border border-red-200 px-2 py-1 text-[11px] font-bold text-red-600 hover:bg-red-50 transition"
                           >
                             Rechazar

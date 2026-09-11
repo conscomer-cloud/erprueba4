@@ -596,7 +596,7 @@ export const MultiUserLiveSimulatorModal: React.FC<MultiUserLiveSimulatorModalPr
                             {p.availableStock}
                           </td>
                           <td className="py-2 px-3 text-slate-500 font-mono text-[10px]">
-                            {p.warehouseLocation}
+                            {typeof p.warehouseLocation === 'string' ? p.warehouseLocation : p.warehouseLocation?.locationCode}
                           </td>
                         </tr>
                       );

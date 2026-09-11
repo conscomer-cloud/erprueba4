@@ -1,0 +1,31 @@
+
+========================================
+CONSCORE ERP IA — TEST SUITE 01 AL 21
+========================================
+
+✅ PASS: TEST 01: Folio en nombre de archivo
+✅ PASS: TEST 02: Nombre del cliente en nombre de archivo
+✅ PASS: TEST 03: Estructura exacta Cotizacion_COT-000008_Thermal-Proyectos.pdf
+✅ PASS: TEST 04: Sanitización de caracteres prohibidos de archivo
+✅ PASS: TEST 05: Generación exitosa de instancia jsPDF
+✅ PASS: TEST 06: Tamaño de PDF comercial válido (> 10KB)
+✅ PASS: TEST 07: RLS permite acceso de lectura al ejecutivo propietario
+✅ PASS: TEST 08: RLS bloquea acceso a ejecutivo no propietario
+✅ PASS: TEST 09: RLS permite acceso al Director General
+✅ PASS: TEST 10: Confidencialidad en PDF (sin campos de costo interno)
+✅ PASS: TEST 11: Paginación dinámica para cotizaciones largas (2 páginas)
+✅ PASS: TEST 12: Generación sin cliente asignado es tolerante y robusta
+✅ PASS: TEST 13: Generación con 0 partidas es tolerante y robusta
+✅ PASS: TEST 14: Manejo de acentos, eñes y caracteres especiales en PDF
+✅ PASS: TEST 15: Descuento comercial registrado
+✅ PASS: TEST 16: Impuesto IVA 16% registrado
+✅ PASS: TEST 17: Ecuación matemática de Total
+✅ PASS: TEST 18: Tiempo de entrega presente en condiciones comerciales
+✅ PASS: TEST 19: Condiciones de crédito / pago presentes
+✅ PASS: TEST 20: Nombre de ejecutivo comercial presente
+✅ PASS: TEST 21: Sandbox detectado descarga PDF y previene window.print()
+
+========================================
+RESULTADO FINAL: 21 PASSED / 0 FAILED
+========================================
+

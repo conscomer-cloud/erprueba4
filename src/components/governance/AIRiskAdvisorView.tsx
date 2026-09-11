@@ -187,17 +187,17 @@ export const AIRiskAdvisorView: React.FC<AIRiskAdvisorViewProps> = ({
             <div className="flex items-center gap-2">
               <span
                 className={`text-xs font-bold px-2.5 py-1 rounded border ${getHonestyBadge(
-                  advisorResponse.dataHonestyClassification
+                  advisorResponse.datosInsuficientes.length ? 'DATOS_INSUFICIENTES' : 'DATOS_DISPONIBLES'
                 )}`}
               >
-                HONESTIDAD DE DATOS: {advisorResponse.dataHonestyClassification}
+                HONESTIDAD DE DATOS: {advisorResponse.datosInsuficientes.length ? 'DATOS_INSUFICIENTES' : 'DATOS_DISPONIBLES'}
               </span>
             </div>
           </div>
 
           {/* Core Response Narrative */}
           <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 text-xs text-slate-800 leading-relaxed font-sans whitespace-pre-wrap">
-            {advisorResponse.responseNarrative}
+            {advisorResponse.hallazgos.join('\n')}
           </div>
 
           {/* Structured Points */}
@@ -211,12 +211,12 @@ export const AIRiskAdvisorView: React.FC<AIRiskAdvisorViewProps> = ({
               <div className="space-y-2 text-xs">
                 <div className="bg-slate-50 p-2.5 rounded border border-slate-200">
                   <span className="text-[10px] text-slate-400 block uppercase font-bold">Impacto Financiero Estimado</span>
-                  <b className="text-slate-900">{advisorResponse.estimatedFinancialImpact}</b>
+                  <b className="text-slate-900">{advisorResponse.impactoFinanciero}</b>
                 </div>
                 <div className="bg-slate-50 p-2.5 rounded border border-slate-200">
                   <span className="text-[10px] text-slate-400 block uppercase font-bold">Métricas y Drivers Afectados</span>
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {advisorResponse.affectedDrivers.map((d, i) => (
+                    {advisorResponse.datosUtilizados.map((d, i) => (
                       <span key={i} className="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded font-mono">
                         {d}
                       </span>
@@ -235,7 +235,7 @@ export const AIRiskAdvisorView: React.FC<AIRiskAdvisorViewProps> = ({
               <div className="space-y-1.5 text-xs text-slate-700">
                 <span className="font-bold text-slate-900 block text-[11px]">Acciones Clave Recomendadas:</span>
                 <ul className="list-disc pl-4 space-y-1">
-                  {advisorResponse.suggestedMitigations.map((m, i) => (
+                  {advisorResponse.recomendaciones.map((m, i) => (
                     <li key={i}>{m}</li>
                   ))}
                 </ul>
@@ -255,7 +255,7 @@ export const AIRiskAdvisorView: React.FC<AIRiskAdvisorViewProps> = ({
             </div>
             <div className="shrink-0 text-right">
               <span className="text-[10px] font-bold text-slate-500 font-mono block">
-                Audit Token: {advisorResponse.auditTraceId}
+                Audit Token: {advisorResponse.queryId}
               </span>
               <span className="text-[10px] text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded font-bold">
                 Bloqueo Autónomo: ACTIVO

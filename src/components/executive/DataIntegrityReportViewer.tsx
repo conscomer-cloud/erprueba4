@@ -42,7 +42,7 @@ export const DataIntegrityReportViewer: React.FC = () => {
       deliveries: erpData.pods,
       supplierInvoices: erpData.cxpInvoices,
       campaigns: erpData.marketingCampaigns,
-      companyBudget: erpData.budgets,
+      budgets: erpData.budgets,
       operatingExpenses: erpData.expenses,
     });
   }, [erpData]);

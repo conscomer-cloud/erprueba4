@@ -1,65 +1,53 @@
-/**
- * @license
- * CONSCORE ERP IA - Real-Time Server-Sent Events (SSE) Bus
- */
-
-import { Response } from 'express';
+import type { Response } from 'express';
 
 interface SSEClient {
   id: string;
   res: Response;
-  userId?: string;
-  role?: string;
+  userId: string;
+  role: string;
+  isAuthorized: () => boolean;
 }
 
-class EventBus {
+export class EventBus {
   private clients: SSEClient[] = [];
 
   public addClient(client: SSEClient) {
+    if (!this.validateClient(client)) return;
     this.clients.push(client);
-    console.log(`[SSE] Cliente conectado: ${client.id}. Total activos: ${this.clients.length}`);
-
-    // Send initial handshake
-    this.sendToClient(client, 'connected', {
-      clientId: client.id,
-      timestamp: new Date().toISOString(),
-      message: 'Conexión en tiempo real establecida con CONSCORE Core',
-    });
+    this.sendToClient(client, 'connected', { clientId: client.id });
   }
 
   public removeClient(clientId: string) {
     this.clients = this.clients.filter(c => c.id !== clientId);
-    console.log(`[SSE] Cliente desconectado: ${clientId}. Total activos: ${this.clients.length}`);
   }
 
-  public broadcast(event: string, data: any) {
-    const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
-    this.clients.forEach(client => {
-      try {
-        client.res.write(payload);
-      } catch (err) {
-        console.error(`[SSE] Error enviando a cliente ${client.id}:`, err);
-      }
-    });
+  private validateClient(client: SSEClient): boolean {
+    if (client.userId && client.role && client.isAuthorized()) return true;
+    this.removeClient(client.id);
+    client.res.end();
+    return false;
   }
 
-  public sendToClient(client: SSEClient, event: string, data: any) {
+  public broadcast(event: string, _data: unknown) {
+    // Invalidate cached views. Fetch records through the authenticated API,
+    // which applies permissions and ownership; never broadcast business records.
+    [...this.clients].forEach(client => this.sendToClient(client, event, { changed: true }));
+  }
+
+  public sendToClient(client: SSEClient, event: string, data: unknown) {
+    if (!this.validateClient(client)) return;
     try {
       client.res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
-    } catch (err) {
-      console.error(`[SSE] Error en sendToClient ${client.id}:`, err);
+    } catch {
+      this.removeClient(client.id);
+      client.res.end();
     }
   }
 
-  public notifyRole(role: string, event: string, data: any) {
-    const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
-    this.clients
-      .filter(c => !c.role || c.role === role || c.role === 'ADMINISTRADOR')
-      .forEach(c => {
-        try {
-          c.res.write(payload);
-        } catch (e) {}
-      });
+  public notifyRole(role: string, event: string, _data: unknown) {
+    [...this.clients]
+      .filter(c => c.role === role || c.role === 'ADMINISTRADOR')
+      .forEach(c => this.sendToClient(c, event, { changed: true }));
   }
 }
 

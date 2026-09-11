@@ -57,7 +57,7 @@ export const WorkflowBpmStudioView: React.FC<WorkflowBpmStudioViewProps> = ({
       const parsed = JSON.parse(testPayload);
       const res = AutomationBpmEngine.emitEvent({
         eventType: currentWf.triggerEvent,
-        sourceModule: currentWf.module,
+        sourceModule: currentWf.category,
         entityType: 'MANUAL_TEST_INSTANCE',
         entityId: `TEST-${Date.now().toString(36).toUpperCase()}`,
         userId: 'USR-ADMIN-01',
@@ -115,10 +115,10 @@ export const WorkflowBpmStudioView: React.FC<WorkflowBpmStudioViewProps> = ({
             </span>
           </div>
           <h2 className="text-xl font-bold text-slate-900 mt-1">
-            {currentWf?.name} ({currentWf?.code})
+            {currentWf?.name} ({currentWf?.workflowId})
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            {currentWf?.description}
+            {currentWf?.triggerConditionDescription}
           </p>
         </div>
 
@@ -130,7 +130,7 @@ export const WorkflowBpmStudioView: React.FC<WorkflowBpmStudioViewProps> = ({
           >
             {workflows.map((wf) => (
               <option key={wf.workflowId} value={wf.workflowId}>
-                {wf.code} - {wf.name} (v{wf.version})
+                {wf.workflowId} - {wf.name} (v{wf.version})
               </option>
             ))}
           </select>
@@ -260,7 +260,7 @@ export const WorkflowBpmStudioView: React.FC<WorkflowBpmStudioViewProps> = ({
                           </span>
                         )}
                         <span className="text-[10px] text-slate-400 font-mono">
-                          SLA {step.slaMinutes}m
+                          SLA {step.timeoutMinutes}m
                         </span>
                       </div>
                     </div>
@@ -320,7 +320,7 @@ export const WorkflowBpmStudioView: React.FC<WorkflowBpmStudioViewProps> = ({
                       SLA Máximo Permitido
                     </label>
                     <p className="text-slate-800">
-                      {selectedStep.slaMinutes} minutos
+                      {selectedStep.timeoutMinutes} minutos
                     </p>
                   </div>
                   <div>
@@ -331,13 +331,13 @@ export const WorkflowBpmStudioView: React.FC<WorkflowBpmStudioViewProps> = ({
                       {selectedStep.nextStepId || '(Fin de Flujo)'}
                     </p>
                   </div>
-                  {selectedStep.conditionExpression && (
+                  {selectedStep.condition && (
                     <div>
                       <label className="text-[10px] font-semibold text-slate-400 uppercase">
                         Expresión Condicional
                       </label>
                       <pre className="p-2 bg-slate-900 text-emerald-400 rounded text-[11px] font-mono overflow-x-auto">
-                        {selectedStep.conditionExpression}
+                        {JSON.stringify(selectedStep.condition)}
                       </pre>
                     </div>
                   )}
@@ -458,7 +458,7 @@ export const WorkflowBpmStudioView: React.FC<WorkflowBpmStudioViewProps> = ({
           <div className="flex items-center gap-2">
             <RotateCcw className="w-5 h-5 text-indigo-600" />
             <h3 className="text-sm font-bold text-slate-900">
-              Estrategia de Compensación y Rollback Atómico ({currentWf?.rollbackStrategy})
+              Estrategia de Compensación y Rollback Atómico ({currentWf?.rollbackStrategy.enabled ? 'Habilitada' : 'Deshabilitada'})
             </h3>
           </div>
 

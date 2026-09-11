@@ -53,7 +53,7 @@ export const NewPurchaseRequestModal: React.FC<NewPurchaseRequestModalProps> = (
         const prod = products.find((p) => p.id === init.productId);
         const suppProd = supplierProducts.find((sp) => sp.product_id === init.productId);
         const supp = suppliers.find((s) => s.id === (init.suggestedSupplierId || suppProd?.supplier_id));
-        const cost = suppProd?.cost || prod?.cost_price || 100;
+        const cost = suppProd?.purchase_price || prod?.cost_price || 100;
         return {
           product_id: prod?.id || init.productId,
           product_code: prod?.code || 'ITEM',
@@ -96,7 +96,7 @@ export const NewPurchaseRequestModal: React.FC<NewPurchaseRequestModalProps> = (
 
     const suppProd = supplierProducts.find((sp) => sp.product_id === productId);
     const supp = suppliers.find((s) => s.id === suppProd?.supplier_id);
-    const cost = suppProd?.cost || prod.cost_price || 0;
+    const cost = suppProd?.purchase_price || prod.cost_price || 0;
 
     const newItems = [...items];
     newItems[index] = {

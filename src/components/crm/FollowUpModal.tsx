@@ -27,7 +27,7 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
   const [opportunityId, setOpportunityId] = useState(defaultOpportunityId || '');
   const [leadId, setLeadId] = useState(defaultLeadId || '');
   const [salespersonId, setSalespersonId] = useState(currentUser?.id || 'USR-004');
-  const [type, setType] = useState<'LLAMADA' | 'WHATSAPP' | 'CORREO' | 'REUNION' | 'COTIZACION' | 'VISITA'>('WHATSAPP');
+  const [type, setType] = useState<'LLAMADA' | 'WHATSAPP' | 'CORREO' | 'REUNION' | 'PRESENTACION_COTIZACION' | 'VISITA_TECNICA'>('WHATSAPP');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [time, setTime] = useState('11:00');
@@ -141,8 +141,8 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
                 <option value="WHATSAPP">WhatsApp Directo</option>
                 <option value="LLAMADA">Llamada Telefónica</option>
                 <option value="CORREO">Correo Electrónico</option>
-                <option value="COTIZACION">Presentar Cotización</option>
-                <option value="VISITA">Visita Técnica en Obra</option>
+                <option value="PRESENTACION_COTIZACION">Presentar Cotización</option>
+                <option value="VISITA_TECNICA">Visita Técnica en Obra</option>
                 <option value="REUNION">Reunión Comercial</option>
               </select>
             </div>

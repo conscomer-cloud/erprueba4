@@ -1,0 +1,16 @@
+✔ SSE no divulga registros y deja de enviar al revocar la sesión (2.7171ms)
+✔ SSE rechaza clientes sin identidad y respeta el filtro de rol (0.3899ms)
+✔ La alerta de duplicado ajeno no devuelve identificadores ni campos privados (0.2784ms)
+✔ RH sin registros conserva ceros y ausencia de indicadores, sin datos demo (1.513ms)
+✔ Asistencia diaria excluye otros días del mes (2.0587ms)
+✔ Capacitación usa el mínimo del catálogo y rechaza calificaciones inválidas (2.0616ms)
+✔ Manejadores RH niegan cambios sin permiso y no inventan nómina faltante (1.4392ms)
+✔ Excel actualizado conserva números, texto y folios en lectura/escritura (20.3885ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 433.2804

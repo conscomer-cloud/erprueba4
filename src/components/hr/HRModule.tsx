@@ -37,7 +37,7 @@ export interface HRModuleProps {
 }
 
 export const HRModule: React.FC<HRModuleProps> = ({ initialTab = 'EMPLOYEES' }) => {
-  const { user } = useAuth();
+  const { currentUser: user } = useAuth();
   const [activeTab, setActiveTab] = useState<
     | 'DASHBOARD'
     | 'EMPLOYEES'
@@ -113,7 +113,7 @@ export const HRModule: React.FC<HRModuleProps> = ({ initialTab = 'EMPLOYEES' }) 
 
       {/* Tab Content Display */}
       <div>
-        {activeTab === 'DASHBOARD' && <HRDashboard />}
+        {activeTab === 'DASHBOARD' && <HRDashboard onNavigateTab={setActiveTab} />}
         {activeTab === 'EMPLOYEES' && <EmployeeDirectory />}
         {activeTab === 'ATTENDANCE' && <AttendanceTracker />}
         {activeTab === 'VACATIONS' && <VacationsAndAbsences />}

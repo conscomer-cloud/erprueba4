@@ -217,7 +217,7 @@ export const ModulePlaceholder: React.FC<ModulePlaceholderProps> = ({ module, on
                     </td>
                     <td className="py-2.5 px-3">
                       <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-700">
-                        {c.customerType}
+                        {c.status}
                       </span>
                     </td>
                     <td className="py-2.5 px-3">
@@ -227,7 +227,7 @@ export const ModulePlaceholder: React.FC<ModulePlaceholderProps> = ({ module, on
                     <td className="py-2.5 px-3 text-slate-600">{c.city}, {c.state}</td>
                     <td className="py-2.5 px-3 text-right font-mono font-semibold text-slate-700">${(Number(c.creditLimit) || 0).toLocaleString('es-MX')}</td>
                     <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">${(Number(c.currentBalance) || 0).toLocaleString('es-MX')}</td>
-                    <td className="py-2.5 px-3 font-semibold text-slate-700">{c.assignedSellerName}</td>
+                    <td className="py-2.5 px-3 font-semibold text-slate-700">{c.assignedSalespersonName || c.sellerName}</td>
                   </tr>
                 ))}
               </tbody>

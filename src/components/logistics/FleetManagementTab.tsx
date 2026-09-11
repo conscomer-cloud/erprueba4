@@ -107,7 +107,12 @@ export const FleetManagementTab: React.FC = () => {
         status: vStatus,
       });
     } else {
+      const reading = window.prompt('Odómetro actual del vehículo (km):');
+      if (reading === null || !reading.trim()) return;
+      const currentOdometer = Number(reading);
+      if (!Number.isFinite(currentOdometer) || currentOdometer < 0) { alert('Odómetro inválido'); return; }
       addVehicle({
+        currentOdometer,
         economicNumber: vEconomicNumber,
         plate: vPlate.toUpperCase(),
         brandModel: vBrandModel,

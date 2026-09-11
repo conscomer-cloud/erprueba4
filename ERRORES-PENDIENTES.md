@@ -1,3 +1,11 @@
+# Estado de corrección
+
+Los 304 diagnósticos iniciales de TypeScript fueron corregidos. La comprobación final de tipos no reporta errores.
+
+El historial original se conserva a continuación. Consulte INFORME-CORRECCIONES.md para cambios, pruebas ejecutadas y límites de validación: el build de una versión intermedia pasó; la repetición sobre la entrega final quedó bloqueada por permisos del entorno.
+
+---
+
 # Verificación de tipos: 304 errores pendientes
 
 ## Qué cambió

@@ -75,7 +75,7 @@ export interface InventoryExportOptions {
   scopeWarehouseName?: string;
   onAuditLog?: (entry: {
     action: string;
-    module: string;
+    module: 'INVENTARIO';
     entityType: string;
     entityId: string;
     details: Record<string, any>;

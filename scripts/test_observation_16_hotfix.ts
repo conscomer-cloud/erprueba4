@@ -35,7 +35,8 @@ async function run19StepDefinitiveTest() {
   const results: { step: number; name: string; passed: boolean; details: string }[] = [];
 
   // Paso 1: Consultar inventario antes de iniciar
-  const initialStock = testProduct.stock;
+  const initialStock = testProduct.available_stock;
+  const initialPhysicalStock = testProduct.physical_stock;
   results.push({
     step: 1,
     name: 'Consultar inventario antes de iniciar',
@@ -124,7 +125,7 @@ async function run19StepDefinitiveTest() {
   });
 
   // Paso 6: Verificar que el inventario se mantiene intacto
-  const currentProductStock1 = db.getProducts().find(p => p.id === testProduct.id)?.stock;
+  const currentProductStock1 = db.getProducts().find(p => p.id === testProduct.id)?.available_stock;
   results.push({
     step: 6,
     name: 'Verificar inventario intacto (sin decrementos)',
@@ -165,7 +166,7 @@ async function run19StepDefinitiveTest() {
   results.push({
     step: 10,
     name: 'Vendedor intenta auto-aprobar financieramente -> RECHAZADO',
-    passed: !unauthorizedApproval.success && unauthorizedApproval.error?.includes('403'),
+    passed: !unauthorizedApproval.success && !!unauthorizedApproval.code && !unauthorizedApproval.updatedQuote,
     details: `Resultado: ${unauthorizedApproval.error}`,
   });
 
@@ -175,7 +176,7 @@ async function run19StepDefinitiveTest() {
   let apiGenericOrder403 = false;
 
   try {
-    const res1 = await fetch(`http://127.0.0.1:3000/api/quotes/${testQuoteId}/convert`, {
+    const res1 = await fetch(`${process.env.TEST_BASE_URL || 'http://127.0.0.1:3000'}/api/quotes/${testQuoteId}/convert`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -184,13 +185,13 @@ async function run19StepDefinitiveTest() {
       },
       body: JSON.stringify({ warehouseId: warehouse.id }),
     });
-    apiConvert403 = res1.status === 403;
+    apiConvert403 = res1.status === 401;
   } catch (e) {
-    apiConvert403 = true;
+    apiConvert403 = false;
   }
 
   try {
-    const res2 = await fetch(`http://127.0.0.1:3000/api/quotes/${testQuoteId}/create-order`, {
+    const res2 = await fetch(`${process.env.TEST_BASE_URL || 'http://127.0.0.1:3000'}/api/quotes/${testQuoteId}/create-order`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -199,13 +200,13 @@ async function run19StepDefinitiveTest() {
       },
       body: JSON.stringify({ warehouseId: warehouse.id }),
     });
-    apiCreateOrder403 = res2.status === 403;
+    apiCreateOrder403 = res2.status === 401;
   } catch (e) {
-    apiCreateOrder403 = true;
+    apiCreateOrder403 = false;
   }
 
   try {
-    const res3 = await fetch(`http://127.0.0.1:3000/api/orders`, {
+    const res3 = await fetch(`${process.env.TEST_BASE_URL || 'http://127.0.0.1:3000'}/api/orders`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -214,16 +215,16 @@ async function run19StepDefinitiveTest() {
       },
       body: JSON.stringify({ quoteId: testQuoteId, warehouseId: warehouse.id }),
     });
-    apiGenericOrder403 = res3.status === 403;
+    apiGenericOrder403 = res3.status === 401;
   } catch (e) {
-    apiGenericOrder403 = true;
+    apiGenericOrder403 = false;
   }
 
   results.push({
     step: 11,
-    name: 'Endpoints API protegidos contra bypass (/convert, /create-order, /api/orders)',
+    name: 'API rechaza cabeceras de identidad falsificadas sin sesión',
     passed: apiConvert403 && apiCreateOrder403 && apiGenericOrder403,
-    details: `POST /convert: 403 (${apiConvert403}), POST /create-order: 403 (${apiCreateOrder403}), POST /api/orders: 403 (${apiGenericOrder403})`,
+    details: `POST /convert: 401 (${apiConvert403}), POST /create-order: 401 (${apiCreateOrder403}), POST /api/orders: 401 (${apiGenericOrder403})`,
   });
 
   // Paso 12: Usuario de Finanzas aprueba formalmente la cotización
@@ -271,7 +272,7 @@ async function run19StepDefinitiveTest() {
     step: 15,
     name: 'Finanzas re-autoriza la versión 2',
     passed: reApproval.success && validation5.allowed,
-    details: `allowed: ${validation5.allowed}, version autorizada: ${(finalApprovedQuote as any).financialApprovalVersion}`,
+    details: `allowed: ${validation5.allowed}, version autorizada: ${finalApprovedQuote.approvedQuoteVersion}`,
   });
 
   // Paso 16: Vendedor convierte la cotización autorizada a Pedido
@@ -286,11 +287,11 @@ async function run19StepDefinitiveTest() {
   });
 
   // Paso 17: Verificar stock decrementado / reservado tras conversión válida
-  const finalProductStock = db.getProducts().find(p => p.id === testProduct.id)?.stock;
+  const finalProductStock = db.getProducts().find(p => p.id === testProduct.id)?.available_stock;
   results.push({
     step: 17,
     name: 'Verificar reserva y trazabilidad de inventario tras conversión válida',
-    passed: finalProductStock === initialStock - 2,
+    passed: finalProductStock === initialStock - 2 && db.getProducts().find(p => p.id === testProduct.id)?.physical_stock === initialPhysicalStock,
     details: `Stock inicial: ${initialStock}, Stock final: ${finalProductStock} (-2 unidades)`,
   });
 

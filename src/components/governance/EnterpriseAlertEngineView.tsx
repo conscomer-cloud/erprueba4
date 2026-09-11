@@ -57,7 +57,7 @@ interface ErrorBoundaryState {
   errorMessage: string;
 }
 
-export class EnterpriseAlertEngineErrorBoundary extends (Component as any)<
+export class EnterpriseAlertEngineErrorBoundary extends Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
 > {

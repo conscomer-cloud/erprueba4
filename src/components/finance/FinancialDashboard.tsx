@@ -6,6 +6,7 @@
 
 import React, { useState } from 'react';
 import { useERP } from '../../context/ERPContext';
+import { useAuth } from '../../context/AuthContext';
 import { TreasuryOverview } from './TreasuryOverview';
 import { CXCManagement } from './CXCManagement';
 import { CXPManagement } from './CXPManagement';
@@ -31,14 +32,18 @@ import {
 
 export const FinancialDashboard: React.FC = () => {
   const {
+    resetFinanceData,
     financialKPIs,
     cxcInvoices,
     cxpInvoices,
     aiFinancialInsights,
-    resetFinanceData,
-    currentUser,
+
   } = useERP();
 
+  const { currentUser } = useAuth();
+  const handleResetFinance = () => {
+    if (window.confirm('¿Restablecer los datos financieros de demostración?')) resetFinanceData();
+  };
   const [activeTab, setActiveTab] = useState<
     'TREASURY' | 'CXC' | 'CXP' | 'ACCOUNTS_CC' | 'BUDGETS_EXPENSES' | 'PROFITABILITY' | 'SIMULATOR' | 'AI_ADVISOR'
   >('TREASURY');
@@ -47,11 +52,7 @@ export const FinancialDashboard: React.FC = () => {
   const pendingCXPCount = cxpInvoices.filter((i) => i.status !== 'PAGADA').length;
   const highAlertsCount = aiFinancialInsights.filter((i) => i.severity === 'ALTA').length;
 
-  const handleResetFinance = () => {
-    if (window.confirm('¿Deseas restablecer los datos financieros a los valores demostrativos iniciales de la Fase 7?')) {
-      resetFinanceData();
-    }
-  };
+
 
   return (
     <div className="space-y-6">
@@ -82,14 +83,14 @@ export const FinancialDashboard: React.FC = () => {
             </span>
           </div>
 
-          <button
+          {import.meta.env.DEV && currentUser?.role === 'ADMINISTRADOR' && <button
             onClick={handleResetFinance}
             className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
             title="Restablecer datos financieros demo"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Restablecer Demo
-          </button>
+          </button>}
         </div>
       </div>
 
