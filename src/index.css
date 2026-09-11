@@ -1,0 +1,217 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   PALETA DE LA APLICACIÓN  (observación 37)
+
+   Toda la interfaz usa la escala de Tailwind por nombre: blue-600 para el
+   color primario (371 usos), yellow-400 para las llamadas a la acción (300),
+   emerald para confirmaciones (244) y slate para la estructura.
+
+   Como Tailwind v4 compila cada utilidad a var(--color-*), redefinir esos
+   nombres aquí repinta los 246 archivos de componentes. Cambiar la identidad
+   visual de la app es editar este bloque, no tocar los componentes.
+
+   Paleta aplicada: la de Conscomer — azul #05406a / #065994, dorado #e4a734
+   y rojos #cf2823 / #ae251e. Para ajustarla, se editan los valores de abajo
+   y nada más.
+   ========================================================================== */
+
+@theme {
+  /* --- Azul institucional -------------------------------------------------
+     Base #05406a (oscuro) y #065994 (medio). La escala se construye alrededor
+     de esos dos: los tonos claros para fondos de insignia, los oscuros para
+     encabezados y barras. blue-600 es el color primario de la app. */
+  --color-blue-50:  #eaf2f8;
+  --color-blue-100: #cfe1ee;
+  --color-blue-200: #a4c6de;
+  --color-blue-500: #0b6fb4;
+  --color-blue-600: #065994;
+  --color-blue-700: #05406a;
+  --color-blue-800: #04324f;
+  --color-blue-900: #03253b;
+  --color-blue-950: #021a2a;
+
+  /* --- Amarillo dorado ----------------------------------------------------
+     #e4a734. Es el color de acción de la app: botones destacados sobre fondo
+     oscuro, insignias de la barra lateral, el logotipo. */
+  --color-yellow-300: #f0c268;
+  --color-yellow-400: #e4a734;
+  --color-yellow-500: #c88f22;
+
+  /* --- Rojos --------------------------------------------------------------
+     #cf2823 para alertas y acciones destructivas, #ae251e al pasar el cursor
+     y en los estados oscuros. */
+  --color-red-500: #cf2823;
+  --color-red-600: #be2620;
+  --color-red-700: #ae251e;
+  --color-rose-600: #be2620;
+
+  /* --- Verde de confirmación ----------------------------------------------
+     No viene del kit. Se conserva un verde sobrio para "correcto" y "surtido"
+     porque son estados operativos que no deben confundirse con la marca. */
+  --color-emerald-600: oklch(59.6% 0.145 163.225);
+
+  /* --- Ámbar de advertencia -----------------------------------------------
+     Se separa deliberadamente del amarillo de marca: si ambos fueran el mismo
+     tono, un botón de acción y una advertencia se verían iguales. */
+  --color-amber-400: oklch(82.8% 0.189 84.429);
+}
+
+/* ==========================================================================
+   MODO OSCURO
+   Tailwind v4 compila cada utilidad de color a var(--color-*), por ejemplo
+   .bg-white { background-color: var(--color-white) }. Eso permite invertir
+   toda la aplicacion redefiniendo la escala bajo .dark, sin tocar los 246
+   archivos de componentes ni agregar una sola clase dark:.
+
+   El toggle del header ya escribia la clase .dark en <html>, pero no existia
+   ninguna regla que respondiera a ella y el boton no hacia nada.
+   ========================================================================== */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+.dark {
+  color-scheme: dark;
+
+  /* La escala slate se invierte: lo que era el fondo mas claro pasa a ser el
+     mas oscuro. Se conservan los pasos intermedios para que la jerarquia
+     visual (fondo / tarjeta / borde / texto) se mantenga igual. */
+  --color-white: oklch(21% 0.02 256);
+  --color-slate-50: oklch(24% 0.021 256);
+  --color-slate-100: oklch(28% 0.023 256);
+  --color-slate-200: oklch(34% 0.025 256);
+  --color-slate-300: oklch(44% 0.027 256);
+  --color-slate-400: oklch(60% 0.028 256);
+  --color-slate-500: oklch(70% 0.026 256);
+  --color-slate-600: oklch(79% 0.021 256);
+  --color-slate-700: oklch(87% 0.015 256);
+  --color-slate-800: oklch(93% 0.009 256);
+  --color-slate-900: oklch(97% 0.005 256);
+  --color-slate-950: oklch(99% 0.002 256);
+
+  /* Los acentos de marca se aclaran: el azul #065994 y el rojo #cf2823
+     pierden contraste sobre fondo oscuro y se vuelven ilegibles. El dorado
+     #e4a734 se deja igual, funciona en ambos fondos. */
+  --color-blue-500: #4fa8dd;
+  --color-blue-600: #3d92c9;
+  --color-blue-700: #2b7bad;
+  --color-indigo-600: oklch(60% 0.19 277);
+  --color-emerald-600: oklch(66% 0.15 163);
+  --color-red-500: #e8564f;
+  --color-red-600: #de4841;
+  --color-red-700: #cf2823;
+  --color-rose-600: #de4841;
+  --color-amber-600: oklch(74% 0.16 70);
+
+  /* Los fondos tenues de badge (bg-*-50) quedaban casi blancos al invertir. */
+  --color-blue-50: oklch(30% 0.06 258);
+  --color-emerald-50: oklch(29% 0.05 163);
+  --color-red-50: oklch(30% 0.06 25);
+  --color-amber-50: oklch(30% 0.06 70);
+  --color-indigo-50: oklch(30% 0.06 277);
+  --color-rose-50: oklch(30% 0.06 16);
+}
+
+html {
+  background-color: var(--color-slate-100);
+}
+
+/* Transicion al cambiar de tema. Se respeta la preferencia del sistema:
+   quien pidio menos movimiento no ve el barrido de color. */
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-transition,
+  html.theme-transition * {
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Foco visible por teclado. Antes varios botones usaban outline-none sin
+   reemplazo, dejando la navegacion con Tab sin ninguna senal. */
+:focus-visible {
+  outline: 2px solid var(--color-blue-600);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Barras de desplazamiento acordes al tema */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-slate-300) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-slate-300);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-slate-400);
+}
+
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide everything marked as no-print or navigation/sidebar/overlays */
+  .no-print,
+  header,
+  nav,
+  aside,
+  .print-hide {
+    display: none !important;
+  }
+
+  /* Ensure the printable document container is visible and occupies full page */
+  .printable-document {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 20px !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: none !important;
+    max-height: none !important;
+    overflow: visible !important;
+    z-index: 99999 !important;
+  }
+
+  .printable-document * {
+    color: #000000 !important;
+    background-color: transparent !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  .printable-document .bg-slate-50,
+  .printable-document .bg-slate-100 {
+    background-color: #f8fafc !important;
+  }
+}

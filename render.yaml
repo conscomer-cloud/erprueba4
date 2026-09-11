@@ -1,0 +1,28 @@
+# Despliegue en Render. Con el repositorio conectado, Render lee este archivo
+# y crea el servicio solo.
+services:
+  - type: web
+    name: conscore-erp
+    runtime: node
+    plan: starter          # el plan free no permite disco persistente
+    buildCommand: npm ci && npm run build
+    startCommand: node dist/server.cjs
+    healthCheckPath: /api/health
+    envVars:
+      # Sin fijar la versión, Render usa el Node por defecto y este cambia
+      # con el tiempo. El lockfile está probado con npm 10 y npm 11, pero
+      # el resto del proyecto se validó sobre Node 22.
+      - key: NODE_VERSION
+        value: 22.22.2
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true   # Render genera el secreto y lo guarda
+      - key: SEED_PASSWORD
+        sync: false           # se captura a mano en el panel
+      - key: DB_PATH
+        value: /var/data/conscore_db.json
+    disk:
+      name: conscore-datos
+      mountPath: /var/data
+      sizeGB: 1
