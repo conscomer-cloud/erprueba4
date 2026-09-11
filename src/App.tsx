@@ -83,6 +83,18 @@ const MODULE_TITLES: Record<ERPModule, string> = {
 
 const MainLayout: React.FC = () => {
   const [activeModule, setActiveModule] = useState<ERPModule>('DASHBOARD');
+
+  /**
+   * Pestaña de destino cuando se navega desde el menú lateral. Permite que
+   * "Proveedores" y "Órdenes de Compra" sean entradas distintas del menú
+   * aunque ambas vivan dentro del módulo de Compras.
+   */
+  const [targetTab, setTargetTab] = useState<string | undefined>(undefined);
+
+  const navegar = (mod: ERPModule, tab?: string) => {
+    setActiveModule(mod);
+    setTargetTab(tab);
+  };
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -187,6 +199,7 @@ const MainLayout: React.FC = () => {
       case 'VENTAS':
         return (
           <CRMModule
+            initialTab={targetTab}
             onNavigate={setActiveModule}
             onSelectCustomer={(cId) => {
               setSelectedCustomerId(cId);
@@ -210,13 +223,13 @@ const MainLayout: React.FC = () => {
       case 'PEDIDOS':
         return <OrdersModule />;
       case 'COMPRAS':
-        return <PurchasesDashboard />;
+        return <PurchasesDashboard initialTab={targetTab as any} />;
       case 'LOGISTICA':
         return <LogisticsModule />;
       case 'RH':
-        return <HRModule />;
+        return <HRModule initialTab={targetTab as any} />;
       case 'FINANZAS':
-        return <FinancialDashboard />;
+        return <FinancialDashboard initialTab={targetTab as any} />;
       case 'SERVICIO':
         return <CustomerServiceCenter />;
       case 'INVENTARIO':
@@ -250,7 +263,7 @@ const MainLayout: React.FC = () => {
       {/* Sidebar navigation */}
       <Sidebar
         activeModule={activeModule}
-        onSelectModule={setActiveModule}
+        onSelectModule={navegar}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         isCollapsed={isSidebarCollapsed}

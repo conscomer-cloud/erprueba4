@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Briefcase,
   UserPlus,
@@ -33,12 +33,18 @@ import { ShieldCheck } from 'lucide-react';
 interface CRMModuleProps {
   onNavigate?: (module: ERPModule) => void;
   onSelectCustomer?: (customerId: string) => void;
+  /** Pestaña de arranque, para que el menú lateral pueda entrar directo. */
+  initialTab?: string;
 }
 
-export const CRMModule: React.FC<CRMModuleProps> = ({ onNavigate, onSelectCustomer }) => {
+export const CRMModule: React.FC<CRMModuleProps> = ({ onNavigate, onSelectCustomer, initialTab }) => {
   const [activeTab, setActiveTab] = useState<
     'PIPELINE' | 'LEADS' | 'MI_DIA' | 'ACTIVIDADES' | 'METAS' | 'FORECAST'
-  >('PIPELINE');
+  >((initialTab as any) || 'PIPELINE');
+
+  useEffect(() => {
+    if (initialTab) setActiveTab(initialTab as any);
+  }, [initialTab]);
 
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isNewOppOpen, setIsNewOppOpen] = useState(false);

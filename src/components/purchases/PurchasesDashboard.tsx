@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { useAuth } from '../../context/AuthContext';
 import { PurchaseRequestsTab } from './PurchaseRequestsTab';
@@ -27,13 +27,23 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 
-export const PurchasesDashboard: React.FC = () => {
+type PurchasesTab = 'REQUESTS' | 'ORDERS' | 'SUPPLIERS' | 'RECEIPTS' | 'RETURNS' | 'REPLENISHMENT';
+
+interface PurchasesDashboardProps {
+  /** Pestaña de arranque, para que el menú lateral pueda entrar directo. */
+  initialTab?: PurchasesTab;
+}
+
+export const PurchasesDashboard: React.FC<PurchasesDashboardProps> = ({ initialTab }) => {
   const { purchaseRequests, purchaseOrders, suppliers, goodsReceipts, supplierReturns } = useERP();
   const { can } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<
-    'REQUESTS' | 'ORDERS' | 'SUPPLIERS' | 'RECEIPTS' | 'RETURNS' | 'REPLENISHMENT'
-  >('REQUESTS');
+  const [activeTab, setActiveTab] = useState<PurchasesTab>(initialTab || 'REQUESTS');
+
+  // Al cambiar el destino desde el menú se reposiciona la pestaña.
+  useEffect(() => {
+    if (initialTab) setActiveTab(initialTab);
+  }, [initialTab]);
 
   // Modal States
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);

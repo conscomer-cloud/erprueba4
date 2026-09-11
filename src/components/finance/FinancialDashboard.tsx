@@ -4,7 +4,7 @@
  * FASE 7: Finanzas, Tesorería, CXC, CXP, Rentabilidad, Presupuestos y Asesor IA
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useERP } from '../../context/ERPContext';
 import { useAuth } from '../../context/AuthContext';
 import { TreasuryOverview } from './TreasuryOverview';
@@ -30,7 +30,14 @@ import {
   RotateCcw,
 } from 'lucide-react';
 
-export const FinancialDashboard: React.FC = () => {
+type FinanceTab = 'TREASURY' | 'CXC' | 'CXP' | 'ACCOUNTS_CC' | 'BUDGETS_EXPENSES' | 'PROFITABILITY' | 'SIMULATOR' | 'AI_ADVISOR';
+
+interface FinancialDashboardProps {
+  /** Pestaña de arranque, para que el menú lateral pueda entrar directo. */
+  initialTab?: FinanceTab;
+}
+
+export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ initialTab }) => {
   const {
     resetFinanceData,
     financialKPIs,
@@ -44,9 +51,11 @@ export const FinancialDashboard: React.FC = () => {
   const handleResetFinance = () => {
     if (window.confirm('¿Restablecer los datos financieros de demostración?')) resetFinanceData();
   };
-  const [activeTab, setActiveTab] = useState<
-    'TREASURY' | 'CXC' | 'CXP' | 'ACCOUNTS_CC' | 'BUDGETS_EXPENSES' | 'PROFITABILITY' | 'SIMULATOR' | 'AI_ADVISOR'
-  >('TREASURY');
+  const [activeTab, setActiveTab] = useState<FinanceTab>(initialTab || 'TREASURY');
+
+  useEffect(() => {
+    if (initialTab) setActiveTab(initialTab);
+  }, [initialTab]);
 
   const pendingCXCCount = cxcInvoices.filter((i) => i.status !== 'PAGADA').length;
   const pendingCXPCount = cxpInvoices.filter((i) => i.status !== 'PAGADA').length;
